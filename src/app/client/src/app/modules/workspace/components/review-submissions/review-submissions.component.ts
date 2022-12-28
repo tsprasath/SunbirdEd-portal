@@ -175,8 +175,15 @@ export class ReviewSubmissionsComponent extends WorkSpace implements OnInit, Aft
     };
     this.search(searchParams).subscribe(
       (data: ServerResponse) => {
-        if (data.result.count && data.result.content.length > 0) {
-          this.reviewContent = data.result.content;
+        if (data.result.count && (!_.isEmpty(data.result.content) ||
+        (!_.isEmpty(data.result.QuestionSet)))) {
+          if(!_.isEmpty(data.result.content) && (!_.isEmpty(data.result.QuestionSet))){
+            this.reviewContent = _.concat(data.result.content, data.result.QuestionSet);
+          }else if(!_.isEmpty(data.result.QuestionSet)){
+            this.reviewContent = data.result.QuestionSet;
+          } else {
+            this.reviewContent = data.result.content;
+          }
           this.totalCount = data.result.count;
           this.pager = this.paginationService.getPager(data.result.count, this.pageNumber, this.pageLimit);
           const constantData = this.config.appConfig.WORKSPACE.ReviewSubmission.constantData;
