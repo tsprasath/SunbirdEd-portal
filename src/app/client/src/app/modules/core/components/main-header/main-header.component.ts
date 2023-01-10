@@ -123,6 +123,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     view: this.config.constants.VIEW.HORIZONTAL,
     isBold: true
   };
+  isLanguageDropdown:boolean = true
   totalUsersCount: number;
   libraryMenuIntractEdata: IInteractEventEdata;
   learnMenuIntractEdata: IInteractEventEdata;
@@ -316,6 +317,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       contentType: this.languageFormQuery.filterEnv
     };
     this.formService.getFormConfig(formServiceInputParams, channelId).subscribe((data: any) => {
+      this.isLanguageDropdown = data[0].visible
       this.languages = data[0].range;
     }, (err: any) => {
       this.languages = [{ 'value': 'en', 'label': 'English', 'dir': 'ltr', 'accessibleText': 'English' }];
