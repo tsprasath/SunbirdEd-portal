@@ -166,6 +166,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showReportMenu = false;
   showingDescription: string;
   showSwitchTheme = false
+  showUserMergeAccount:boolean = true;
+  showUserMyGroup: boolean = true;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, public formService: FormService,
@@ -216,6 +218,28 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  getUserProfileConfig(){
+    const formReadInputParams = { 
+      formType: 'user',
+      formAction: 'display',
+      contentType: 'account',
+      component: 'portal'
+    };
+    this.formService.getFormConfig(formReadInputParams).subscribe(
+      (formResponsedata) => {
+        if(formResponsedata.length){
+          this.showUserMergeAccount = formResponsedata[0].showMergeAccount
+          this.showUserMyGroup = formResponsedata[1].showMyGroup
+        }
+        },
+        (error) => {
+          this.showUserMergeAccount = true
+          this.showUserMyGroup =  true
+        }
+      );
+  }
+
 
   getFormConfigs() {
     this.observationUtilService.browseByCategoryForm()
@@ -655,6 +679,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
     this.setWindowConfig();
     this.switchToNewTheme();
+    this.getUserProfileConfig();
   }
 
   checkFullScreenView() {
