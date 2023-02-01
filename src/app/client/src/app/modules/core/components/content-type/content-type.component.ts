@@ -160,9 +160,15 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   }
   makeFormChange() {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
+    const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaassessment');
+
     if (this.userType != 'administrator') {
       this.contentTypes[index].isEnabled = false;
-    } else {
+    }
+    if(this.userType != 'student'){
+      this.contentTypes[studentIndex].isEnabled = false;
+    }
+     else {
       this.contentTypes[index].isEnabled = true;
     }
   }
