@@ -1,6 +1,6 @@
 {
     "headerDropdownRoles":{
-        "workSpaceRole" : ["CONTENT_CREATOR" , "CONTENT_CREATION" , "CONTENT_REVIEWER" , "CONTENT_REVIEW" , "FLAG_REVIEWER" , "COURSE_MENTOR" ,"BOOK_REVIEWER", "BOOK_CREATOR"],
+        "workSpaceRole" : ["CONTENT_CREATOR" , "CONTENT_CREATION" , "CONTENT_REVIEWER" , "CONTENT_REVIEW" , "FLAG_REVIEWER" , "COURSE_MENTOR" ,"BOOK_REVIEWER", "BOOK_CREATOR", "NODAL_OFFICER"],
         "adminDashboard" : ["ORG_ADMIN","SYSTEM_ADMINISTRATION","REPORT_VIEWER", "REPORT_ADMIN"],
         "announcementRole" : ["ANNOUNCEMENT_SENDER"],
         "myActivityRole" : ["CONTENT_CREATOR"],
@@ -60,12 +60,17 @@
        "reportViewerRole": ["REPORT_VIEWER", "REPORT_ADMIN"],
        "alltextbookRole": ["ORG_ADMIN"],
        "uciAdmin": ["ORG_ADMIN"],
-       "programDashboardRole":["PROGRAM_MANAGER","PROGRAM_DESIGNER"]
+       "programDashboardRole":["PROGRAM_MANAGER","PROGRAM_DESIGNER"],
+       "nodalOfficer": ["NODAL_OFFICER"]
     }
     ,"WORKSPACEAUTHGARDROLES":[
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR","NODAL_OFFICER"],
         "roleName":"createRole","url":"workspace/content/create","tab":"CREATE"
+    },
+    {
+        "roles": ["NODAL_OFFICER"],
+        "roleName": "nodalOfficer", "url":"workspace/content/assessments", "tab":"ASSESSMENTS"
     },
     {
         "roles":["ORG_ADMIN"],
