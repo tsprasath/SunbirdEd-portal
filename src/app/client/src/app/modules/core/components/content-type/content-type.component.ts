@@ -6,6 +6,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TelemetryService } from '@sunbird/telemetry';
+import { PermissionService } from '../../services';
 
 
 @Component({
@@ -23,6 +24,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   public unsubscribe$ = new Subject<void>();
   subscription: any;
   userType: any;
+  userRole:any;
   returnTo: string;
   constructor(
     public formService: FormService,
@@ -34,6 +36,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     private utilService: UtilService,
     public navigationhelperService: NavigationHelperService,
+    public permissionService: PermissionService
   ) {}
 
 
@@ -98,7 +101,12 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     if (data.contentType === 'mydownloads' || data.contentType === 'all') {
       params = _.omit(params, ['board', 'medium', 'gradeLevel', 'subject', 'se_boards', 'se_mediums', 'se_gradeLevels', 'se_subjects']);
     }
-
+    if(data.contentType === 'workspace'){
+      const authroles = this.permissionService.getWorkspaceAuthRoles();
+    if (authroles) {
+      this.router.navigate([authroles])
+    }
+    }
     if (this.userService.loggedIn) {
       this.router.navigate([data.loggedInUserRoute.route],
         { queryParams: { ...params, selectedTab: data.loggedInUserRoute.queryParam } });
@@ -141,6 +149,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
         this.userService.userData$.pipe(takeUntil(this.unsubscribe$)).subscribe((profileData: IUserData) => {
           if (_.get(profileData, 'userProfile.profileUserType.type')) {
           this.userType = profileData.userProfile['profileUserType']['type'];
+          this.userRole = profileData.userProfile['roles'][0]['role']
           }
           this.makeFormChange();
         });
@@ -161,15 +170,19 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   makeFormChange() {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
     const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaassessment');
+    const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace')
 
     if (this.userType != 'administrator') {
       this.contentTypes[index].isEnabled = false;
     }
+     else {
+      this.contentTypes[index].isEnabled = true;
+    }
     if(this.userType != 'student'){
       this.contentTypes[studentIndex].isEnabled = false;
     }
-     else {
-      this.contentTypes[index].isEnabled = true;
+    if(this.userRole!= 'NODAL_OFFICER'){
+       this.contentTypes[nodalIndex].isEnabled = false
     }
   }
 
