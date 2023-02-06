@@ -7,7 +7,7 @@ import {
   BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent } from './components';
+  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, StudentsListComponent } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
 const objectType = 'workspace';
@@ -241,6 +241,34 @@ const routes: Routes = [
           breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
         }
       },
+      {
+        path: 'assessments', component: AssessmentsComponent, canActivate: [AuthGuard],
+        data: {
+          telemetry: {
+            env: telemetryEnv, pageid: 'workspace-content-allassessments', subtype: 'paginate', uri: 'workspace/content/assessments',
+            type: 'list', mode: 'create', object: { type: objectType, ver: '1.0' }
+          }, roles: 'nodalOfficer',
+          // breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
+        },
+        children: [{
+          path: 'assign', component: StudentsListComponent,
+          data: {
+            telemetry: {
+              env: telemetryEnv, pageid: 'workspace-content-studentsList', uri: '/workspace/content/assessments/assign',
+              type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+            },
+          }
+        }]
+      },
+      // {
+      //   path: 'assign', component: StudentsListComponent,
+      //   data: {
+      //     telemetry: {
+      //       env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assign',
+      //       type: 'list', mode: 'create', object: { type: objectType, ver: '1.0' }
+      //     }, roles: 'alltextbookRole',
+      //   },
+      // },
       {
         path: 'alltextbooks/:pageNumber', component: AllTextbooksComponent, canActivate: [AuthGuard],
         data: {
