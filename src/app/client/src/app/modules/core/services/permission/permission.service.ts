@@ -48,7 +48,7 @@ export class PermissionService {
    * @param {ConfigService} config ConfigService reference
    * @param {LearnerService} learner LearnerService reference
    * @param {UserService} userService UserService reference
-   */
+   */c
   constructor(private resourceService: ResourceService, private  config: ConfigService,
     private learner: LearnerService, private  userService: UserService, public toasterService: ToasterService) {
   }
