@@ -169,12 +169,17 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   }
   makeFormChange() {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
+    const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaassessment');
     const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace')
+
     if (this.userType != 'administrator') {
       this.contentTypes[index].isEnabled = false;
     }
      else {
       this.contentTypes[index].isEnabled = true;
+    }
+    if(this.userType != 'student'){
+      this.contentTypes[studentIndex].isEnabled = false;
     }
     if(this.userRole!= 'NODAL_OFFICER'){
        this.contentTypes[nodalIndex].isEnabled = false
