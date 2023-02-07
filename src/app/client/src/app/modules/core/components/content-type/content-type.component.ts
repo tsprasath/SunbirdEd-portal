@@ -101,12 +101,6 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     if (data.contentType === 'mydownloads' || data.contentType === 'all') {
       params = _.omit(params, ['board', 'medium', 'gradeLevel', 'subject', 'se_boards', 'se_mediums', 'se_gradeLevels', 'se_subjects']);
     }
-    if(data.contentType === 'workspace'){
-      const authroles = this.permissionService.getWorkspaceAuthRoles();
-    if (authroles) {
-      this.router.navigate([authroles])
-    }
-    }
     if (this.userService.loggedIn) {
       this.router.navigate([data.loggedInUserRoute.route],
         { queryParams: { ...params, selectedTab: data.loggedInUserRoute.queryParam } });
@@ -178,10 +172,10 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
      else {
       this.contentTypes[index].isEnabled = true;
     }
-    if(this.userType != 'student'){
+    if(this.userType != 'student' && studentIndex!=-1){
       this.contentTypes[studentIndex].isEnabled = false;
     }
-    if(this.userRole!= 'NODAL_OFFICER'){
+    if(this.userRole!= 'NODAL_OFFICER' && nodalIndex!=-1){
        this.contentTypes[nodalIndex].isEnabled = false
     }
   }
