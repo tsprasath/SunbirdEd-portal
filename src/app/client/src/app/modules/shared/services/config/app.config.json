@@ -1478,5 +1478,10 @@
   },
   "OTPTemplate": {
       "updateContactTemplate": "otpContactUpdateTemplate"
+  },
+  "Assessments":{
+   "primaryCategories":[
+    "PIAA Question Set"
+   ]
   }
 }
