@@ -308,15 +308,13 @@ export class AssessmentsComponent extends WorkSpace implements OnInit, AfterView
         } else {
             this.sort = { lastUpdatedOn: this.config.appConfig.WORKSPACE.lastUpdatedOn };
         }
-        const preStatus = ['Draft', 'FlagDraft', 'Review', 'Processing', 'Live', 'Unlisted', 'FlagReview'];
+        const preStatus = ['Live']
         const primaryCategories = _.compact(_.concat(this.frameworkService['_channelData'].contentPrimaryCategories, this.frameworkService['_channelData'].collectionPrimaryCategories));
         const searchParams = {
             filters: {
                 status: bothParams.queryParams.status ? bothParams.queryParams.status : preStatus,
-                createdBy: this.userService.userid,
                 // tslint:disable-next-line:max-line-length
-                primaryCategory: _.get(bothParams, 'queryParams.primaryCategory') || (!_.isEmpty(primaryCategories) ? primaryCategories : this.config.appConfig.WORKSPACE.primaryCategory),
-                board: bothParams.queryParams.board,
+                primaryCategory: _.get(bothParams, 'queryParams.primaryCategory') || (!_.isEmpty(primaryCategories) ? primaryCategories : this.config.appConfig.WORKSPACE.Assessments.primaryCategories),
                 subject: bothParams.queryParams.subject,
                 medium: bothParams.queryParams.medium,
                 gradeLevel: bothParams.queryParams.gradeLevel
@@ -327,11 +325,7 @@ export class AssessmentsComponent extends WorkSpace implements OnInit, AfterView
             sort_by: this.sort
         };
 
-        if (this.isQuestionSetFilterEnabled !== true) {
-            searchParams.filters['objectType'] = this.config.appConfig.WORKSPACE.objectType;
-        }
-
-        this.searchContentWithLockStatus(searchParams)
+        this.search(searchParams)
             .subscribe((data: ServerResponse) => {
                 if (data.result.count && (!_.isEmpty(data.result.content) ||
                     (!_.isEmpty(data.result.QuestionSet)))) {

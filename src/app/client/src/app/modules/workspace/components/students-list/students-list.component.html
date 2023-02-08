@@ -3,7 +3,7 @@
 </div>
 
 <div *ngIf="!showLoader">
-    <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/assessments">
+    <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/workspace/content/assessments">
         <i aria-hidden="true" class="arrow left icon"></i>
         Back to assignments
     </button>
@@ -13,7 +13,7 @@
     <app-no-result [data]="noResultMessage"></app-no-result>
 </div>
 
-<table class="ui upForReviewTable table" *ngIf="allContent.length > 0 && !showLoader && !noResult">
+<table class="ui upForReviewTable table" *ngIf="allStudents.length > 0 && !showLoader && !noResult">
     <thead>
         <tr>
             <th class="four wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
@@ -25,36 +25,36 @@
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
-        [throttle]="[1000]" [trigger]="allContent">
-        <tr in-view-item class="UpForReviewListHover" *ngFor="let content of allContent let i = index;" [id]="i"
-            [data]="content" appTelemetryInteract>
+        [throttle]="[1000]" [trigger]="allStudents">
+        <tr in-view-item class="UpForReviewListHover" *ngFor="let student of allStudents let i = index;" [id]="i"
+            [data]="student" appTelemetryInteract>
             <td tabindex="0">
                 <h5 class="ui image header">
                     <div class="content ">
-                        <div class="UpReviewHeader">{{ content.name | slice:0:25 }}
-                            <i *ngIf="content.name.length > 25">...</i>
+                        <div class="UpReviewHeader">{{ student?.firstName | slice:0:25 }}
+                            <i *ngIf="student?.firstName?.length > 25">...</i>
                         </div>
                     </div>
                 </h5>
             </td>
             <td>
                 <h5 class="ui image header">
-                    <div class="content">31 Dec 2022</div>
+                    <div class="content">NA</div>
                 </h5>
             </td>
             <td>
                 <h5 class="ui image header">
-                    <div class="content">SVK270789</div>
+                    <div class="content">{{ student?.userId }}</div>
                 </h5>
             </td>
             <td>
                 <h5 class="ui image header">
-                    <div class="content">GNM</div>
+                    <div class="content">{{ student?.framework?.board[0] }}</div>
                 </h5>
             </td>
             <td>
                 <h5 class="ui image header">
-                    <div class="content">Pending evaluation</div>
+                    <div class="content">NA</div>
                 </h5>
             </td>
             <td>
@@ -67,7 +67,7 @@
     <div class="two wide column"></div>
     <div class="ten wide column">
         <div class="pb-10"
-            *ngIf="allContent && totalCount > config.appConfig.WORKSPACE.PAGE_LIMIT && !showLoader && !showError && !noResult">
+            *ngIf="allStudents && totalCount > config.appConfig.WORKSPACE.PAGE_LIMIT && !showLoader && !showError && !noResult">
             <div class="ui pagination menu mt-10 right-floated p-0 " *ngIf="pager.pages.length ">
                 <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0"
                     (click)="navigateToPage(1) ">First</a>

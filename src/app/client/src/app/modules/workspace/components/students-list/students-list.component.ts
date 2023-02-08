@@ -48,9 +48,9 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     contentIds: string;
 
     /**
-     * Contains list of published course(s) of logged-in user
+     * Contains list of students
     */
-    allContent: Array<IContents> = [];
+    allStudents: Array<IContents> = [];
 
     /**
      * To show / hide loader
@@ -308,39 +308,25 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         } else {
             this.sort = { lastUpdatedOn: this.config.appConfig.WORKSPACE.lastUpdatedOn };
         }
-        const preStatus = ['Draft', 'FlagDraft', 'Review', 'Processing', 'Live', 'Unlisted', 'FlagReview'];
-        const primaryCategories = _.compact(_.concat(this.frameworkService['_channelData'].contentPrimaryCategories, this.frameworkService['_channelData'].collectionPrimaryCategories));
+
         const searchParams = {
             filters: {
-                status: bothParams.queryParams.status ? bothParams.queryParams.status : preStatus,
-                createdBy: this.userService.userid,
-                // tslint:disable-next-line:max-line-length
-                primaryCategory: _.get(bothParams, 'queryParams.primaryCategory') || (!_.isEmpty(primaryCategories) ? primaryCategories : this.config.appConfig.WORKSPACE.primaryCategory),
-                board: bothParams.queryParams.board,
-                subject: bothParams.queryParams.subject,
-                medium: bothParams.queryParams.medium,
-                gradeLevel: bothParams.queryParams.gradeLevel
+                "profileUserType.type" : "student"
             },
             limit: limit,
-            offset: (pageNumber - 1) * (limit),
+            // offset: (pageNumber - 1) * (limit),
+            pageNumber: 1,
             query: _.toString(bothParams.queryParams.query),
-            sort_by: this.sort
+            sort_by: this.sort,
+            type: 'studentList'
         };
 
-        if (this.isQuestionSetFilterEnabled !== true) {
-            searchParams.filters['objectType'] = this.config.appConfig.WORKSPACE.objectType;
-        }
-
-        this.searchContentWithLockStatus(searchParams)
+        this.search(searchParams)
             .subscribe((data: ServerResponse) => {
-                if (data.result.count && (!_.isEmpty(data.result.content) ||
-                    (!_.isEmpty(data.result.QuestionSet)))) {
-                    if (this.isQuestionSetFilterEnabled === true && data.result.QuestionSet) {
-                        data.result.content = _.concat(data.result.content, data.result.QuestionSet);
-                    }
-                    this.allContent = data.result.content;
-                    this.totalCount = data.result.count;
-                    this.pager = this.paginationService.getPager(data.result.count, pageNumber, limit);
+                if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
+                    this.allStudents = data.result.response.content;
+                    this.totalCount = data.result.response.count;
+                    this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
                     this.showLoader = false;
                     this.noResult = false;
                 } else {
@@ -454,8 +440,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
         this.delete(contentId).subscribe((data: ServerResponse) => {
             this.showLoader = false;
-            this.allContent = this.removeAllMyContent(this.allContent, contentId);
-            if (this.allContent.length === 0) {
+            this.allStudents = this.removeAllMyContent(this.allStudents, contentId);
+            if (this.allStudents.length === 0) {
                 this.ngOnInit();
             }
             this.toasterService.success(this.resourceService.messages.smsg.m0006);

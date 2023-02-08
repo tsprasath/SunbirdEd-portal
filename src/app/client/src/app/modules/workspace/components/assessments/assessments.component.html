@@ -21,8 +21,8 @@
             <td tabindex="0">
                 <h5 class="ui image header">
                     <div class="content ">
-                        <div class="UpReviewHeader">{{ content.name | slice:0:50 }}
-                            <i *ngIf="content.name.length > 50">...</i>
+                        <div class="UpReviewHeader">{{ content?.name | slice:0:50 }}
+                            <i *ngIf="content?.name?.length > 50">...</i>
                         </div>
                     </div>
                 </h5>
@@ -39,7 +39,7 @@
                 </h5>
             </td>
             <td>
-                <div class="assign-link" routerLink="/assign">Assign</div>
+                <div class="assign-link" routerLink="assign">Assign</div>
             </td>
         </tr>
     </tbody>

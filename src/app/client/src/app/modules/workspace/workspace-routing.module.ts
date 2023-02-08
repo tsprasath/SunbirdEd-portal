@@ -7,7 +7,8 @@ import {
   BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, StudentsListComponent } from './components';
+  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, StudentsListComponent
+} from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
 const objectType = 'workspace';
@@ -109,7 +110,7 @@ const routes: Routes = [
       },
       {
         path: 'edit/collection/:contentId/:type/:state/:framework/:contentStatus',
-          component: CollectionEditorComponent, canActivate: [AuthGuard],
+        component: CollectionEditorComponent, canActivate: [AuthGuard],
         data: { roles: 'workspace' }
       },
       {
@@ -126,11 +127,11 @@ const routes: Routes = [
       },
       {
         path: 'edit/editorforlargecontent', component: GenericEditorComponent,
-        canActivate: [AuthGuard], data: { roles: 'workspace' , isLargeFileUpload: true }
+        canActivate: [AuthGuard], data: { roles: 'workspace', isLargeFileUpload: true }
       },
       {
         path: 'edit/collection/:contentId/:type/:state/:framework',
-          component: CollectionEditorComponent, canActivate: [AuthGuard],
+        component: CollectionEditorComponent, canActivate: [AuthGuard],
         data: { roles: 'workspace' }
       },
       {
@@ -246,27 +247,26 @@ const routes: Routes = [
         data: {
           telemetry: {
             env: telemetryEnv, pageid: 'workspace-content-allassessments', subtype: 'paginate', uri: 'workspace/content/assessments',
-            type: 'list', mode: 'create', object: { type: objectType, ver: '1.0' }
+            type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
           }, roles: 'nodalOfficer',
-          // breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
         },
-        children: [{
-          path: 'assign', component: StudentsListComponent,
-          data: {
-            telemetry: {
-              env: telemetryEnv, pageid: 'workspace-content-studentsList', uri: '/workspace/content/assessments/assign',
-              type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
-            },
-          }
-        }]
+        // children: [{
+        //   path: 'assign', component: StudentsListComponent,
+        //   data: {
+        //     telemetry: {
+        //       env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign',
+        //       type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+        //     },
+        //   }
+        // }]
       },
       // {
-      //   path: 'assign', component: StudentsListComponent,
+      //   path: 'assign', component: StudentsListComponent, canActivate: [AuthGuard],
       //   data: {
       //     telemetry: {
       //       env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assign',
-      //       type: 'list', mode: 'create', object: { type: objectType, ver: '1.0' }
-      //     }, roles: 'alltextbookRole',
+      //       type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+      //     }, roles: 'nodalOfficer',
       //   },
       // },
       {
@@ -293,8 +293,7 @@ const routes: Routes = [
         path: 'collaborating-on/:pageNumber', component: CollaboratingOnComponent, canActivate: [AuthGuard],
         data: {
           telemetry: {
-            env: telemetryEnv, pageid: 'workspace-content-collaborating-on',
-      subtype: 'paginate', uri: 'workspace/content/collaborating-on',
+            env: telemetryEnv, pageid: 'workspace-content-collaborating-on', subtype: 'paginate', uri: 'workspace/content/collaborating-on',
             type: 'list', mode: 'create', object: { type: objectType, ver: '1.0' }
           }, roles: 'collaboratingRole',
           breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
