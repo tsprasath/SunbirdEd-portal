@@ -143,7 +143,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
         this.userService.userData$.pipe(takeUntil(this.unsubscribe$)).subscribe((profileData: IUserData) => {
           if (_.get(profileData, 'userProfile.profileUserType.type')) {
           this.userType = profileData.userProfile['profileUserType']['type'];
-          this.userRole = profileData.userProfile['roles'][0]['role']
+          this.userRole = profileData.userProfile['roles'].length ? profileData.userProfile['roles'][0]['role'] : ''; 
           }
           this.makeFormChange();
         });
