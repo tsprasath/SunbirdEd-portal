@@ -11,9 +11,9 @@ import { IImpressionEventInput } from '@sunbird/telemetry';
 import { SearchService, UserService, ISort, FrameworkService } from '@sunbird/core';
 import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService } from '@sunbird/shared';
 
-import { WorkSpace } from '../../classes/workspace';
-import { WorkSpaceService } from '../../services';
-import { ContentIDParam } from '../../interfaces/delteparam';
+import { WorkSpace } from './../../../classes/workspace';
+import { WorkSpaceService } from './../../../services';
+import { ContentIDParam } from './../../../interfaces/delteparam';
 
 @Component({
     selector: 'app-students-list',
@@ -469,7 +469,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             return;
         }
         this.pageNumber = page;
-        this.route.navigate(['workspace/content/allcontent', this.pageNumber], { queryParams: this.queryParams });
+        this.route.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
     }
 
     contentClick(content) {
