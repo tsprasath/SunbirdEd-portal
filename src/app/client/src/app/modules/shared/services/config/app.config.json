@@ -906,17 +906,9 @@
       "TVLesson"
     ],
     "primaryCategory": [
-      "Course",
-      "Digital Textbook",
-      "Content Playlist",
-      "Explanation Content",
-      "Learning Resource",
-      "Practice Question Set",
-      "eTextbook",
-      "Teacher Resource",
-      "Course Assessment"
+      "PIAA Question Set"
     ],
-    "adminHandledContentType" :[
+    "adminHandledContentType": [
       "TextBook"
     ],
     "mimeType": [
@@ -924,7 +916,10 @@
       "application/vnd.ekstep.content-collection"
     ],
     "objectType": "Content",
-    "allowedObjectType": ["Content", "QuestionSet"],
+    "allowedObjectType": [
+      "Content",
+      "QuestionSet"
+    ],
     "lastUpdatedOn": "desc",
     "createdOn": "asc",
     "createdDate": "desc",
@@ -1183,7 +1178,12 @@
     "questionPrimaryCategories": [
       "Multiple Choice Question",
       "Subjective Question"
-    ]
+    ],
+    "Assessments":{
+      "primaryCategories":[
+        "PIAA Question Set"
+      ]
+    }
   },
   "DASHBOARD": {
     "PAGE_LIMIT": 200
@@ -1458,25 +1458,43 @@
   "DIAL_CODE": {
     "PAGE_LIMIT": 10
   },
-  "userTypeMapping" : {
-    "student": ["Student", "Learner"],
-    "teacher": ["Teacher", "Instructor"],
-    "other": ["Student", "Teacher", "Instructor", "Learner"],
-    "administrator": ["Administrator"],
-    "parent": ["Student", "Teacher", "Instructor", "Learner"]
+  "userTypeMapping": {
+    "student": [
+      "Student",
+      "Learner"
+    ],
+    "teacher": [
+      "Teacher",
+      "Instructor"
+    ],
+    "other": [
+      "Student",
+      "Teacher",
+      "Instructor",
+      "Learner"
+    ],
+    "administrator": [
+      "Administrator"
+    ],
+    "parent": [
+      "Student",
+      "Teacher",
+      "Instructor",
+      "Learner"
+    ]
   },
-  "contentType" : {
-    "Course" : "Course",
+  "contentType": {
+    "Course": "Course",
     "Collection": "Collection",
     "Textbook": "Textbook",
     "Resource": "Resource",
-    "Courses" : "Courses",
+    "Courses": "Courses",
     "Textbooks": "Textbooks"
   },
   "assetsPath": {
     "book": "./assets/images/book.png"
   },
   "OTPTemplate": {
-      "updateContactTemplate": "otpContactUpdateTemplate"
+    "updateContactTemplate": "otpContactUpdateTemplate"
   }
 }

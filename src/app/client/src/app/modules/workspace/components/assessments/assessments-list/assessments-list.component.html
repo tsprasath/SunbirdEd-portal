@@ -1,64 +1,45 @@
+<!-- <app-workspace-content-filter ></app-workspace-content-filter> -->
 <div class="twelve wide column mt-20" *ngIf="showLoader">
     <app-loader [data]="loaderMessage"></app-loader>
 </div>
-
-<div *ngIf="!showLoader">
-    <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/assessments">
-        <i aria-hidden="true" class="arrow left icon"></i>
-        Back to assignments
-    </button>
-</div>
-
 <div *ngIf="noResult && !showLoader">
     <app-no-result [data]="noResultMessage"></app-no-result>
 </div>
 
-<table class="ui upForReviewTable table" *ngIf="allContent.length > 0 && !showLoader && !noResult">
+<table class="ui upForReviewTable table" *ngIf="allAssessments.length > 0 && !showLoader && !noResult ">
     <thead>
         <tr>
-            <th class="four wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.attempted }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.idNo }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
+            <th class="four wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.snav?.assessments }}</th>
+            <th class="seven wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th>
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
-        [throttle]="[1000]" [trigger]="allContent">
-        <tr in-view-item class="UpForReviewListHover" *ngFor="let content of allContent let i = index;" [id]="i"
+        [throttle]="[1000]" [trigger]="allAssessments">
+        <tr in-view-item class="UpForReviewListHover" *ngFor="let assessment of allAssessments let i = index;" [id]="i"
             [data]="content" appTelemetryInteract>
             <td tabindex="0">
                 <h5 class="ui image header">
                     <div class="content ">
-                        <div class="UpReviewHeader">{{ content.name | slice:0:25 }}
-                            <i *ngIf="content.name.length > 25">...</i>
+                        <div class="UpReviewHeader">{{ (assessment?.name) ? (assessment?.name | slice:0:50) : 'NA' }}
+                            <i *ngIf="assessment?.name?.length > 50">...</i>
                         </div>
                     </div>
                 </h5>
             </td>
             <td>
                 <h5 class="ui image header">
-                    <div class="content">31 Dec 2022</div>
+                    <div class="content">
+                        <div class="UpReviewSubHeader">General Nursing and Midwifery</div>
+                        <hr>
+                        <div class="UpReviewSubHeader">C1, L4 &nbsp;&nbsp; C1, L4 &nbsp;&nbsp; C1, L4</div>
+                        <hr>
+                        <div class="UpReviewSubHeader">C1, L4</div>
+                    </div>
                 </h5>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">SVK270789</div>
-                </h5>
-            </td>
-            <td>
-                <h5 class="ui image header">
-                    <div class="content">GNM</div>
-                </h5>
-            </td>
-            <td>
-                <h5 class="ui image header">
-                    <div class="content">Pending evaluation</div>
-                </h5>
-            </td>
-            <td>
-                <div class="assign-link" [routerLink]="['/assign']">Assign</div>
+                <div class="assign-link" [routerLink]="['/workspace/content/assessments/assign']">Assign</div>
             </td>
         </tr>
     </tbody>

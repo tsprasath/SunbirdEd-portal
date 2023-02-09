@@ -30,4 +30,5 @@ export * from './workspace-content-filter/workspace-content-filter.component';
 export * from './all-textbooks/all-textbooks.component';
 export * from './content-editors/new-collection-editor/new-collection-editor.component';
 export * from './assessments/assessments.component';
-export * from './students-list/students-list.component';
+export * from './assessments/assessments-list/assessment-list.component';
+export * from './assessments/students-list/students-list.component';

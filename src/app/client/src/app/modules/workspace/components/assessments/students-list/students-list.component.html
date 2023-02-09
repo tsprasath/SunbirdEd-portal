@@ -1,0 +1,85 @@
+<div class="twelve wide column mt-20" *ngIf="showLoader">
+    <app-loader [data]="loaderMessage"></app-loader>
+</div>
+
+<div *ngIf="!showLoader">
+    <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/workspace/content/assessments/list">
+        <i aria-hidden="true" class="arrow left icon"></i>
+        Back to assignments
+    </button>
+</div>
+
+<div *ngIf="noResult && !showLoader">
+    <app-no-result [data]="noResultMessage"></app-no-result>
+</div>
+
+<table class="ui upForReviewTable table" *ngIf="allStudents.length > 0 && !showLoader && !noResult">
+    <thead>
+        <tr>
+            <th class="four wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.attempted }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.idNo }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
+        </tr>
+    </thead>
+    <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
+        [throttle]="[1000]" [trigger]="allStudents">
+        <tr in-view-item class="UpForReviewListHover" *ngFor="let student of allStudents let i = index;" [id]="i"
+            [data]="student" appTelemetryInteract>
+            <td tabindex="0">
+                <h5 class="ui image header">
+                    <div class="content ">
+                        <div class="UpReviewHeader">{{ student?.firstName | slice:0:25 }}
+                            <i *ngIf="student?.firstName?.length > 25">...</i>
+                        </div>
+                    </div>
+                </h5>
+            </td>
+            <td>
+                <h5 class="ui image header">
+                    <div class="content">NA</div>
+                </h5>
+            </td>
+            <td>
+                <h5 class="ui image header">
+                    <div class="content">{{ student?.userId }}</div>
+                </h5>
+            </td>
+            <td>
+                <h5 class="ui image header">
+                    <div class="content">{{ student?.framework?.board[0] }}</div>
+                </h5>
+            </td>
+            <td>
+                <h5 class="ui image header">
+                    <div class="content">NA</div>
+                </h5>
+            </td>
+            <td>
+                <div class="assign-link" [routerLink]="['/assign']">Assign</div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div class="ui grid">
+    <div class="two wide column"></div>
+    <div class="ten wide column">
+        <div class="pb-10"
+            *ngIf="allStudents && totalCount > config.appConfig.WORKSPACE.PAGE_LIMIT && !showLoader && !showError && !noResult">
+            <div class="ui pagination menu mt-10 right-floated p-0 " *ngIf="pager.pages.length ">
+                <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0"
+                    (click)="navigateToPage(1) ">First</a>
+                <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0"
+                    (click)="navigateToPage(pager.currentPage - 1)">Previous</a>
+                <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" tabindex="0"
+                    (click)="navigateToPage(page)" class="item">{{page}}</a>
+                <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" tabindex="0"
+                    (click)="navigateToPage(pager.currentPage + 1)" class="item">Next</a>
+                <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" tabindex="0"
+                    (click)="navigateToPage(pager.totalPages)" class="item ">Last</a>
+            </div>
+        </div>
+    </div>
+</div>
