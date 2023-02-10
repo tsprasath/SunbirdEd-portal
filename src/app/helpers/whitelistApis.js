@@ -1600,6 +1600,13 @@ const API_LIST = {
       ROLE_CHECK: [ROLE.PUBLIC]
     },
     // Question & QuestionSet API's
+    '/api/questionset/v1/retire/:QuestionSet_Id': {
+      description: 'QuestionSet delete',
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [
+        ROLE.CONTENT_CREATOR
+      ]
+    },
     '/action/questionset/v1/create': {
       description: 'QuestionSet create',
       checksNeeded: ['ROLE_CHECK'],
@@ -2034,7 +2041,8 @@ const API_LIST = {
     '/uci/admin/v1/conversationLogic/update/:id',
     '/uci/admin/v1/conversationLogic/delete/:id',
     '/uci/admin/v1/forms/upload',
-    '/kendra/user-extension/mlcore/v1/solutions/:id'
+    '/kendra/user-extension/mlcore/v1/solutions/:id',
+    '/api/questionset/v1/retire/:QuestionSet_Id'
   ]
 };
 module.exports = API_LIST;
