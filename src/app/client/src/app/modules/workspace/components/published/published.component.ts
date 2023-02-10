@@ -362,6 +362,9 @@ export class PublishedComponent extends WorkSpace implements OnInit, AfterViewIn
     if (this.contentMimeType === 'application/vnd.ekstep.content-collection') {
       this.deleteContent(this.currentContentId);
       return;
+    }else if(this.contentMimeType === 'application/vnd.sunbird.questionset') {
+      this.deleteQuestionSetContent(this.currentContentId);
+      return;
     }
     this.getLinkedCollections(this.currentContentId)
       .subscribe((response) => {
@@ -444,6 +447,33 @@ export class PublishedComponent extends WorkSpace implements OnInit, AfterViewIn
           this.deleteModal.deny();
         }
   }
+
+    /**
+  * This method deletes questionset using the questionset id.
+  */
+     deleteQuestionSetContent(questionSetId) {
+      this.showLoader = true;
+      this.loaderMessage = {
+        'loaderMessage': this.resourceService.messages.stmsg.m0034,
+      };
+      this.deleteQuestionSet(questionSetId).subscribe(
+        (data: ServerResponse) => {
+          this.showLoader = false;
+          this.publishedContent = this.removeContent(this.publishedContent, questionSetId);
+          if (this.publishedContent.length === 0) {
+            this.ngOnInit();
+          }
+          this.toasterService.success(this.resourceService.messages.smsg.m0006);
+        },
+        (err: ServerResponse) => {
+          this.showLoader = false;
+          this.toasterService.error(this.resourceService.messages.fmsg.m0022);
+        }
+      );
+      if (!_.isUndefined(this.deleteModal)) {
+        this.deleteModal.deny();
+      }
+    }
 
   /**
   * This method helps to navigate to different pages.
