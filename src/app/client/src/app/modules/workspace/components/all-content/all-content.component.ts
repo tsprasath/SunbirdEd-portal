@@ -194,6 +194,11 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
   private deleteModal: any;
 
   /**
+  * label for filter selected, used especially for changing BMGS to FRACCL
+  */
+  label: Array<string>; 
+
+  /**
    * To show/hide collection modal
    */
   public collectionListModal = false;
@@ -216,7 +221,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
     activatedRoute: ActivatedRoute,
     route: Router, userService: UserService,
     toasterService: ToasterService, resourceService: ResourceService,
-    config: ConfigService, public modalService: SuiModalService) {
+    config: ConfigService, public modalService: SuiModalService, ) {
     super(searchService, workSpaceService, userService);
     this.paginationService = paginationService;
     this.route = route;
@@ -253,7 +258,14 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
         this.query = this.queryParams['query'];
         this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
       });
+
+    this.workSpaceService.workspaceSearchLabelConfig$.subscribe((searchLabelConfig) => {
+      if(searchLabelConfig.searchLabel?.label && searchLabelConfig.searchLabel?.label.length) {
+        this.label = searchLabelConfig.searchLabel?.label;
+      }
+    })
   }
+
   /**
   * This method sets the make an api call to get all UpForReviewContent with page No and offset
   */
@@ -392,10 +404,16 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
             medium: 'Medium',
             board: 'Board',
             channel: 'Tenant Name'
-            };
-            if (!_.isUndefined(modal)) {
-              this.deleteModal.deny();
-            }
+          };
+          if (this.label && this.label?.length) {
+            this.label.forEach((obj: any) => {
+              this.headers[obj.id] = obj.name;
+            });
+          }
+          
+          if (!_.isUndefined(modal)) {
+            this.deleteModal.deny();
+          }
           this.collectionListModal = true;
           },
           (error) => {
