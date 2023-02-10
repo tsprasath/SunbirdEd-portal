@@ -26,7 +26,7 @@ export class ProfileFrameworkPopupComponent implements OnInit, OnDestroy {
   @Output() close = new EventEmitter<any>();
   @Input() dialogProps;
   @Input() isStepper: boolean = false;
-  public allowedFields = ['board', 'medium', 'gradeLevel', 'subject'];
+  public allowedFields = ['board', 'medium', 'gradeLevel', 'subject', 'difficultyLevel'];
   private _formFieldProperties: any;
   public formFieldOptions = [];
   private custOrgFrameworks: any;
