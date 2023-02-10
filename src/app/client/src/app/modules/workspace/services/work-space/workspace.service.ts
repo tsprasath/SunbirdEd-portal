@@ -74,6 +74,23 @@ export class WorkSpaceService {
     return this.content.delete(option);
   }
 
+  /**
+  * deleteQuestionSet
+  * delete  question set based on questionsetId
+  * @param {string} questionSetId - questionSetId
+  */
+   deleteQuestionSet(questionSetId: string): Observable<ServerResponse> {
+    const option = {
+      url: `${this.config.urlConFig.URLS.QUESTIONSET.RETIRE}/${questionSetId}`,
+      data: {
+        'request': {
+          'questionset': {}
+        }
+      }
+    };
+    return this.publicDataService.delete(option);
+  }
+
 
   /**
  * openContentEditor
