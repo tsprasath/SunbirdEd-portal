@@ -292,6 +292,10 @@ let envVariables = {
 
   // Accessibility links (from NAV) configuration
   sunbird_portal_nav_accessibility: env.sunbird_portal_nav_accessibility || 'true',
+
+   // download qr course btn configuration
+   sunbird_portal_show_qr_download_btn: env.sunbird_portal_show_qr_download_btn || 'true'
+
 }
 
 envVariables.PORTAL_CASSANDRA_URLS = (env.sunbird_cassandra_urls && env.sunbird_cassandra_urls !== '')
