@@ -3,11 +3,21 @@
 </div>
 
 <div *ngIf="!showLoader">
-    <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/workspace/content/assessments/list">
-        <i aria-hidden="true" class="arrow left icon"></i>
-        Back to assignments
-    </button>
+    <div class="sb-g">
+        <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6">
+            <h4 class="header font-weight-bold mb8">{{ assessment?.name }}</h4>
+            <div class="fsmall">{{ assessment?.description }}</div>
+        </div>
+        <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
+            <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/workspace/content/assessments/list">
+                <i aria-hidden="true" class="arrow left icon"></i>
+                Back to assignments
+            </button>
+        </div>
+    </div>
 </div>
+
+<h3 class="mt-10" *ngIf="!showLoader">List of Candidates</h3>
 
 <div *ngIf="noResult && !showLoader">
     <app-no-result [data]="noResultMessage"></app-no-result>
@@ -58,7 +68,7 @@
                 </h5>
             </td>
             <td>
-                <div class="assign-link">Assign</div>
+                <div class="assign-link" (click)="handleAssignStudent(student)">Assign</div>
             </td>
         </tr>
     </tbody>

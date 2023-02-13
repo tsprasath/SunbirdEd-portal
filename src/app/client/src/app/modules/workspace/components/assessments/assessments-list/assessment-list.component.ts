@@ -2,19 +2,17 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { combineLatest as observableCombineLatest, forkJoin } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
-import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
+import { SuiModalService, ModalTemplate } from 'ng2-semantic-ui-v9';
 import { IImpressionEventInput } from '@sunbird/telemetry';
 import { SearchService, UserService, ISort, FrameworkService } from '@sunbird/core';
 import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService } from '@sunbird/shared';
 
 import { WorkSpace } from './../../../classes/workspace';
 import { WorkSpaceService } from './../../../services';
-import { ContentIDParam } from './../../../interfaces/delteparam';
-
 @Component({
     selector: 'app-assessments-list',
     templateUrl: './assessments-list.component.html',
@@ -184,31 +182,6 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     public collectionData: Array<any>;
 
     /**
-    * Flag to show/hide loader on first modal
-    */
-    private showCollectionLoader: boolean;
-
-    /**
-    * To define collection modal table header
-    */
-    private headers: any;
-
-    /**
-    * To store deleting content id
-    */
-    private currentContentId: ContentIDParam;
-
-    /**
-    * To store deleteing content type
-    */
-    private contentMimeType: string;
-
-    /**
-     * To store modal object of first yes/No modal
-     */
-    private deleteModal: any;
-
-    /**
      * To show/hide collection modal
      */
     public collectionListModal = false;
@@ -247,25 +220,17 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
         this.config = config;
         this.state = 'allcontent';
         this.loaderMessage = {
-            'loaderMessage': this.resourceService.messages.stmsg.m0110,
+            'loaderMessage': this.resourceService?.messages?.stmsg?.m0110,
         };
         this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
     }
 
     ngOnInit() {
-        this.workSpaceService.questionSetEnabled$
-            .subscribe((response: any) => {
-                this.isQuestionSetFilterEnabled = response.questionSetEnablement;
-            });
-
-        this.filterType = this.config.appConfig.allmycontent.filterType;
-        this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
-
-        observableCombineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+        combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(
                 debounceTime(10),
-                map(([params, queryParams]) => ({ params, queryParams })
-                ))
+                map(([params, queryParams]) => ({ params, queryParams }))
+            )
             .subscribe(bothParams => {
                 if (bothParams.params.pageNumber) {
                     this.pageNumber = Number(bothParams.params.pageNumber);
@@ -327,11 +292,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
 
         this.search(searchParams)
             .subscribe((data: ServerResponse) => {
-                if (data.result.count && (!_.isEmpty(data.result.content) ||
-                    (!_.isEmpty(data.result.QuestionSet)))) {
-                    if (this.isQuestionSetFilterEnabled === true && data.result.QuestionSet) {
-                        data.result.content = _.concat(data.result.content, data.result.QuestionSet);
-                    }
+                if (data.result.count && (!_.isEmpty(data.result.content) || (!_.isEmpty(data.result.content)))) {
                     this.allAssessments = data.result.content;
                     this.totalCount = data.result.count;
                     this.pager = this.paginationService.getPager(data.result.count, pageNumber, limit);
@@ -349,118 +310,30 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
                 this.showLoader = false;
                 this.noResult = false;
                 this.showError = true;
-                this.toasterService.error(this.resourceService.messages.fmsg.m0081);
+                this.toasterService.error(this.resourceService.messages?.fmsg?.m0081);
             });
     }
 
-    public deleteConfirmModal(contentIds, mimeType) {
-        this.currentContentId = contentIds;
-        this.contentMimeType = mimeType;
-        this.showCollectionLoader = false;
-        const config = new TemplateModalConfig<{ data: string }, string, string>(this.modalTemplate);
-        config.isClosable = false;
-        config.size = 'small';
-        config.transitionDuration = 0;
-        config.mustScroll = true;
-        this.modalService.open(config);
-        setTimeout(() => {
-            let element = document.getElementsByTagName('sui-modal');
-            if (element && element.length > 0)
-                element[0].className = 'sb-modal';
-        }, 10);
+    handleAssignAssessment(assessment): void {
+        this.route.navigate(['/workspace/content/assessments/assign'], { state: {assessment: assessment} });
     }
 
-    /**
-    * This method checks whether deleting content is linked to any collections, if linked to collection displays collection list pop modal.
-    */
-    public checkLinkedCollections(modal) {
-        if (!_.isUndefined(modal)) {
-            this.deleteModal = modal;
-        }
-        this.showCollectionLoader = false;
-        if (this.contentMimeType === 'application/vnd.ekstep.content-collection') {
-            this.deleteContent(this.currentContentId);
-            return;
-        }
-
-        this.getLinkedCollections(this.currentContentId)
-            .subscribe((response) => {
-                const count = _.get(response, 'result.count');
-                if (!count) {
-                    this.deleteContent(this.currentContentId);
-                    return;
-                }
-                this.showCollectionLoader = true;
-                const collections = _.get(response, 'result.content', []);
-
-                const channels = _.map(collections, (collection) => {
-                    return _.get(collection, 'channel');
-                });
-
-                const channelMapping = {};
-                forkJoin(_.map(channels, (channel: string) => {
-                    return this.getChannelDetails(channel);
-                })).subscribe((forkResponse) => {
-                    this.collectionData = [];
-                    _.forEach(forkResponse, channelResponse => {
-                        const channelId = _.get(channelResponse, 'result.channel.code');
-                        const channelName = _.get(channelResponse, 'result.channel.name');
-                        channelMapping[channelId] = channelName;
-                    });
-
-                    _.forEach(collections, collection => {
-                        const obj = _.pick(collection, ['contentType', 'board', 'medium', 'name', 'gradeLevel', 'subject', 'channel']);
-                        obj['channel'] = channelMapping[obj.channel];
-                        this.collectionData.push(obj);
-                    });
-
-                    this.headers = {
-                        type: 'Type',
-                        name: 'Name',
-                        subject: 'Subject',
-                        grade: 'Grade',
-                        medium: 'Medium',
-                        board: 'Board',
-                        channel: 'Tenant Name'
-                    };
-                    if (!_.isUndefined(modal)) {
-                        this.deleteModal.deny();
-                    }
-                    this.collectionListModal = true;
-                }, (error) => {
-                    this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0014'));
-                    console.log(error);
-                });
-            }, (error) => {
-                this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0015'));
-                console.log(error);
+    inview(event) {
+        _.forEach(event.inview, (inview, key) => {
+            const obj = _.find(this.inviewLogs, (o) => {
+                return o.objid === inview.data.identifier;
             });
-    }
-
-    /**
-    * This method deletes content using the content id.
-    */
-    deleteContent(contentId) {
-        this.showLoader = true;
-        this.loaderMessage = {
-            'loaderMessage': this.resourceService.messages.stmsg.m0034,
-        };
-
-        this.delete(contentId).subscribe((data: ServerResponse) => {
-            this.showLoader = false;
-            this.allAssessments = this.removeAllMyContent(this.allAssessments, contentId);
-            if (this.allAssessments.length === 0) {
-                this.ngOnInit();
+            if (obj === undefined) {
+                this.inviewLogs.push({
+                    objid: inview?.data?.identifier,
+                    objtype: inview?.data?.contentType,
+                    index: inview?.id
+                });
             }
-            this.toasterService.success(this.resourceService.messages.smsg.m0006);
-        }, (err: ServerResponse) => {
-            this.showLoader = false;
-            this.toasterService.error(this.resourceService.messages.fmsg.m0022);
         });
-
-        if (!_.isUndefined(this.deleteModal)) {
-            this.deleteModal.deny();
-        }
+        this.telemetryImpression.edata.visits = this.inviewLogs;
+        this.telemetryImpression.edata.subtype = 'pageexit';
+        this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
     /**
@@ -478,59 +351,6 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
         }
         this.pageNumber = page;
         this.route.navigate(['workspace/content/assessments/list', this.pageNumber], { queryParams: this.queryParams });
-    }
-
-    contentClick(content) {
-        if (content.originData) {
-            const originData = JSON.parse(content.originData);
-            if (originData.copyType === 'shallow') {
-                const errMsg = (this.resourceService.messages.emsg.m1414).replace('{instance}', originData.organisation[0]);
-                this.toasterService.error(errMsg);
-                return;
-            }
-        }
-        if (_.size(content.lockInfo) && this.userService.userid !== content.lockInfo.createdBy) {
-            this.lockPopupData = content;
-            this.showLockedContentModal = true;
-        } else {
-            const status = content.status.toLowerCase();
-            if (status === 'processing') {
-                return;
-            }
-            if (status === 'draft') { // only draft state contents need to be locked
-                this.workSpaceService.navigateToContent(content, this.state);
-            } else {
-                this.workSpaceService.navigateToContent(content, this.state);
-            }
-        }
-    }
-
-    public onCloseLockInfoPopup() {
-        this.showLockedContentModal = false;
-    }
-
-    inview(event) {
-        _.forEach(event.inview, (inview, key) => {
-            const obj = _.find(this.inviewLogs, (o) => {
-                return o.objid === inview.data.identifier;
-            });
-            if (obj === undefined) {
-                this.inviewLogs.push({
-                    objid: inview.data.identifier,
-                    objtype: inview.data.contentType,
-                    index: inview.id
-                });
-            }
-        });
-        this.telemetryImpression.edata.visits = this.inviewLogs;
-        this.telemetryImpression.edata.subtype = 'pageexit';
-        this.telemetryImpression = Object.assign({}, this.telemetryImpression);
-    }
-
-    removeAllMyContent(contentList, requestData) {
-        return contentList.filter((content) => {
-            return requestData.indexOf(content.identifier) === -1;
-        });
     }
 
     ngOnDestroy(): void {

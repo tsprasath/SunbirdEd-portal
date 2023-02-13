@@ -1,6 +1,6 @@
 <app-modal-wrapper *ngIf="showUpdateModal"
-  [config]="{disableClose: false, size: 'normal', panelClass: ['overflow-visible', 'material-modal']}" (dismiss)="redirect()"
-  #updateBatchModal>
+  [config]="{disableClose: false, size: 'normal', panelClass: ['overflow-visible', 'material-modal']}"
+  (dismiss)="redirect()" #updateBatchModal>
   <ng-template sbModalContent>
     <div class="sb-mat__modal">
 
@@ -97,7 +97,8 @@
                   <!-- <mat-label>{{resourceService?.frmelmnts?.lbl?.startdate}}</mat-label> -->
                   <input [attr.disabled]="(batchDetails.status !== 0 || showFormInViewMode ) ? true : null" matInput
                     [matDatepicker]="startDatePicker" formControlName="startDate"
-                    [min]='batchDetails.status !== 0 ? batchUpdateForm.controls["startDate"].value : pickerMinDate' (dateChange)="onStartDateChange($event)">
+                    [min]='batchDetails.status !== 0 ? batchUpdateForm.controls["startDate"].value : pickerMinDate'
+                    (dateChange)="onStartDateChange($event)">
                   <mat-datepicker-toggle matSuffix [for]="startDatePicker"
                     [disabled]="(batchDetails.status !== 0 || showFormInViewMode ) ? true : null">
                   </mat-datepicker-toggle>
@@ -129,7 +130,8 @@
                 <mat-form-field appearance="fill" [ngClass]="{'disabled': !batchUpdateForm.value.startDate}"
                   class="sb-mat__datepicker sb-mat__datepicker--nolabel">
                   <!-- <mat-label>{{resourceService?.frmelmnts?.lbl?.startdate}}</mat-label> -->
-                  <input (click)="setTelemetryCData([{id:'course:enrollment:endDate',type:'Feature'},{id:'SB-13073',type:'Task'}])"
+                  <input
+                    (click)="setTelemetryCData([{id:'course:enrollment:endDate',type:'Feature'},{id:'SB-13073',type:'Task'}])"
                     matInput [matDatepicker]="enrollmentEndDatePicker" formControlName="enrollmentEndDate"
                     [min]='pickerMinDateForEnrollmentEndDate' [max]="batchUpdateForm.value.endDate"
                     aria-label="enrollment End Date">
@@ -151,39 +153,42 @@
           <div class="sb-field-group mb-8">
             <label>{{resourceService?.frmelmnts?.lbl?.batchmentors}}</label>
             <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
-              <mat-select formControlName="mentors" role="listbox" multiple aria-label="mentor list"
-                class="selection" [disabled]="showFormInViewMode" (selectionChange)="selectedMultiValues($event, 'mentors')">
+              <mat-select formControlName="mentors" role="listbox" multiple aria-label="mentor list" class="selection"
+                [disabled]="showFormInViewMode" (selectionChange)="selectedMultiValues($event, 'mentors')">
                 <mat-select-trigger>
                   <span>{{selectedMentors ? selectedMentors[0] : ''}} </span>
                   <span *ngIf="selectedMentors?.length >= 2" class="example-additional-selection">
                     (+{{selectedMentors.length - 1}} {{selectedMentors?.length === 2 ? 'other' : 'others'}})
                   </span>
                 </mat-select-trigger>
-                <mat-option [disabled]="batchDetails.status === 0" class="mat-dropdown__options" role="option" *ngFor="let mentor of mentorList" [value]="mentor.id"
-                attr.aria-label="{{mentor.name}}">
+                <mat-option [disabled]="batchDetails.status === 0" class="mat-dropdown__options" role="option"
+                  *ngFor="let mentor of mentorList" [value]="mentor.id" attr.aria-label="{{mentor.name}}">
                   <img class="ui mini avatar image"
-                      src="{{mentor.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
+                    src="{{mentor.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
                   {{mentor.name}}{{mentor.otherDetail}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
-          
+
           <div class="sb-field-group mb-8" *ngIf="batchUpdateForm.value.enrollmentType !== 'open'">
             <label>{{resourceService?.frmelmnts?.lbl?.bacthmembers}}</label>
             <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
               <mat-select formControlName="users" role="listbox" multiple aria-label="participant list"
-                class="selection" [disabled]="showFormInViewMode || (batchDetails.participants && batchDetails.participants.length >= 100)" (selectionChange)="selectedMultiValues($event, 'participant')">
+                class="selection"
+                [disabled]="showFormInViewMode || (batchDetails.participants && batchDetails.participants.length >= 100)"
+                (selectionChange)="selectedMultiValues($event, 'participant')">
                 <mat-select-trigger>
                   <span>{{selectedParticipants ? selectedParticipants[0] : ''}} </span>
                   <span *ngIf="selectedMentorList?.length >= 2" class="example-additional-selection">
                     (+{{selectedParticipants.length - 1}} {{selectedParticipants?.length === 2 ? 'other' : 'others'}})
                   </span>
                 </mat-select-trigger>
-                <mat-option [disabled]="batchDetails.status === 0" class="mat-dropdown__options" role="option" *ngFor="let participant of participantList" [value]="participant.id"
-                attr.aria-label="{{participant.name}}">
+                <mat-option [disabled]="batchDetails.status === 0" class="mat-dropdown__options" role="option"
+                  *ngFor="let participant of participantList" [value]="participant.id"
+                  attr.aria-label="{{participant.name}}">
                   <img class="ui mini avatar image"
-                      src="{{participant.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
+                    src="{{participant.avatar || 'assets/images/user_logo.png' | cdnprefixurl}}" alt="avatar image">
                   {{participant.name}}{{participant.otherDetail}}
                 </mat-option>
               </mat-select>

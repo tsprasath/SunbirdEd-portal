@@ -1,8 +1,9 @@
 
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
-import { combineLatest as observableCombineLatest, forkJoin } from 'rxjs';
+import { combineLatest, forkJoin } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
@@ -31,10 +32,10 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     */
     state: string;
 
-    /**
-     * To navigate to other pages
-     */
-    route: Router;
+    // /**
+    //  * To navigate to other pages
+    //  */
+    // route: Router;
 
     /**
      * To send activatedRoute.snapshot to router navigation
@@ -208,6 +209,9 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
      */
     private deleteModal: any;
 
+    // location: any;
+    assessment: any = {}
+
     /**
      * To show/hide collection modal
      */
@@ -230,17 +234,24 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         public navigationhelperService: NavigationHelperService,
         public workSpaceService: WorkSpaceService,
         public frameworkService: FrameworkService,
+        private router: Router,
+        private location: Location,
         paginationService: PaginationService,
         activatedRoute: ActivatedRoute,
-        route: Router,
         userService: UserService,
         toasterService: ToasterService,
         resourceService: ResourceService,
         config: ConfigService,
         public modalService: SuiModalService) {
+
         super(searchService, workSpaceService, userService);
+
+        console.log('get state - ', this.location.getState());
+        const routerStateObj: any = this.location.getState();
+        this.assessment = routerStateObj?.assessment;
+        console.log('this.assessment - ', this.assessment);
+
         this.paginationService = paginationService;
-        this.route = route;
         this.activatedRoute = activatedRoute;
         this.toasterService = toasterService;
         this.resourceService = resourceService;
@@ -249,7 +260,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;        
     }
 
     ngOnInit() {
@@ -261,11 +272,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
-        observableCombineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+        combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(
                 debounceTime(10),
-                map(([params, queryParams]) => ({ params, queryParams })
-                ))
+                map(([params, queryParams]) => ({ params, queryParams }) )
+            )
             .subscribe(bothParams => {
                 if (bothParams.params.pageNumber) {
                     this.pageNumber = Number(bothParams.params.pageNumber);
@@ -469,7 +480,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             return;
         }
         this.pageNumber = page;
-        this.route.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
+        this.router.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
     }
 
     contentClick(content) {
@@ -524,6 +535,69 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             return requestData.indexOf(content.identifier) === -1;
         });
     }
+
+    handleAssignStudent(student): void {
+        const requestBody = {
+            id: this.assessment.batchId || '',
+            courseId: this.assessment.identifier || 'do_11372741650354176012',
+            name: this.assessment.name,
+            description: this.assessment.description,
+            enrollmentType: this.assessment.enrollmentType,
+            startDate: this.assessment.startDate,
+            endDate: this.assessment.endDate || null,
+            createdFor: this.assessment.channel,
+            // participants: []
+        };
+
+        console.log('requestBody - ', requestBody);
+    }
+
+    // public updateBatch() {
+    //     let participants = [];
+    //     const selectedMentors = [];
+    //     let mentors = this.batchUpdateForm.value.mentors || [];
+    //     if (this.batchUpdateForm.value.enrollmentType !== 'open') {
+    //       participants = this.batchUpdateForm.value.users || [];
+    //     }
+    //     const startDate = dayjs(this.batchUpdateForm.value.startDate).format('YYYY-MM-DD');
+    //     const endDate = this.batchUpdateForm.value.endDate && dayjs(this.batchUpdateForm.value.endDate).format('YYYY-MM-DD');
+    //     const requestBody = {
+    //       id: this.batchId,
+    //       courseId: this.courseId,
+    //       name: this.batchUpdateForm.value.name,
+    //       description: this.batchUpdateForm.value.description,
+    //       enrollmentType: this.batchUpdateForm.value.enrollmentType,
+    //       startDate: startDate,
+    //       endDate: endDate || null,
+    //       createdFor: this.userService.userProfile.organisationIds,
+    //       mentors: _.compact(mentors)
+    //     };
+    //     if (this.batchUpdateForm.value.enrollmentType === 'open' && this.batchUpdateForm.value.enrollmentEndDate) {
+    //       requestBody['enrollmentEndDate'] = dayjs(this.batchUpdateForm.value.enrollmentEndDate).format('YYYY-MM-DD');
+    //     }
+    
+    //     const requests = [];
+    //     requests.push(this.courseBatchService.updateBatch(requestBody));
+    //     if (this.removedUsers && this.removedUsers.length > 0) {
+    //       requests.push(this.removeParticipantFromBatch(this.batchId, this.removedUsers));
+    //     }
+    //     if (participants && participants.length > 0) {
+    //       requests.push(this.addParticipantToBatch(this.batchId, participants));
+    //     }
+    
+    //     forkJoin(requests).subscribe(results => {
+    //       // this.disableSubmitBtn = false;
+    //       this.toasterService.success(this.resourceService.messages.smsg.m0034);
+    //       this.checkIssueCertificate(this.batchId, this.batchDetails);
+    //       this.checkEnableDiscussions(this.batchId);
+    //     }, (err) => {
+    //       if (err.error && err.error.params && err.error.params.errmsg) {
+    //         this.toasterService.error(err.error.params.errmsg);
+    //       } else {
+    //         this.toasterService.error(this.resourceService.messages.fmsg.m0052);
+    //       }
+    //     });
+    // }
 
     ngOnDestroy(): void {
 

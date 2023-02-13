@@ -2,7 +2,7 @@ import { IInteractEventEdata } from './../../../../telemetry/interfaces/telemetr
 
 import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import {combineLatest, Subject, forkJoin} from 'rxjs';
+import { combineLatest, Subject, forkJoin } from 'rxjs';
 import { takeUntil, mergeMap } from 'rxjs/operators';
 import { RouterNavigationService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -61,13 +61,13 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   /**
    * To fetch create-forum request payload for batch
    */
-   fetchForumConfigReq: Array<IFetchForumConfig>;
+  fetchForumConfigReq: Array<IFetchForumConfig>;
   /**
-	 * This variable hepls to show and hide loader.
+   * This variable hepls to show and hide loader.
    * It is kept true by default as at first when we comes
    * to a popup the loader should be displayed before the
    * data is loaded
-	 */
+   */
   public showLoader = true;
 
   /**
@@ -227,7 +227,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         this.courseConsumptionService.getCourseHierarchy(this.courseId),
         this.courseBatchService.getUpdateBatchDetails(this.batchId),
         (userDetails, courseDetails, batchDetails) => (
-          { userDetails, courseDetails, batchDetails, participantList}
+          { userDetails, courseDetails, batchDetails, participantList }
         ));
     } else {
       const requestBody = {
@@ -261,7 +261,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   */
   private initializeUpdateForm(): void {
     this.isCertificateIssued = _.get(this.batchDetails, 'cert_templates') &&
-    Object.keys(_.get(this.batchDetails, 'cert_templates')).length ? 'yes' : 'no';
+      Object.keys(_.get(this.batchDetails, 'cert_templates')).length ? 'yes' : 'no';
     const endDate = this.batchDetails.endDate ? new Date(this.batchDetails.endDate) : null;
     const enrollmentEndDate = this.batchDetails.enrollmentEndDate ? new Date(this.batchDetails.enrollmentEndDate) : null;
     if (!dayjs(this.batchDetails.startDate).isBefore(dayjs(this.pickerMinDate).format('YYYY-MM-DD'))) {
@@ -325,14 +325,14 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       if (!userList.length) {
         this.showLoader = false;
         this.disableSubmitBtn = false;
-        return ;
+        return;
       }
 
       const request = {
         filters: {
           identifier: userList
         },
-        limit : userList.length
+        limit: userList.length
       };
       this.courseBatchService.getUserList(request).pipe(takeUntil(this.unsubscribe))
         .subscribe((res) => {
@@ -440,7 +440,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (this.batchUpdateForm.value.enrollmentType === 'open' && this.batchUpdateForm.value.enrollmentEndDate) {
       requestBody['enrollmentEndDate'] = dayjs(this.batchUpdateForm.value.enrollmentEndDate).format('YYYY-MM-DD');
     }
-    
+
     const requests = [];
     requests.push(this.courseBatchService.updateBatch(requestBody));
     if (this.removedUsers && this.removedUsers.length > 0) {
@@ -477,8 +477,10 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (batchDetails && _.get(batchDetails, 'cert_templates')) {
       isCertInBatch = _.isEmpty(_.get(batchDetails, 'cert_templates')) ? false : true;
     }
-    this.courseBatchService.updateEvent.emit({ event: 'issueCert', value: this.batchUpdateForm.value.issueCertificate,
-    mode: 'edit', batchId: batchId , isCertInBatch : isCertInBatch});
+    this.courseBatchService.updateEvent.emit({
+      event: 'issueCert', value: this.batchUpdateForm.value.issueCertificate,
+      mode: 'edit', batchId: batchId, isCertInBatch: isCertInBatch
+    });
   }
   public redirect() {
     this.router.navigate(['./'], { relativeTo: this.activatedRoute.parent });
@@ -502,7 +504,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     }
   }
 
-  ngAfterViewInit () {
+  ngAfterViewInit() {
     setTimeout(() => {
       this.telemetryImpression = {
         context: {
@@ -588,11 +590,11 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     this.fetchForumConfigReq = [{
       type: 'batch',
       identifier: this.batchId
-  }];
+    }];
     const subType = 'batch';
     this.discussionService.fetchForumConfig(subType).subscribe((formData: any) => {
       this.createForumRequest = formData[0];
-      this.createForumRequest['category']['context'] =  this.fetchForumConfigReq;
+      this.createForumRequest['category']['context'] = this.fetchForumConfigReq;
     }, error => {
       this.toasterService.error(this.resourceService.messages.emsg.m0005);
     });
@@ -636,7 +638,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   handleInputChange(inputId) {
     const telemetryData = {
       context: {
-        env:  this.activatedRoute.snapshot.data.telemetry.env,
+        env: this.activatedRoute.snapshot.data.telemetry.env,
         cdata: [{
           id: this.courseId,
           type: 'Course'
@@ -658,7 +660,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     const selectedValue = event.value;
     this.selectedMentors = []
     this.selectedParticipants = []
-    if(selectedValue.length) {
+    if (selectedValue.length) {
       selectedValue.forEach(userID => {
         const user = this.mentorList.find(item => item.id === userID)
         if (field === 'mentors') {
