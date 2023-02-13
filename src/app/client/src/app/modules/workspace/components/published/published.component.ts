@@ -168,6 +168,10 @@ export class PublishedComponent extends WorkSpace implements OnInit, AfterViewIn
    * To check if questionSet enabled
    */
    public isQuestionSetEnabled: boolean;
+
+   showDownloadQrBtn: any = (<HTMLInputElement>document.getElementById('showQrDownloadBtn'))
+    ? (<HTMLInputElement>document.getElementById('showQrDownloadBtn')).value : 'true';
+
   /**
     * Constructor to create injected service(s) object
     Default method of Draft Component class
@@ -232,7 +236,12 @@ export class PublishedComponent extends WorkSpace implements OnInit, AfterViewIn
     };
       this.searchService.compositeSearch(searchParams).subscribe((data: ServerResponse) => {
         if (data?.result?.content && data?.result?.content?.length > 0) {
-         this.showCourseQRCodeBtn = true;
+          if(this.showDownloadQrBtn == 'false'){
+            this.showCourseQRCodeBtn = false
+          }
+          else {
+           this.showCourseQRCodeBtn = true;
+          }
        }
       });
   }
