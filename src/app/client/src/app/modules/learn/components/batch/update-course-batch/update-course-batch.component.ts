@@ -386,7 +386,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
             otherDetail: this.getUserOtherDetail(userData)
           };
           _.forEach(userData.roles, (roles) => {
-            if (roles.role === 'COURSE_MENTOR') {
+            if (roles.role === 'COURSE_MENTOR' || roles.role === 'NODAL_OFFICER') {
               mentorList.push(user);
             }
           });
