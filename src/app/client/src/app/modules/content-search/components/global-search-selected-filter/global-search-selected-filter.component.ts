@@ -16,6 +16,7 @@ export class GlobalSearchSelectedFilterComponent implements OnInit {
   @Input() queryParamsToOmit;
   @Output() filterChange: EventEmitter<{ status: string, filters?: any }> = new EventEmitter();
   private unsubscribe$ = new Subject<void>();
+  noResult: boolean = false;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute, public resourceService: ResourceService, private utilService: UtilService) { }
 
@@ -27,6 +28,13 @@ export class GlobalSearchSelectedFilterComponent implements OnInit {
         });
       }
     });
+
+    // To show the no-result msg
+    this.facets.forEach((obj) => {
+      if (obj?.values?.length === 0) {
+        this.noResult = true;
+      }
+    })
   }
 
   removeFilterSelection(data) {
