@@ -80,9 +80,14 @@
                   <label for="Enrollment Type">{{resourceService?.frmelmnts?.lbl?.natureofbatch}}</label>
                 </div>
                 <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="courseCreator">
-                  <input id="update-course-open" [attr.disabled]="batchDetails.status !== 0 ? true : null" type="radio"
+                  <input id="update-course-open" [attr.disabled]="batchDetails.status === 0 ? true : null" type="radio"
                     value='open' name="enrollmentType" formControlName="enrollmentType">
                   <label for="update-course-open">{{resourceService?.frmelmnts?.lbl?.open}}</label>
+                </div>
+                <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="courseCreator">
+                  <input id="update-course-invite-only" [attr.disabled]="batchDetails.status === 1 ? true : null"
+                    type="radio" value='invite-only' name="enrollmentType" formControlName="enrollmentType">
+                  <label for="update-course-invite-only">{{resourceService?.frmelmnts?.lbl?.inviteonly}}</label>
                 </div>
               </div>
             </div>
