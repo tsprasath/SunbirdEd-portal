@@ -26,12 +26,12 @@
 <table class="ui upForReviewTable table" *ngIf="allStudents.length > 0 && !showLoader && !noResult">
     <thead>
         <tr>
-            <th class="four wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.attempted }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.idNo }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
@@ -39,35 +39,24 @@
         <tr in-view-item class="UpForReviewListHover" *ngFor="let student of allStudents let i = index;" [id]="i"
             [data]="student" appTelemetryInteract>
             <td tabindex="0">
-                <h5 class="ui image header">
-                    <div class="content ">
-                        <div class="UpReviewHeader">{{ student?.firstName | slice:0:25 }}
-                            <i *ngIf="student?.firstName?.length > 25">...</i>
-                        </div>
-                    </div>
-                </h5>
+                <div class="UpReviewHeader">{{ student?.firstName | slice:0:30 }}
+                    <i *ngIf="student?.firstName?.length > 30">...</i>
+                </div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">NA</div>
-                </h5>
+                <div>NA</div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">{{ student?.userId }}</div>
-                </h5>
+                <div>{{ student?.userId }}</div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">{{ student?.framework?.board[0] }}</div>
-                </h5>
+                <div>{{ student?.framework?.board[0] }}</div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">NA</div>
-                </h5>
+                <div>NA</div>
             </td>
             <td>
+                <!-- <div *ngIf="expression"></div> -->
                 <div class="assign-link" (click)="handleAssignStudent(student)">Assign</div>
             </td>
         </tr>

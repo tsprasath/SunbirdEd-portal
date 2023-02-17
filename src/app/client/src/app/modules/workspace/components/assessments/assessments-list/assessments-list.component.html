@@ -10,11 +10,11 @@
 <table class="ui upForReviewTable table" *ngIf="allAssessments?.length > 0 && !showLoader && !noResult ">
     <thead>
         <tr>
-            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.snav?.assessments }}</th>
-            <th class="three wide UpReviewTableHeader">{{ frmelmnts?.lbl?.header?.board }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.snav?.assessments }}</th>
+            <th class="two wide UpReviewTableHeader">{{ frmelmnts?.lbl?.header?.board }}</th>
             <th class="three wide UpReviewTableHeader">{{ frmelmnts?.lbl?.header?.medium }}</th>
-            <th class="three wide UpReviewTableHeader">{{ frmelmnts?.lbl?.header?.grade }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
+            <th class="four wide UpReviewTableHeader">{{ frmelmnts?.lbl?.header?.grade }}</th>
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
@@ -27,28 +27,17 @@
                 </div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">
-                        <div class="UpReviewSubHeader" *ngFor="let board of assessment.se_boards">{{ board }}</div>
-                    </div>
-                </h5>
+                <div *ngFor="let board of assessment.se_boards">{{ board }}</div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">
-                        <div class="UpReviewSubHeader" *ngFor="let medium of assessment.se_mediums">{{ medium }}</div>
-                    </div>
-                </h5>
+                <div *ngFor="let medium of assessment.se_mediums">{{ medium }}</div>
             </td>
             <td>
-                <h5 class="ui image header">
-                    <div class="content">
-                        <div class="UpReviewSubHeader" *ngFor="let grade of assessment.se_gradeLevels">{{ grade }}</div>
-                    </div>
-                </h5>
+                <div *ngFor="let grade of assessment.se_gradeLevels">{{ grade }}</div>
             </td>
             <td>
-                <div class="assign-link" (click)="handleAssignAssessment(assessment)">Assign</div>
+                <div *ngIf="!assessment?.batches || assessment?.batches?.length === 0">No batch found</div>
+                <div class="assign-link" (click)="handleAssignAssessment(assessment)" *ngIf="assessment?.batches && assessment?.batches?.length">Assign</div>
             </td>
         </tr>
     </tbody>

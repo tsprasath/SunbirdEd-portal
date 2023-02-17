@@ -196,7 +196,6 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
           this.courseCreator = true;
         }
         this.batchDetails = data.batchDetails;
-        // this.batchDetails.status = ( data?.batchDetails?.enrollmentType === 'invite-only' ) ? 2 : data.batchDetails.status;
         if (this.batchDetails.enrollmentType !== 'open' && data.participantList && data.participantList.length > 0) {
           this.batchDetails.participants = data.participantList;
         }

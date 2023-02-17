@@ -224,6 +224,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
         const routerStateObj: any = this.location.getState();
         this.assessment = routerStateObj?.assessment;
+        console.log("🚀 ~ file: students-list.component.ts:227 ~ StudentsListComponent ~ this.assessment", this.assessment)
 
         this.paginationService = paginationService;
         this.activatedRoute = activatedRoute;

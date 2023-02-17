@@ -34,7 +34,7 @@ export class CourseBatchService {
     };
     return this.learnerService.post(option);
   }
-  getUserList(requestParam: SearchParam = {}): Observable<ServerResponse> {
+  getUserList(requestParam: SearchParam = {}, nodalFormConfig?: any): Observable<ServerResponse> {
     if (_.isEmpty(requestParam) && this.defaultUserList) {
       return observableOf(this.defaultUserList);
     } else {
@@ -57,7 +57,15 @@ export class CourseBatchService {
       } else if (mentorOrg) {
         option.data.request.filters['organisations.organisationId'] = mentorOrg;
       }
-      // option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
+
+      /** Working on it */
+      // To include the Nodal officer role, only is isNodalIncluded value is true, from FormConfig (getting data from Course player component)
+      // if (nodalFormConfig && nodalFormConfig?.isNodalIncluded) {
+      //   option.data.request.filters['organisations.roles'] = ['NODAL_OFFICER'];
+      // } else {
+      //   option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
+      // }
+
       option.data.request.filters['organisations.roles'] = ['NODAL_OFFICER'];
       console.log('option - ', option);
       return this.learnerService.post(option).pipe(map((data) => {

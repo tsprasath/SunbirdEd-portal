@@ -321,7 +321,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     inview(event) {
         _.forEach(event.inview, (inview, key) => {
             const obj = _.find(this.inviewLogs, (o) => {
-                return o.objid === inview.data.identifier;
+                return o.objid === inview?.data?.identifier;
             });
             if (obj === undefined) {
                 this.inviewLogs.push({
