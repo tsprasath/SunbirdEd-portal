@@ -1,19 +1,21 @@
 
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
-import { combineLatest as observableCombineLatest, forkJoin } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
-import { SuiModalService, TemplateModalConfig, ModalTemplate } from 'ng2-semantic-ui-v9';
+import { SuiModalService, ModalTemplate } from 'ng2-semantic-ui-v9';
 import { IImpressionEventInput } from '@sunbird/telemetry';
-import { SearchService, UserService, ISort, FrameworkService } from '@sunbird/core';
+import { SearchService, UserService, ISort, FrameworkService, LearnerService } from '@sunbird/core';
+import { CourseBatchService } from '@sunbird/learn';
 import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService } from '@sunbird/shared';
 
 import { WorkSpace } from './../../../classes/workspace';
 import { WorkSpaceService } from './../../../services';
-import { ContentIDParam } from './../../../interfaces/delteparam';
 
 @Component({
     selector: 'app-students-list',
@@ -30,11 +32,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
      * state for content editior
     */
     state: string;
-
-    /**
-     * To navigate to other pages
-     */
-    route: Router;
 
     /**
      * To send activatedRoute.snapshot to router navigation
@@ -184,35 +181,16 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     public collectionData: Array<any>;
 
     /**
-    * Flag to show/hide loader on first modal
+    *To store the assessment object   
     */
-    private showCollectionLoader: boolean;
-
-    /**
-    * To define collection modal table header
-    */
-    private headers: any;
-
-    /**
-    * To store deleting content id
-    */
-    private currentContentId: ContentIDParam;
-
-    /**
-    * To store deleteing content type
-    */
-    private contentMimeType: string;
-
-    /**
-     * To store modal object of first yes/No modal
-     */
-    private deleteModal: any;
+    assessment: any = {}
 
     /**
      * To show/hide collection modal
      */
     public collectionListModal = false;
     public isQuestionSetFilterEnabled: boolean;
+    private destroySubject$ = new Subject();
 
     /**
       * Constructor to create injected service(s) object
@@ -230,17 +208,25 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         public navigationhelperService: NavigationHelperService,
         public workSpaceService: WorkSpaceService,
         public frameworkService: FrameworkService,
+        private router: Router,
+        private location: Location,
         paginationService: PaginationService,
         activatedRoute: ActivatedRoute,
-        route: Router,
         userService: UserService,
         toasterService: ToasterService,
         resourceService: ResourceService,
         config: ConfigService,
-        public modalService: SuiModalService) {
+        public learnerService: LearnerService,
+        public modalService: SuiModalService,
+        private courseBatchService: CourseBatchService) {
+
         super(searchService, workSpaceService, userService);
+
+        const routerStateObj: any = this.location.getState();
+        this.assessment = routerStateObj?.assessment;
+        console.log("🚀 ~ file: students-list.component.ts:227 ~ StudentsListComponent ~ this.assessment", this.assessment)
+
         this.paginationService = paginationService;
-        this.route = route;
         this.activatedRoute = activatedRoute;
         this.toasterService = toasterService;
         this.resourceService = resourceService;
@@ -249,7 +235,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;        
     }
 
     ngOnInit() {
@@ -261,11 +247,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
-        observableCombineLatest(this.activatedRoute.params, this.activatedRoute.queryParams)
+        combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(
                 debounceTime(10),
-                map(([params, queryParams]) => ({ params, queryParams })
-                ))
+                map(([params, queryParams]) => ({ params, queryParams }) )
+            )
             .subscribe(bothParams => {
                 if (bothParams.params.pageNumber) {
                     this.pageNumber = Number(bothParams.params.pageNumber);
@@ -345,116 +331,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             });
     }
 
-    public deleteConfirmModal(contentIds, mimeType) {
-        this.currentContentId = contentIds;
-        this.contentMimeType = mimeType;
-        this.showCollectionLoader = false;
-        const config = new TemplateModalConfig<{ data: string }, string, string>(this.modalTemplate);
-        config.isClosable = false;
-        config.size = 'small';
-        config.transitionDuration = 0;
-        config.mustScroll = true;
-        this.modalService.open(config);
-        setTimeout(() => {
-            let element = document.getElementsByTagName('sui-modal');
-            if (element && element.length > 0)
-                element[0].className = 'sb-modal';
-        }, 10);
-    }
-
-    /**
-    * This method checks whether deleting content is linked to any collections, if linked to collection displays collection list pop modal.
-    */
-    public checkLinkedCollections(modal) {
-        if (!_.isUndefined(modal)) {
-            this.deleteModal = modal;
-        }
-        this.showCollectionLoader = false;
-        if (this.contentMimeType === 'application/vnd.ekstep.content-collection') {
-            this.deleteContent(this.currentContentId);
-            return;
-        }
-
-        this.getLinkedCollections(this.currentContentId)
-            .subscribe((response) => {
-                const count = _.get(response, 'result.count');
-                if (!count) {
-                    this.deleteContent(this.currentContentId);
-                    return;
-                }
-                this.showCollectionLoader = true;
-                const collections = _.get(response, 'result.content', []);
-
-                const channels = _.map(collections, (collection) => {
-                    return _.get(collection, 'channel');
-                });
-
-                const channelMapping = {};
-                forkJoin(_.map(channels, (channel: string) => {
-                    return this.getChannelDetails(channel);
-                })).subscribe((forkResponse) => {
-                    this.collectionData = [];
-                    _.forEach(forkResponse, channelResponse => {
-                        const channelId = _.get(channelResponse, 'result.channel.code');
-                        const channelName = _.get(channelResponse, 'result.channel.name');
-                        channelMapping[channelId] = channelName;
-                    });
-
-                    _.forEach(collections, collection => {
-                        const obj = _.pick(collection, ['contentType', 'board', 'medium', 'name', 'gradeLevel', 'subject', 'channel']);
-                        obj['channel'] = channelMapping[obj.channel];
-                        this.collectionData.push(obj);
-                    });
-
-                    this.headers = {
-                        type: 'Type',
-                        name: 'Name',
-                        subject: 'Subject',
-                        grade: 'Grade',
-                        medium: 'Medium',
-                        board: 'Board',
-                        channel: 'Tenant Name'
-                    };
-                    if (!_.isUndefined(modal)) {
-                        this.deleteModal.deny();
-                    }
-                    this.collectionListModal = true;
-                }, (error) => {
-                    this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0014'));
-                    console.log(error);
-                });
-            }, (error) => {
-                this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0015'));
-                console.log(error);
-            });
-    }
-
-    /**
-    * This method deletes content using the content id.
-    */
-    deleteContent(contentId) {
-        this.showLoader = true;
-        this.loaderMessage = {
-            'loaderMessage': this.resourceService.messages.stmsg.m0034,
-        };
-
-        this.delete(contentId).subscribe((data: ServerResponse) => {
-            this.showLoader = false;
-            this.allStudents = this.removeAllMyContent(this.allStudents, contentId);
-            if (this.allStudents.length === 0) {
-                this.ngOnInit();
-            }
-            this.toasterService.success(this.resourceService.messages.smsg.m0006);
-        }, (err: ServerResponse) => {
-            this.showLoader = false;
-            this.toasterService.error(this.resourceService.messages.fmsg.m0022);
-        });
-
-        if (!_.isUndefined(this.deleteModal)) {
-            this.deleteModal.deny();
-        }
-    }
-
     /**
      * This method helps to navigate to different pages.
      * If page number is less than 1 or page number is greater than total number
@@ -469,36 +345,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             return;
         }
         this.pageNumber = page;
-        this.route.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
-    }
-
-    contentClick(content) {
-        if (content.originData) {
-            const originData = JSON.parse(content.originData);
-            if (originData.copyType === 'shallow') {
-                const errMsg = (this.resourceService.messages.emsg.m1414).replace('{instance}', originData.organisation[0]);
-                this.toasterService.error(errMsg);
-                return;
-            }
-        }
-        if (_.size(content.lockInfo) && this.userService.userid !== content.lockInfo.createdBy) {
-            this.lockPopupData = content;
-            this.showLockedContentModal = true;
-        } else {
-            const status = content.status.toLowerCase();
-            if (status === 'processing') {
-                return;
-            }
-            if (status === 'draft') { // only draft state contents need to be locked
-                this.workSpaceService.navigateToContent(content, this.state);
-            } else {
-                this.workSpaceService.navigateToContent(content, this.state);
-            }
-        }
-    }
-
-    public onCloseLockInfoPopup() {
-        this.showLockedContentModal = false;
+        this.router.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
     }
 
     inview(event) {
@@ -519,13 +366,34 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
-    removeAllMyContent(contentList, requestData) {
-        return contentList.filter((content) => {
-            return requestData.indexOf(content.identifier) === -1;
-        });
+    handleAssignStudent(student): void {
+        console.log('student - ', student);
+        console.log('this.assessment - ', this.assessment.batches[0]);
+        const batch = this.assessment.batches[0];
+        console.log("🚀 ~ file: students-list.component.ts:365 ~ StudentsListComponent ~ handleAssignStudent ~ batch", batch)
+        
+        const requestBody = {
+            request: {
+                batchId: batch?.batchId,
+                courseId: this.assessment?.identifier,
+                userId: student.id
+            }
+        };
+
+        this.courseBatchService.addCandidateToBatch(requestBody)
+            .pipe(takeUntil(this.destroySubject$))
+            .subscribe((res) => {
+                this.toasterService.success(this.resourceService.messages.smsg.m0034);
+            }, (err) => {
+                if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+                } else {
+                    this.toasterService.error(this.resourceService.messages.fmsg.m0052);
+                }
+            })
     }
 
     ngOnDestroy(): void {
-
+        this.destroySubject$.unsubscribe();
     }
 }

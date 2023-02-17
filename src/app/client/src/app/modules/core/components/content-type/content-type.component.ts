@@ -166,17 +166,21 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaassessment');
     const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace')
 
-    if (this.userType != 'administrator') {
+    if (this.userType != 'administrator' && index !== -1) {
       this.contentTypes[index].isEnabled = false;
     }
-     else {
-      this.contentTypes[index].isEnabled = true;
+    else {
+      if (this.contentTypes[index]) {
+        this.contentTypes[index].isEnabled = true;
+      }
     }
-    if(this.userType != 'student' && studentIndex!=-1){
+
+    if(this.userType != 'student' && studentIndex !== -1){
       this.contentTypes[studentIndex].isEnabled = false;
     }
-    if(this.userRole!= 'NODAL_OFFICER' && nodalIndex!=-1){
-       this.contentTypes[nodalIndex].isEnabled = false
+
+    if(this.userRole!= 'NODAL_OFFICER' && nodalIndex !== -1){
+      this.contentTypes[nodalIndex].isEnabled = false
     }
   }
 

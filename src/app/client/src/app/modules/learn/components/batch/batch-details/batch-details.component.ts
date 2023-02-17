@@ -26,6 +26,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
   @Input() batchId: string;
   @Input() courseHierarchy: any;
   @Input() courseProgressData: any;
+  @Input() nodalFormConfig: any;
   isOpen = true;
   courseMentor = false;
   batchList = [];
@@ -291,7 +292,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
         identifier: this.userList
       }
     };
-    this.courseBatchService.getUserList(request).pipe(
+    this.courseBatchService.getUserList(request, this.nodalFormConfig).pipe(
       takeUntil(this.unsubscribe))
       .subscribe((res) => {
         _.forEach(res.result.response.content, (user) => {
@@ -303,12 +304,12 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
       });
   }
   batchUpdate(batch) {
-    if (batch.enrollmentType === 'open') {
+    if (batch.enrollmentType === 'open' || batch.enrollmentType === 'invite-only') {
       this.courseBatchService.setUpdateBatchDetails(batch);
     }
     this.router.navigate(['update/batch', batch.identifier],
       {
-        queryParams: { enrollmentType: batch.enrollmentType },
+        queryParams: { enrollmentType: batch.enrollmentType, isNodalOnly: this.nodalFormConfig?.isNodalIncluded },
         relativeTo: this.activatedRoute
       });
   }

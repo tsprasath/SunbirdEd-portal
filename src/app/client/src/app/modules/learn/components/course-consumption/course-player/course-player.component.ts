@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { TocCardType } from '@project-sunbird/common-consumption'
-import { CoursesService, PermissionService, UserService, GeneraliseLabelService } from '@sunbird/core';
+import { CoursesService, PermissionService, UserService, GeneraliseLabelService, FormService } from '@sunbird/core';
 import {
   ConfigService, ExternalUrlPreviewService, ICollectionTreeOptions, NavigationHelperService,
   ResourceService, ToasterService, WindowScrollService, ITelemetryShare, LayoutService
@@ -94,6 +94,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
   isConnected = false;
   dropdownContent = true;
   showForceSync = true;
+  PIAAFormConfig: any;
   constructor(
     public activatedRoute: ActivatedRoute,
     private configService: ConfigService,
@@ -116,6 +117,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
     public layoutService: LayoutService,
     public generaliseLabelService: GeneraliseLabelService,
     private connectionService: ConnectionService,
+    private formService: FormService,
     @Inject('CS_COURSE_SERVICE') private CsCourseService: CsCourseService,
     @Inject('SB_NOTIFICATION_SERVICE') private notificationService: NotificationServiceImpl
   ) {
@@ -266,6 +268,8 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
         if (isForceSynced) {
           this.showForceSync = false;
         }
+    
+    this.getPIAAFormConfig();
   }
 
   /**
@@ -677,6 +681,25 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       });
     }
     this.telemetryService.interact(interactData);
+  }
+
+  /**
+   * To get the form config data, for PIAA assessment and Nodal officer configuration
+   */
+  getPIAAFormConfig(): void {
+    const formInputParams = {
+      formType: 'config',
+      contentType: 'global',
+      formAction: 'display',
+      component: 'portal',
+    };
+  
+    this.formService.getFormConfig(formInputParams)
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((responseData) => {
+        console.log("🚀 ~ file: course-player.component.ts:700 ~ CoursePlayerComponent ~ .subscribe ~ responseData", responseData)
+        this.PIAAFormConfig = responseData?.coursePlayer;
+      });
   }
 
   ngOnDestroy() {
