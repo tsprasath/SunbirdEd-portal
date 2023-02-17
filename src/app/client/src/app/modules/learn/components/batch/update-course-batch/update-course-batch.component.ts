@@ -185,7 +185,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         }),
         takeUntil(this.unsubscribe)
       )
-      .subscribe((data) => {
+      .subscribe((data: any) => {
         this.showDiscussionForum = _.get(data.courseDetails, 'discussionForum.enabled');
         this.generateDataForDF();
         if (this.showDiscussionForum === 'Yes') {
@@ -196,6 +196,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
           this.courseCreator = true;
         }
         this.batchDetails = data.batchDetails;
+        // this.batchDetails.status = ( data?.batchDetails?.enrollmentType === 'invite-only' ) ? 2 : data.batchDetails.status;
         if (this.batchDetails.enrollmentType !== 'open' && data.participantList && data.participantList.length > 0) {
           this.batchDetails.participants = data.participantList;
         }

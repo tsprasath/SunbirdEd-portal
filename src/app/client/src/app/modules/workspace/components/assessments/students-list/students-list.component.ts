@@ -3,8 +3,9 @@ import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
-import { combineLatest, forkJoin } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
+import { Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
 import { SuiModalService, ModalTemplate } from 'ng2-semantic-ui-v9';
@@ -179,6 +180,9 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     */
     public collectionData: Array<any>;
 
+    /**
+    *To store the assessment object   
+    */
     assessment: any = {}
 
     /**
@@ -186,6 +190,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
      */
     public collectionListModal = false;
     public isQuestionSetFilterEnabled: boolean;
+    private destroySubject$ = new Subject();
 
     /**
       * Constructor to create injected service(s) object
@@ -367,85 +372,27 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         console.log("🚀 ~ file: students-list.component.ts:365 ~ StudentsListComponent ~ handleAssignStudent ~ batch", batch)
         
         const requestBody = {
-            id: batch?.batchId,
-            courseId: this.assessment?.identifier,
-            name: batch?.name,
-            description: batch?.description || '',
-            enrollmentType: batch?.enrollmentType,
-            startDate: batch?.startDate || null,
-            endDate: batch?.endDate || null,
-            createdFor: batch?.createdFor,
-        };
-
-        const userRequest = {
-            userIds: _.compact([student.id])
-        };
-
-        const request = [];
-        request.push(this.courseBatchService.updateBatch(requestBody));        
-        request.push(this.courseBatchService.addUsersToBatch(userRequest, batch?.batchId));
-
-        forkJoin(request).subscribe(results => {
-            this.toasterService.success(this.resourceService.messages.smsg.m0034);
-            // this.checkIssueCertificate(this.batchId, this.batchDetails);
-            // this.checkEnableDiscussions(this.batchId);
-        }, (err) => {
-            if (err.error && err.error.params && err.error.params.errmsg) {
-            this.toasterService.error(err.error.params.errmsg);
-            } else {
-            this.toasterService.error(this.resourceService.messages.fmsg.m0052);
+            request: {
+                batchId: batch?.batchId,
+                courseId: this.assessment?.identifier,
+                userId: student.id
             }
-        });
+        };
+
+        this.courseBatchService.addCandidateToBatch(requestBody)
+            .pipe(takeUntil(this.destroySubject$))
+            .subscribe((res) => {
+                this.toasterService.success(this.resourceService.messages.smsg.m0034);
+            }, (err) => {
+                if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+                } else {
+                    this.toasterService.error(this.resourceService.messages.fmsg.m0052);
+                }
+            })
     }
 
-    // public updateBatch() {
-    //     let participants = [];
-    //     const selectedMentors = [];
-    //     let mentors = this.batchUpdateForm.value.mentors || [];
-    //     if (this.batchUpdateForm.value.enrollmentType !== 'open') {
-    //       participants = this.batchUpdateForm.value.users || [];
-    //     }
-    //     const startDate = dayjs(this.batchUpdateForm.value.startDate).format('YYYY-MM-DD');
-    //     const endDate = this.batchUpdateForm.value.endDate && dayjs(this.batchUpdateForm.value.endDate).format('YYYY-MM-DD');
-    //     const requestBody = {
-    //       id: this.batchId,
-    //       courseId: this.courseId,
-    //       name: this.batchUpdateForm.value.name,
-    //       description: this.batchUpdateForm.value.description,
-    //       enrollmentType: this.batchUpdateForm.value.enrollmentType,
-    //       startDate: startDate,
-    //       endDate: endDate || null,
-    //       createdFor: this.userService.userProfile.organisationIds,
-    //       mentors: _.compact(mentors)
-    //     };
-    //     if (this.batchUpdateForm.value.enrollmentType === 'open' && this.batchUpdateForm.value.enrollmentEndDate) {
-    //       requestBody['enrollmentEndDate'] = dayjs(this.batchUpdateForm.value.enrollmentEndDate).format('YYYY-MM-DD');
-    //     }
-    
-    //     const requests = [];
-    //     requests.push(this.courseBatchService.updateBatch(requestBody));
-    //     if (this.removedUsers && this.removedUsers.length > 0) {
-    //       requests.push(this.removeParticipantFromBatch(this.batchId, this.removedUsers));
-    //     }
-    //     if (participants && participants.length > 0) {
-    //       requests.push(this.addParticipantToBatch(this.batchId, participants));
-    //     }
-    
-    //     forkJoin(requests).subscribe(results => {
-    //       // this.disableSubmitBtn = false;
-    //       this.toasterService.success(this.resourceService.messages.smsg.m0034);
-    //       this.checkIssueCertificate(this.batchId, this.batchDetails);
-    //       this.checkEnableDiscussions(this.batchId);
-    //     }, (err) => {
-    //       if (err.error && err.error.params && err.error.params.errmsg) {
-    //         this.toasterService.error(err.error.params.errmsg);
-    //       } else {
-    //         this.toasterService.error(this.resourceService.messages.fmsg.m0052);
-    //       }
-    //     });
-    // }
-
     ngOnDestroy(): void {
-
+        this.destroySubject$.unsubscribe();
     }
 }

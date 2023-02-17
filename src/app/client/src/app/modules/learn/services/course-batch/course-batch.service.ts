@@ -52,13 +52,14 @@ export class CourseBatchService {
         option.data.request['limit'] = requestParam.limit;
       }
       const mentorOrg = this.userService.userProfile.roleOrgMap['CONTENT_CREATOR'];
-      // if (mentorOrg && mentorOrg.includes(this.userService.rootOrgId)) {
-      //   option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
-      // } else if (mentorOrg) {
-      //   option.data.request.filters['organisations.organisationId'] = mentorOrg;
-      // }
+      if (mentorOrg && mentorOrg.includes(this.userService.rootOrgId)) {
+        option.data.request.filters['rootOrgId'] = this.userService.rootOrgId;
+      } else if (mentorOrg) {
+        option.data.request.filters['organisations.organisationId'] = mentorOrg;
+      }
       // option.data.request.filters['organisations.roles'] = ['COURSE_MENTOR'];
       option.data.request.filters['organisations.roles'] = ['NODAL_OFFICER'];
+      console.log('option - ', option);
       return this.learnerService.post(option).pipe(map((data) => {
         if (_.isEmpty(requestParam)) {
           this.defaultUserList = data;
@@ -186,5 +187,13 @@ export class CourseBatchService {
       }
     }
     return certificateDescription;
+  }
+
+  addCandidateToBatch(request): Observable<any> {
+    const option = {
+      url: this.configService.urlConFig.URLS.COURSE.ENROLL_USER_TO_BATCH,
+      data: request
+    };
+    return this.learnerService.post(option);
   }
 }

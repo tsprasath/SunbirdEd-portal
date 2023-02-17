@@ -303,7 +303,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
       });
   }
   batchUpdate(batch) {
-    if (batch.enrollmentType === 'open') {
+    if (batch.enrollmentType === 'open' || batch.enrollmentType === 'invite-only') {
       this.courseBatchService.setUpdateBatchDetails(batch);
     }
     this.router.navigate(['update/batch', batch.identifier],
