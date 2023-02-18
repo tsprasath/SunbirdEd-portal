@@ -138,6 +138,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   isCertificateIssued: string;
   isEnableDiscussions: string;
   callCreateDiscussion = true;
+  
   /**
    * Constructor to create injected service(s) object
    * @param {RouterNavigationService} routerNavigationService Reference of routerNavigationService
@@ -461,7 +462,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       if (err.error && err.error.params && err.error.params.errmsg) {
         this.toasterService.error(err.error.params.errmsg);
       } else {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0052);
+        this.toasterService.error(this.resourceService.messages.fmsg.m0057);
       }
     });
   }
