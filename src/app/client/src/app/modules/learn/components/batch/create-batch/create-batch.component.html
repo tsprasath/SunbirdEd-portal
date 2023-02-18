@@ -77,8 +77,8 @@
                 </div>
               </div>
               <div class="d-flex flex-dc flex-w-wrap" *ngIf="courseCreator">
-                <div class="mr-8 required">
-                  <label for="Enrollment Type">{{resourceService?.frmelmnts?.lbl?.natureofbatch}}</label>
+                <div class="mr-8 sb-field-group">
+                  <label for="Enrollment Type" class="required">{{resourceService?.frmelmnts?.lbl?.natureofbatch}}</label>
                 </div>
                 <div class="d-flex flex-dr flex-w-wrap">
                   <div class="d-flex sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="assessmentType !== 'piaa assessment'">
@@ -151,7 +151,9 @@
             </div>
           </div>
           <div class="sb-field-group mb-8">
-            <label [ngClass]="{'required': assessmentType === 'piaa assessment'}">{{resourceService?.frmelmnts?.lbl?.batchmentors}}</label>
+            <label [ngClass]="{'required': assessmentType === 'piaa assessment'}">
+              {{ (assessmentType === 'piaa assessment') ? resourceService?.frmelmnts?.lbl?.batchnodalofficers : resourceService?.frmelmnts?.lbl?.batchmentors }}
+            </label>
             <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
               <mat-select formControlName="mentors" role="listbox" multiple aria-label="mentor list"
                 class="selection" (selectionChange)="selectedMultiValues($event, 'mentors')">

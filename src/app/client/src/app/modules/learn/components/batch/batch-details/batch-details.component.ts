@@ -308,7 +308,7 @@ export class BatchDetailsComponent implements OnInit, OnDestroy {
     }
     this.router.navigate(['update/batch', batch.identifier],
       {
-        queryParams: { enrollmentType: batch.enrollmentType },
+        queryParams: { enrollmentType: batch.enrollmentType, assessmentType: _.get(this.courseHierarchy, 'primaryCategory') },
         relativeTo: this.activatedRoute
       });
   }
