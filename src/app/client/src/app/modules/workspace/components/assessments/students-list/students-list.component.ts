@@ -47,7 +47,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     /**
      * Contains list of students
     */
-    allStudents: Array<IContents> = [];
+    allStudents: any[] = [];
 
     /**
      * To show / hide loader
@@ -184,6 +184,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     *To store the assessment object   
     */
     assessment: any = {}
+    participantsList: any[] = [];
 
     /**
      * To show/hide collection modal
@@ -224,8 +225,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
         const routerStateObj: any = this.location.getState();
         this.assessment = routerStateObj?.assessment;
-        console.log("🚀 ~ file: students-list.component.ts:227 ~ StudentsListComponent ~ this.assessment", this.assessment)
-
         this.paginationService = paginationService;
         this.activatedRoute = activatedRoute;
         this.toasterService = toasterService;
@@ -258,7 +257,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 }
                 this.queryParams = bothParams.queryParams;
                 this.query = this.queryParams['query'];
-                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                this.getParticipantsList(bothParams);                
             });
     }
 
@@ -278,6 +277,28 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 }
             };
         });
+    }
+
+    getParticipantsList(bothParams): void {
+        const batchDetails = {
+            "request": {
+                "batch": {
+                    "batchId": this.assessment.batches[0].batchId
+                }
+            }
+        };
+
+        this.courseBatchService.getParticipantList(batchDetails)
+            .pipe(takeUntil(this.destroySubject$))
+            .subscribe((data) => {
+                this.participantsList = data;
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+            }, (err: ServerResponse) => {
+                this.showLoader = false;
+                this.noResult = false;
+                this.showError = true;
+                this.toasterService.error(this.resourceService.messages.fmsg.m0081);
+            });
     }
 
     /**
@@ -308,9 +329,13 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         };
 
         this.search(searchParams)
+            .pipe(takeUntil(this.destroySubject$))
             .subscribe((data: ServerResponse) => {
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
+                    this.allStudents.forEach((obj) => {
+                        obj['action'] = this.participantsList.includes(obj.id) ? 1 : 0;
+                    });
                     this.totalCount = data.result.response.count;
                     this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
                     this.showLoader = false;
@@ -351,13 +376,13 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     inview(event) {
         _.forEach(event.inview, (inview, key) => {
             const obj = _.find(this.inviewLogs, (o) => {
-                return o.objid === inview.data.identifier;
+                return o.objid === inview?.data?.identifier;
             });
             if (obj === undefined) {
                 this.inviewLogs.push({
-                    objid: inview.data.identifier,
-                    objtype: inview.data.contentType,
-                    index: inview.id
+                    objid: inview?.data?.identifier,
+                    objtype: inview?.data?.contentType,
+                    index: inview?.id
                 });
             }
         });
@@ -367,11 +392,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     handleAssignStudent(student): void {
-        console.log('student - ', student);
-        console.log('this.assessment - ', this.assessment.batches[0]);
-        const batch = this.assessment.batches[0];
-        console.log("🚀 ~ file: students-list.component.ts:365 ~ StudentsListComponent ~ handleAssignStudent ~ batch", batch)
-        
+        const batch = this.assessment.batches[0];        
         const requestBody = {
             request: {
                 batchId: batch?.batchId,
@@ -383,6 +404,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.courseBatchService.addCandidateToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
+                student.action = 1;
                 this.toasterService.success(this.resourceService.messages.smsg.m0034);
             }, (err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {

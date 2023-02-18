@@ -56,8 +56,8 @@
                 <div>NA</div>
             </td>
             <td>
-                <!-- <div *ngIf="expression"></div> -->
-                <div class="assign-link" (click)="handleAssignStudent(student)">Assign</div>
+                <div *ngIf="student.action">Assigned</div>
+                <div *ngIf="student.action === 0" class="assign-link" (click)="handleAssignStudent(student)">Assign</div>
             </td>
         </tr>
     </tbody>
