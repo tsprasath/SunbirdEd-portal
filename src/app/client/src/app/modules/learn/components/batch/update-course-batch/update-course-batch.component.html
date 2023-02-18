@@ -76,16 +76,16 @@
                 </div>
               </div>
               <div class="d-flex flex-dc flex-w-wrap" *ngIf="courseCreator">
-                <div class="mr-8">
-                  <label for="Enrollment Type">{{resourceService?.frmelmnts?.lbl?.natureofbatch}}</label>
+                <div class="mr-8 sb-field-group">
+                  <label for="Enrollment Type" class="required">{{resourceService?.frmelmnts?.lbl?.natureofbatch}}</label>
                 </div>
                 <div class="d-flex flex-dr">
-                  <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="courseCreator">
+                  <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="courseCreator && assessmentType !== 'piaa assessment'">
                     <input id="update-course-open" [attr.disabled]="batchDetails.status === 1 ? true : null" type="radio"
                       value='open' name="enrollmentType" formControlName="enrollmentType">
                     <label for="update-course-open">{{resourceService?.frmelmnts?.lbl?.open}}</label>
                   </div>
-                  <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="courseCreator">
+                  <div class="sb-radio-btn-checkbox sb-radio-btn-primary py-8" *ngIf="courseCreator && assessmentType === 'piaa assessment'">
                     <input id="update-course-invite-only" [attr.disabled]="batchDetails.status === 1 ? true : null"
                       type="radio" value='invite-only' name="enrollmentType" formControlName="enrollmentType">
                     <label for="update-course-invite-only">{{resourceService?.frmelmnts?.lbl?.inviteonly}}</label>
@@ -164,7 +164,9 @@
             <app-loader></app-loader>
           </div>
           <div class="sb-field-group mb-8">
-            <label>{{resourceService?.frmelmnts?.lbl?.batchmentors}}</label>
+            <label [ngClass]="{'required': assessmentType === 'piaa assessment'}">
+              {{ (assessmentType === 'piaa assessment') ? resourceService?.frmelmnts?.lbl?.batchnodalofficers : resourceService?.frmelmnts?.lbl?.batchmentors }}
+            </label>
             <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
               <mat-select formControlName="mentors" role="listbox" multiple aria-label="mentor list" class="selection"
                 [disabled]="showFormInViewMode" (selectionChange)="selectedMultiValues($event, 'mentors')">

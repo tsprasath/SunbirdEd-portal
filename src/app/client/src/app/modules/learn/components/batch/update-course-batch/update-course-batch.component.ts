@@ -138,6 +138,8 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   isCertificateIssued: string;
   isEnableDiscussions: string;
   callCreateDiscussion = true;
+  assessmentType: string;
+  
   /**
    * Constructor to create injected service(s) object
    * @param {RouterNavigationService} routerNavigationService Reference of routerNavigationService
@@ -180,6 +182,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
           this.batchId = params.batchId;
           this.courseId = params.courseId;
           this.enrolmentType = params.enrollmentType;
+          this.assessmentType = params?.assessmentType?.toLowerCase();
           this.setTelemetryInteractData();
           return this.fetchBatchDetails();
         }),
@@ -223,7 +226,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       };
       const participantList = {};
       return combineLatest(
-        this.courseBatchService.getUserList(requestBody),
+        this.courseBatchService.getUserList(requestBody, this.assessmentType),
         this.courseConsumptionService.getCourseHierarchy(this.courseId),
         this.courseBatchService.getUpdateBatchDetails(this.batchId),
         (userDetails, courseDetails, batchDetails) => (
@@ -234,7 +237,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         filters: { 'status': '1' },
       };
       return combineLatest(
-        this.courseBatchService.getUserList(requestBody),
+        this.courseBatchService.getUserList(requestBody, this.assessmentType),
         this.courseConsumptionService.getCourseHierarchy(this.courseId),
         this.courseBatchService.getUpdateBatchDetails(this.batchId),
         this.courseBatchService.getParticipantList(
@@ -282,6 +285,11 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       issueCertificate: new FormControl(this.isCertificateIssued, [Validators.required]),
       enableDiscussions: new FormControl(this.isEnableDiscussions, [Validators.required])
     });
+
+    if (this.assessmentType === 'piaa assessment') {
+      this.batchUpdateForm.get('mentors').setValidators([Validators.required]);
+      this.batchUpdateForm.updateValueAndValidity();
+    }
 
     this.batchUpdateForm.get('startDate').valueChanges.subscribe(value => {
       const startDate: any = dayjs(value);
@@ -334,7 +342,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
         },
         limit: userList.length
       };
-      this.courseBatchService.getUserList(request).pipe(takeUntil(this.unsubscribe))
+      this.courseBatchService.getUserList(request, this.assessmentType).pipe(takeUntil(this.unsubscribe))
         .subscribe((res) => {
           this.processParticipantDetails(res);
         }, (err) => {
@@ -461,7 +469,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       if (err.error && err.error.params && err.error.params.errmsg) {
         this.toasterService.error(err.error.params.errmsg);
       } else {
-        this.toasterService.error(this.resourceService.messages.fmsg.m0052);
+        this.toasterService.error(this.resourceService.messages.fmsg.m0057);
       }
     });
   }

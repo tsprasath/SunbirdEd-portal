@@ -94,7 +94,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
   isConnected = false;
   dropdownContent = true;
   showForceSync = true;
-  PIAAFormConfig: any;
+
   constructor(
     public activatedRoute: ActivatedRoute,
     private configService: ConfigService,
@@ -132,9 +132,9 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       this.courseMentor = false;
     }
     this.connectionService.monitor()
-    .pipe(takeUntil(this.unsubscribe)).subscribe(isConnected => {
-      this.isConnected = isConnected;
-    });
+      .pipe(takeUntil(this.unsubscribe)).subscribe(isConnected => {
+        this.isConnected = isConnected;
+      });
 
     // Set consetnt pop up configuration here
     this.consentConfig = {
@@ -178,12 +178,12 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       });
 
     this.activatedRoute.queryParams
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe(response => {
-      this.addToGroup = Boolean(response.groupId);
-      this.groupId = _.get(response, 'groupId');
-      this.tocId = response.textbook || undefined;
-    });
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(response => {
+        this.addToGroup = Boolean(response.groupId);
+        this.groupId = _.get(response, 'groupId');
+        this.tocId = response.textbook || undefined;
+      });
 
     this.courseConsumptionService.updateContentState
       .pipe(takeUntil(this.unsubscribe))
@@ -265,11 +265,9 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       }, 1000);
     });
     const isForceSynced = localStorage.getItem(this.courseId + '_isforce-sync');
-        if (isForceSynced) {
-          this.showForceSync = false;
-        }
-    
-    this.getPIAAFormConfig();
+    if (isForceSynced) {
+      this.showForceSync = false;
+    }
   }
 
   /**
@@ -306,11 +304,11 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
   initLayout() {
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
     this.layoutService.switchableLayout().
-    pipe(takeUntil(this.unsubscribe)).subscribe(layoutConfig => {
-    if (layoutConfig != null) {
-      this.layoutConfiguration = layoutConfig.layout;
-    }
-   });
+      pipe(takeUntil(this.unsubscribe)).subscribe(layoutConfig => {
+        if (layoutConfig != null) {
+          this.layoutConfiguration = layoutConfig.layout;
+        }
+      });
   }
 
   private parseChildContent() {
@@ -382,7 +380,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
     }
     /* istanbul ignore else */
     setTimeout(() => {
-        if (!this.showLastAttemptsModal && !_.isEmpty(this.navigateToContentObject.event.event)) {
+      if (!this.showLastAttemptsModal && !_.isEmpty(this.navigateToContentObject.event.event)) {
         this.navigateToPlayerPage(this.navigateToContentObject.collectionUnit, this.navigateToContentObject.event);
       }
     }, 100);
@@ -393,7 +391,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
     if (this.batchId) {
       this.telemetryCdata.push({ id: this.batchId, type: 'CourseBatch' });
     }
-    if (this.groupId && !_.find(this.telemetryCdata, {id: this.groupId})) {
+    if (this.groupId && !_.find(this.telemetryCdata, { id: this.groupId })) {
       this.telemetryCdata.push({
         id: this.groupId,
         type: 'Group'
@@ -448,7 +446,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
   }
 
   private setTelemetryCourseImpression() {
-    if (this.groupId && !_.find(this.telemetryCdata, {id: this.groupId})) {
+    if (this.groupId && !_.find(this.telemetryCdata, { id: this.groupId })) {
       this.telemetryCdata.push({
         id: this.groupId,
         type: 'Group'
@@ -536,7 +534,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
         const allBatchList = _.filter(_.get(this.courseHierarchy, 'batches'), (batch) => {
           return !this.isEnrollmentAllowed(_.get(batch, 'enrollmentEndDate'));
         });
-         this.batchMessage = this.validateBatchDate(allBatchList);
+        this.batchMessage = this.validateBatchDate(allBatchList);
       }
     }
   }
@@ -626,7 +624,7 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
         rollup: this.courseConsumptionService.getRollUp(objectRollUp) || {}
       }
     };
-    if (this.groupId && !_.find(this.telemetryCdata, {id: this.groupId})) {
+    if (this.groupId && !_.find(this.telemetryCdata, { id: this.groupId })) {
       interactData.context.cdata.push({
         id: this.groupId,
         type: 'Group'
@@ -674,32 +672,13 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       }
     };
 
-    if (this.groupId && !_.find(this.telemetryCdata, {id: this.groupId})) {
+    if (this.groupId && !_.find(this.telemetryCdata, { id: this.groupId })) {
       interactData.context.cdata.push({
         id: this.groupId,
         type: 'Group'
       });
     }
     this.telemetryService.interact(interactData);
-  }
-
-  /**
-   * To get the form config data, for PIAA assessment and Nodal officer configuration
-   */
-  getPIAAFormConfig(): void {
-    const formInputParams = {
-      formType: 'config',
-      contentType: 'global',
-      formAction: 'display',
-      component: 'portal',
-    };
-  
-    this.formService.getFormConfig(formInputParams)
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe((responseData) => {
-        console.log("🚀 ~ file: course-player.component.ts:700 ~ CoursePlayerComponent ~ .subscribe ~ responseData", responseData)
-        this.PIAAFormConfig = responseData?.coursePlayer;
-      });
   }
 
   ngOnDestroy() {
@@ -744,11 +723,11 @@ export class CoursePlayerComponent implements OnInit, OnDestroy {
       'userId': _.get(this.userService, 'userid')
     };
     this.CsCourseService.updateContentState(req, { apiPath: '/content/course/v1' })
-    .pipe(takeUntil(this.unsubscribe))
-    .subscribe((res) => {
-      this.toasterService.success(this.resourceService.frmelmnts.lbl.forceSyncsuccess);
-    }, error => {
-      console.log('Content state update CSL API failed ', error);
-    });
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((res) => {
+        this.toasterService.success(this.resourceService.frmelmnts.lbl.forceSyncsuccess);
+      }, error => {
+        console.log('Content state update CSL API failed ', error);
+      });
   }
 }
