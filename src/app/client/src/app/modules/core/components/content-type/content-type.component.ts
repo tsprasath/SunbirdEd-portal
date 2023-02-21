@@ -163,7 +163,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   }
   makeFormChange() {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
-    const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaassessment');
+    const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaaAssessment');
     const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace')
 
     if (this.userType != 'administrator' && index !== -1) {
@@ -175,7 +175,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
       }
     }
 
-    if(this.userType != 'student' && studentIndex !== -1){
+    if(this.userType != 'student' && this.userRole !== "BOOK_CREATOR" && studentIndex !== -1){
       this.contentTypes[studentIndex].isEnabled = false;
     }
 
