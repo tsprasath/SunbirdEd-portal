@@ -16,7 +16,7 @@
   </ng-container>
 </div>
 
-<div *ngIf="noResult" class="text-center">
+<div *ngIf="noResult && !showLoader" class="text-center">
   <h2 class="sb-color-primary">No results found</h2>
   <div class="fsmall">We couldn't able to find what you have searched for.</div>
   <div class="fsmall">Try searching again.</div>
