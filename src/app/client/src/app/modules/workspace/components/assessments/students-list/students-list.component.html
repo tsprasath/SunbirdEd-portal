@@ -5,14 +5,32 @@
 <div *ngIf="!showLoader">
     <div class="sb-g">
         <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6">
-            <h4 class="header font-weight-bold mb8">{{ assessment?.name }}</h4>
-            <div class="fsmall">{{ assessment?.description }}</div>
+            <div class="d-flex flex-dr">
+                <div class="d-flex flex-ai-center">
+                    <!-- <button class="sb-btn-primary" routerLink="/workspace/content/assessments/list">
+                        <i aria-hidden="true" class="arrow left icon"></i>
+                    </button> -->
+                    <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mr-auto" routerLink="/workspace/content/assessments/list">
+                        <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                            <svg class="icon icon-svg--primary">
+                                <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                            </svg>
+                        </i>
+                    </button>
+                </div>
+                <div class="d-flex flex-dc ml-16">
+                    <h4 class="header font-weight-bold mb8">{{ assessment?.name }}</h4>
+                    <div class="fsmall">{{ assessment?.description }}</div>
+                </div>
+            </div>
         </div>
         <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
-            <button class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" routerLink="/workspace/content/assessments/list">
-                <i aria-hidden="true" class="arrow left icon"></i>
-                Back to assignments
-            </button>
+            <button mat-button [matMenuTriggerFor]="beforeMenu" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">Assessment Actions</button>
+            <mat-menu #beforeMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="handleAssignStudent()">Assign assessment</button>
+                <button mat-menu-item>Abort assessment</button>
+                <button mat-menu-item>Submit for evaluation</button>
+            </mat-menu>
         </div>
     </div>
 </div>
@@ -31,7 +49,9 @@
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.idNo }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
-            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.action }}</th>
+            <th class="one wide text-center">
+                <mat-checkbox (change)="handleCheckBoxChange($event)" [(ngModel)]="isChecked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
+            </th>
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
@@ -55,9 +75,10 @@
             <td>
                 <div>NA</div>
             </td>
-            <td>
-                <div *ngIf="student.action">Assigned</div>
-                <div *ngIf="student.action === 0" class="assign-link" (click)="handleAssignStudent(student)">Assign</div>
+            <td class="text-center">
+                <mat-checkbox (change)="handleCheckBoxChange($event)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
+                <!-- <div *ngIf="student.action">Assigned</div>
+                <div *ngIf="student.action === 0" class="assign-link" (click)="handleAssignStudent(student)">Assign</div> -->
             </td>
         </tr>
     </tbody>

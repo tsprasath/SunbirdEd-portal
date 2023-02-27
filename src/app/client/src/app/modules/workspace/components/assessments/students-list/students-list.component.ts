@@ -2,6 +2,7 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { combineLatest } from 'rxjs';
 import { Subject } from 'rxjs';
@@ -185,6 +186,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     */
     assessment: any = {}
     participantsList: any[] = [];
+    isChecked: boolean = false;
 
     /**
      * To show/hide collection modal
@@ -335,6 +337,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                     this.allStudents = data.result.response.content;
                     this.allStudents.forEach((obj) => {
                         obj['action'] = this.participantsList.includes(obj.id) ? 1 : 0;
+                        obj['checked'] = false;
                     });
                     this.totalCount = data.result.response.count;
                     this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
@@ -391,16 +394,23 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
-    handleAssignStudent(student): void {
-        const batch = this.assessment.batches[0];        
+    handleAssignStudent(): void {
+        const batch = this.assessment.batches[0];
+        const userIds = this.allStudents.map((obj) => {
+            if (obj.checked) {
+                return obj.id
+            };
+        });
         const requestBody = {
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userId: student.id
+                userId: userIds
             }
         };
 
+        console.log('requestBody - ', requestBody);
+        return;
         this.courseBatchService.addCandidateToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
@@ -413,6 +423,17 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                     this.toasterService.error(this.resourceService.messages.fmsg.m0103);
                 }
             })
+    }
+
+    handleCheckBoxChange($event: MatCheckboxChange): void {
+        console.log('event - ', $event);
+        this.allStudents.forEach((obj) => {
+            if ($event.checked) {
+                obj['checked'] = true;
+            } else {
+                obj['checked'] = false;
+            }
+        })
     }
 
     ngOnDestroy(): void {
