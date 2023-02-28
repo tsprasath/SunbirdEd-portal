@@ -70,13 +70,13 @@
                 <div>{{ student?.userId }}</div>
             </td>
             <td>
-                <div>{{ student?.framework?.board[0] }}</div>
+                <div>{{ (student?.framework?.board) ? student?.framework?.board[0] : 'NA' }}</div>
             </td>
             <td>
                 <div>NA</div>
             </td>
             <td class="text-center">
-                <mat-checkbox (change)="handleCheckBoxChange($event)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
+                <mat-checkbox (change)="handleCheckBoxChange($event, student)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
                 <!-- <div *ngIf="student.action">Assigned</div>
                 <div *ngIf="student.action === 0" class="assign-link" (click)="handleAssignStudent(student)">Assign</div> -->
             </td>
@@ -90,15 +90,15 @@
             *ngIf="allStudents && totalCount > config.appConfig.WORKSPACE.PAGE_LIMIT && !showLoader && !showError && !noResult">
             <div class="ui pagination menu mt-10 right-floated p-0 " *ngIf="pager.pages.length ">
                 <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0"
-                    (click)="navigateToPage(1) ">First</a>
+                    (click)="handleNavigateToPage(1)">First</a>
                 <a [ngClass]="{disabled:pager.currentPage===1 }" class="item " tabindex="0"
-                    (click)="navigateToPage(pager.currentPage - 1)">Previous</a>
+                    (click)="handleNavigateToPage(pager.currentPage - 1)">Previous</a>
                 <a *ngFor="let page of pager.pages" [ngClass]="{active:pager.currentPage===page}" tabindex="0"
-                    (click)="navigateToPage(page)" class="item">{{page}}</a>
+                    (click)="handleNavigateToPage(page)" class="item">{{page}}</a>
                 <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" tabindex="0"
-                    (click)="navigateToPage(pager.currentPage + 1)" class="item">Next</a>
+                    (click)="handleNavigateToPage(pager.currentPage + 1)" class="item">Next</a>
                 <a [ngClass]="{disabled:pager.currentPage=== pager.totalPages}" tabindex="0"
-                    (click)="navigateToPage(pager.totalPages)" class="item ">Last</a>
+                    (click)="handleNavigateToPage(pager.totalPages)" class="item ">Last</a>
             </div>
         </div>
     </div>

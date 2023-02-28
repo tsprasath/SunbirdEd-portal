@@ -264,7 +264,7 @@ const routes: Routes = [
             }
           },
           {
-            path: 'assign', component: StudentsListComponent,
+            path: 'assign/:pageNumber', component: StudentsListComponent,
             data: {
               telemetry: {
                 env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign',

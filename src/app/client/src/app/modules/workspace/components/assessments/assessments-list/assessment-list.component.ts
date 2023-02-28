@@ -315,7 +315,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     handleAssignAssessment(assessment): void {
-        this.route.navigate(['/workspace/content/assessments/assign'], { state: {assessment: assessment} });
+        this.route.navigate(['/workspace/content/assessments/assign/1'], { state: {assessment: assessment} });
     }
 
     inview(event) {
@@ -350,7 +350,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
             return;
         }
         this.pageNumber = page;
-        this.route.navigate(['workspace/content/assessments/list', this.pageNumber], { queryParams: this.queryParams });
+        this.route.navigate(['workspace/content/assessments/list', this.pageNumber], { queryParams: this.queryParams });        
     }
 
     ngOnDestroy(): void {

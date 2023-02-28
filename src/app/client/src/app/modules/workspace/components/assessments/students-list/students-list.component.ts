@@ -319,8 +319,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         }
 
         const searchParams = {
+            // filters: {
+            //     "profileUserType.type" : "student"
+            // },
             filters: {
-                "profileUserType.type" : "student"
+                "roles" : []
             },
             limit: limit,
             // offset: (pageNumber - 1) * (limit),
@@ -366,14 +369,15 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
      *
      * @param {number} page Variable to know which page has been clicked
      *
-     * @example navigateToPage(1)
+     * @example handleNavigateToPage(1)
      */
-    navigateToPage(page: number): undefined | void {
+    handleNavigateToPage(page: number): undefined | void {
         if (page < 1 || page > this.pager.totalPages) {
             return;
         }
         this.pageNumber = page;
         this.router.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
+        this.isChecked = false;
     }
 
     inview(event) {
@@ -425,15 +429,23 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             })
     }
 
-    handleCheckBoxChange($event: MatCheckboxChange): void {
-        console.log('event - ', $event);
+    handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
+        if (studentObj?.id) {
+            this.checkUncheck($event, studentObj);
+            return;
+        }
+        
         this.allStudents.forEach((obj) => {
-            if ($event.checked) {
-                obj['checked'] = true;
-            } else {
-                obj['checked'] = false;
-            }
+            this.checkUncheck($event, obj);
         })
+    }
+
+    checkUncheck($event: MatCheckboxChange, obj: any): void {
+        if ($event.checked) {
+            obj['checked'] = true;
+        } else {
+            obj['checked'] = false;
+        }
     }
 
     ngOnDestroy(): void {
