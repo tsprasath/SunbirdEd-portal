@@ -146,6 +146,7 @@ module.exports = function (app) {
     '/action/questionset/v1/read/:do_id',
     '/action/question/v1/read/:do_id',
     '/action/questionset/v1/hierarchy/:do_id',
+    '/action/questionset/v1/retire/:QuestionSet_Id'
     ],
     isAPIWhitelisted.isAllowed(),
     addCorsHeaders,
