@@ -220,7 +220,7 @@ module.exports = function (app) {
   )
   
   app.delete([
-    '/api/questionset/v1/retire/:QuestionSet_Id'
+    '/action/questionset/v1/retire/:QuestionSet_Id'
     ],
     isAPIWhitelisted.isAllowed(),
     addCorsHeaders,
@@ -229,7 +229,7 @@ module.exports = function (app) {
       limit: reqDataLimitOfContentUpload,
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(learnerURL),
       proxyReqPathResolver: function (req) {
-        var originalUrl = req.originalUrl;
+        let originalUrl = req.originalUrl.replace('/action/', '') 
         return require('url').parse(learnerURL + originalUrl).path
       },
       userResDecorator: userResDecorator
