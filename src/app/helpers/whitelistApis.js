@@ -1604,7 +1604,8 @@ const API_LIST = {
       description: 'QuestionSet delete',
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [
-        ROLE.CONTENT_CREATOR
+        ROLE.CONTENT_CREATOR,
+        ROLE.ADMIN
       ]
     },
     '/action/questionset/v1/create': {
