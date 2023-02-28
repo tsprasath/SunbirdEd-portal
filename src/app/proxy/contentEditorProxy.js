@@ -146,7 +146,6 @@ module.exports = function (app) {
     '/action/questionset/v1/read/:do_id',
     '/action/question/v1/read/:do_id',
     '/action/questionset/v1/hierarchy/:do_id',
-    '/action/questionset/v1/retire/:QuestionSet_Id'
     ],
     isAPIWhitelisted.isAllowed(),
     addCorsHeaders,
@@ -214,6 +213,23 @@ module.exports = function (app) {
       proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(learnerURL),
       proxyReqPathResolver: function (req) {
         let originalUrl = req.originalUrl.replace('/action/', '')
+        return require('url').parse(learnerURL + originalUrl).path
+      },
+      userResDecorator: userResDecorator
+    })
+  )
+  
+  app.delete([
+    '/api/questionset/v1/retire/:QuestionSet_Id'
+    ],
+    isAPIWhitelisted.isAllowed(),
+    addCorsHeaders,
+    proxyUtils.verifyToken(),
+    proxy(learnerURL, {
+      limit: reqDataLimitOfContentUpload,
+      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(learnerURL),
+      proxyReqPathResolver: function (req) {
+        var originalUrl = req.originalUrl;
         return require('url').parse(learnerURL + originalUrl).path
       },
       userResDecorator: userResDecorator
