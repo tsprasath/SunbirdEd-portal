@@ -25,11 +25,11 @@
             </div>
         </div>
         <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
-            <button mat-button [matMenuTriggerFor]="beforeMenu" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border">Assessment Actions</button>
+            <button mat-button [matMenuTriggerFor]="beforeMenu" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}">Assessment Actions</button>
             <mat-menu #beforeMenu="matMenu" xPosition="before">
                 <button mat-menu-item (click)="handleAssignStudent()">Assign assessment</button>
-                <button mat-menu-item>Abort assessment</button>
-                <button mat-menu-item>Submit for evaluation</button>
+                <button mat-menu-item (click)="handleFBAssessment('abort')">Abort assessment</button>
+                <button mat-menu-item (click)="handleFBAssessment('submit')">Submit for evaluation</button>
             </mat-menu>
         </div>
     </div>
@@ -77,8 +77,6 @@
             </td>
             <td class="text-center">
                 <mat-checkbox (change)="handleCheckBoxChange($event, student)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
-                <!-- <div *ngIf="student.action">Assigned</div>
-                <div *ngIf="student.action === 0" class="assign-link" (click)="handleAssignStudent(student)">Assign</div> -->
             </td>
         </tr>
     </tbody>
@@ -103,3 +101,35 @@
         </div>
     </div>
 </div>
+
+<sui-modal *ngIf="enableFeedback" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal sb-course-modal" #modal [appTelemetryImpression]="telemetryImpression">
+
+    <i class="icon close" (click)="modal.deny('denied');handleCloseModal();" tabindex="0"></i>
+
+    <!-- This section will show as usual creation popup -->
+    <div>
+        <!--Header-->
+        <div class="sb-modal-header">
+            Provide feedback and {{ feedbackText }}
+        </div>
+        <!--/Header-->
+
+        <!--Content-->
+        <div class="sb-modal-content o-y-visible">
+            <textarea class="sb-form-control" placeholder="Enter feedback" maxlength="250" rows="10"></textarea>
+            <small class="mt-4 pull-right sb-color-grey fxsmall">{{ 250 }}
+                {{ resourceService?.frmelmnts?.lbl?.characterleft }}</small>
+        </div>
+        <!--/Content-->
+
+        <!--Actions-->
+        <div class="sb-modal-actions">
+            <button class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0" (click)="handleSubmitData(modal)">
+                {{ feedbackText }}
+            </button>
+        </div>
+    </div>
+
+    <!--/Actions-->
+</sui-modal>

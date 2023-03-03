@@ -243,12 +243,12 @@ const routes: Routes = [
         }
       },
       {
-        path: 'assessments', component: AssessmentsComponent, canActivate: [AuthGuard],
+        path: 'assessments', component: AssessmentsComponent,
         data: {
           telemetry: {
             env: telemetryEnv, pageid: 'workspace-content-assessments', subtype: 'paginate', uri: 'workspace/content/assessments',
             type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
-          }, roles: 'nodalOfficer',
+          },
         },
         children: [
           {
@@ -258,7 +258,7 @@ const routes: Routes = [
             path: 'list', component: AssessmentsListComponent,
             data: {
               telemetry: {
-                env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list',
+                env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list/1',
                 type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
               },
             }
@@ -267,7 +267,7 @@ const routes: Routes = [
             path: 'assign/:pageNumber', component: StudentsListComponent,
             data: {
               telemetry: {
-                env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign',
+                env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign/1',
                 type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
               },
             }

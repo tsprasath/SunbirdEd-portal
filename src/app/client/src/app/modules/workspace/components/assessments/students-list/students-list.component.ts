@@ -187,6 +187,10 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     assessment: any = {}
     participantsList: any[] = [];
     isChecked: boolean = false;
+    enableFeedback: boolean = false;
+    feedbackText: string = '';
+    disableAssessmentAction: boolean = true;
+    checkedArray: string[] = [];
 
     /**
      * To show/hide collection modal
@@ -326,8 +330,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 "roles" : []
             },
             limit: limit,
-            // offset: (pageNumber - 1) * (limit),
-            pageNumber: 1,
+            offset: (pageNumber - 1) * (limit),
+            pageNumber: this.pageNumber || 1,
             query: _.toString(bothParams.queryParams.query),
             sort_by: this.sort,
             type: 'studentList'
@@ -378,6 +382,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.pageNumber = page;
         this.router.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
         this.isChecked = false;
+        this.disableAssessmentAction = true;     
     }
 
     inview(event) {
@@ -418,7 +423,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.courseBatchService.addCandidateToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
-                student.action = 1;
                 this.toasterService.success(this.resourceService.messages.smsg.m0034);
             }, (err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
@@ -443,9 +447,38 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     checkUncheck($event: MatCheckboxChange, obj: any): void {
         if ($event.checked) {
             obj['checked'] = true;
+            this.shiftUnShiftArray('push', obj);
         } else {
             obj['checked'] = false;
+            this.shiftUnShiftArray('pop', obj);
         }
+
+        this.disableAssessmentAction = this.checkedArray.length ? false : true;
+    }
+
+    shiftUnShiftArray(flag: string, obj: any): void {
+        if (flag === 'push') {
+            if (!this.checkedArray.includes(obj.id)) {
+                this.checkedArray.push(obj.id);
+            }
+        } else {
+            this.checkedArray.splice(this.checkedArray.indexOf(obj.id), 1); 
+        }
+    }
+
+    handleCloseModal(): void {
+        this.enableFeedback = false;
+        console.log('this.enableFeedback - ', this.enableFeedback);
+    }
+
+    handleFBAssessment(flag: string): void {
+        this.feedbackText = (flag === 'abort') ? 'Abort assessment' : 'Submit for Evaluation';
+        this.enableFeedback = true;
+    }
+
+    handleSubmitData(modal): void {
+        console.log('modal - ', modal);
+        modal.deny('denied');        
     }
 
     ngOnDestroy(): void {
