@@ -164,7 +164,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   makeFormChange() {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
     const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaaAssessment');
-    const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace')
+    const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace');
 
     if (this.userType != 'administrator' && index !== -1) {
       this.contentTypes[index].isEnabled = false;
@@ -182,6 +182,15 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     if(this.userRole!= 'NODAL_OFFICER' && nodalIndex !== -1){
       this.contentTypes[nodalIndex].isEnabled = false
     }
+
+    if(!this.userService.loggedIn) {
+      _.forEach(this.contentTypes, (contentType) => {
+        if(contentType?.hideForGuestUser) {
+          contentType.isEnabled = false;
+        }
+      });  
+    }
+
   }
 
   processFormData(formData) {

@@ -7,7 +7,7 @@
                 <div class="six wide column">
                     <img class="ui fluid image" src="{{'assets/images/landingPage.jpg' |  cdnprefixurl}} " />
                 </div>
-                <div class="six wide column">
+                <div class="six wide column" *ngIf="!mainContent.length">
                     <p>In 2000, ten years later, the international community met again at the World Education Forum in Dakar, Senegal,
                         an event which drew 1100 participants.</p>
                     <p>The forum took stock of the fact that many countries were far from having reached the goals established at the
@@ -19,6 +19,9 @@
                     <br/>
                     <a href="#">Read More > </a>
                 </div>
+                <div class="six wide column" *ngIf="mainContent.length > 0">
+                    <p *ngFor="let content of mainContent">{{content.contentText}}</p>
+                </div>
             </div>
         </div>
     </div>
@@ -26,13 +29,13 @@
     <div class="ui container relative9">
     <div class="ui stackable grid">
         <div class="eight wide column ">
-            <div class="ui segment">
+            <div class="ui segment"  *ngIf="showUserArticle">
                 <div class="header p-10 segment-heading">
                     <span>Featured Articles</span>
                     <a href="#" class="right-floated">View All</a>
                 </div>
                 <br>
-                <div class="ui two stackable cards" *ngIf="showUserArticle">
+                <div class="ui two stackable cards">
                     <div class="ui card">
                         <div class="content card-opacity">
                             <div class="description">
