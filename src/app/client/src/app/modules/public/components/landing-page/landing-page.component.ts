@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { LayoutService, ServerResponse } from '@sunbird/shared';
+import { LayoutService, ServerResponse, ResourceService} from '@sunbird/shared';
+import { FormService } from '@sunbird/core';
+import * as _ from 'lodash-es';
 
 @Component({
   selector: 'app-landing-page',
@@ -14,12 +16,16 @@ export class LandingPageComponent implements OnInit {
   showUserArticle:boolean = true;
   showUserCalender:boolean = true;
   showAnnoucements: boolean = true;
+  mainContent:any[]= [];
 
-  constructor(public layoutService: LayoutService) { }
+  constructor(public layoutService: LayoutService, public formService: FormService, public resourceService: ResourceService) {
+    this.formService= formService;
+   }
 
   ngOnInit() {
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
-    this.getUserContentconfig()
+    this.getUserContentconfig();
+    this.getPortalConfig();
   }
 
   getUserContentconfig(){
@@ -50,5 +56,31 @@ export class LandingPageComponent implements OnInit {
       }
     )
   }
+
+    /**
+   * @description -  to fetch portal config to display relevant content
+   */
+    getPortalConfig() {
+      const formReadInputParams = { 
+        formType: 'config',
+        formAction: 'display',
+        contentType: 'global',
+        component: 'portal'
+      };
+      this.formService.getFormConfig(formReadInputParams).subscribe(
+        (formResponsedata) => {
+          if (formResponsedata && _.get(formResponsedata, "guestLandingPage") && _.get(_.get(formResponsedata, "guestLandingPage"), 'mainContent')) {
+            this.mainContent= _.get(_.get(formResponsedata, "guestLandingPage"), 'mainContent').length > 0 ? _.get(_.get(formResponsedata, "guestLandingPage"), 'mainContent') : [];
+            _.forEach(this.mainContent, (content) => {
+              content.contentText = _.get(this.resourceService, content.contentText);
+            });
+          }
+
+          },
+          (error) => {
+            this.mainContent= [];
+          }
+        );
+    }
 
 }
