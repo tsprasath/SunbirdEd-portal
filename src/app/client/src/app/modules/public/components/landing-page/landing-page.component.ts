@@ -20,6 +20,7 @@ export class LandingPageComponent implements OnInit {
 
   constructor(public layoutService: LayoutService, public formService: FormService, public resourceService: ResourceService) {
     this.formService= formService;
+    this.resourceService = resourceService;
    }
 
   ngOnInit() {
