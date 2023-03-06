@@ -24,12 +24,14 @@ export class CardCreationComponent implements OnInit {
   public unsubscribe$ = new Subject<void>();
   userType:any
   userRole:any
+  showDeleteBtn:boolean = true;
 
   constructor(public resourceService: ResourceService,
     private userService: UserService) {
   }
 
   ngOnInit() {
+    console.log('ddd',this.data)
     this.telemetryInteractObject = {
       id: this.data.metaData.identifier,
       type: this.data.metaData.contentType,
@@ -49,6 +51,9 @@ export class CardCreationComponent implements OnInit {
         if (_.get(profileData, 'userProfile.profileUserType.type')) {
         this.userType = profileData.userProfile['profileUserType']['type'];
         this.userRole = profileData.userProfile['roles'].length ? profileData.userProfile['roles'][0]['role'] : ''; 
+        if(this.userRole == 'BOOK_REVIEWER' && this.data['telemetryObjectType'] == 'published'){
+          this.showDeleteBtn =  false;
+        }
         }
       });
     } 
