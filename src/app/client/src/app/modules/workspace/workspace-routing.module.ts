@@ -252,10 +252,10 @@ const routes: Routes = [
         },
         children: [
           {
-            path: '', pathMatch: 'full', redirectTo: 'list'
+            path: '', pathMatch: 'full', redirectTo: 'list/1'
           },
           {
-            path: 'list', component: AssessmentsListComponent,
+            path: 'list/:pageNumber', component: AssessmentsListComponent,
             data: {
               telemetry: {
                 env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list/1',

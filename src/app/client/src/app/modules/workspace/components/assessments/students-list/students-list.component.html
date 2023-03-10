@@ -116,19 +116,21 @@
         <!--/Header-->
 
         <!--Content-->
+        <form [formGroup]="abortForm" (ngSubmit)="handleSubmitData(modal)">
         <div class="sb-modal-content o-y-visible">
-            <textarea class="sb-form-control" placeholder="Enter feedback" maxlength="250" rows="10"></textarea>
-            <small class="mt-4 pull-right sb-color-grey fxsmall">{{ 250 }}
+            <textarea class="sb-form-control"  formControlName="feedback" (keydown)="handleKeyDown($event)" placeholder="Enter feedback" maxlength="250" rows="10"></textarea>
+            <small class="mt-4 pull-right sb-color-grey fxsmall counter">{{ maxCount }}
                 {{ resourceService?.frmelmnts?.lbl?.characterleft }}</small>
         </div>
         <!--/Content-->
 
         <!--Actions-->
         <div class="sb-modal-actions">
-            <button class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0" (click)="handleSubmitData(modal)">
+            <button type="submit"  [disabled]="!abortForm.valid" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
                 {{ feedbackText }}
             </button>
         </div>
+        </form>
     </div>
 
     <!--/Actions-->

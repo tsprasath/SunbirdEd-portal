@@ -17,6 +17,7 @@ import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagi
 
 import { WorkSpace } from './../../../classes/workspace';
 import { WorkSpaceService } from './../../../services';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
     selector: 'app-students-list',
@@ -33,6 +34,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
      * state for content editior
     */
     state: string;
+
+    abortForm:FormGroup
 
     /**
      * To send activatedRoute.snapshot to router navigation
@@ -191,6 +194,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     feedbackText: string = '';
     disableAssessmentAction: boolean = true;
     checkedArray: string[] = [];
+    maxCount:number = 250
 
     /**
      * To show/hide collection modal
@@ -240,7 +244,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;        
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+
+        this.abortForm = new FormGroup({
+            feedback: new FormControl(''),
+          });   
     }
 
     ngOnInit() {
@@ -417,9 +425,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 userId: userIds
             }
         };
-
         console.log('requestBody - ', requestBody);
-        return;
         this.courseBatchService.addCandidateToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
@@ -431,6 +437,19 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                     this.toasterService.error(this.resourceService.messages.fmsg.m0103);
                 }
             })
+    }
+
+    handleKeyDown(event: KeyboardEvent){
+        if(this.maxCount == 0 && event.key !== 'Backspace' ){
+         event.preventDefault();
+         return
+        }
+        if(event.key === 'Backspace'){
+          this.maxCount = this.maxCount + 1
+        }
+        else {
+            this.maxCount = this.maxCount - 1
+        }
     }
 
     handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
@@ -476,8 +495,34 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.enableFeedback = true;
     }
 
-    handleSubmitData(modal): void {
+    handleSubmitData(modal?): void {
+        //console.warn('bbbb',this.abortForm.value);
         console.log('modal - ', modal);
+        const batch = this.assessment.batches[0];
+        const userIds = this.allStudents.map((obj) => {
+            if (obj.checked) {
+                return obj.id
+            };
+        });
+        const requestBody = {
+            request: {
+                batchId: batch?.batchId,
+                courseId: this.assessment?.identifier,
+                userId: userIds
+            }
+        };
+        this.courseBatchService.abortAssessment(requestBody).pipe(takeUntil(this.destroySubject$))
+        .subscribe((res)=>{
+          console.log('resData',res)
+        },(err) => {
+            if (err.error && err.error.params && err.error.params.errmsg) {
+                this.toasterService.error(err.error.params.errmsg);
+            } else {
+                this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+            }
+        })
+        console.log('rB',requestBody)
+
         modal.deny('denied');        
     }
 

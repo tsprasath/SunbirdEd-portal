@@ -195,9 +195,17 @@ export class CourseBatchService {
 
   addCandidateToBatch(request): Observable<any> {
     const option = {
-      url: this.configService.urlConFig.URLS.COURSE.ENROLL_USER_TO_BATCH,
+      url: this.configService.urlConFig.URLS.COURSE.ENROLL_BULK_USER,
       data: request
     };
     return this.learnerService.post(option);
+  }
+
+  abortAssessment(request):Observable<any> {
+    const option = {
+      url: this.configService.urlConFig.URLS.BATCH.UNENROL_ASSESSMENT,
+      data:request
+    }
+    return this.learnerService.post(option)
   }
 }

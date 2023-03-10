@@ -166,7 +166,9 @@
       "RECOMMENDED_COURSE": "recommended/courses",
       "UNENROLL_USER_COURSE": "course/v1/unenrol",
       "GET_QR_CODE_FILE": "course/v1/qrcode/download",
-      "GET_REPORTS_METADATA": "course-reports/metadata"
+      "GET_REPORTS_METADATA": "course-reports/metadata",
+      "ENROLL_BULK_USER": "content/course/v1/admin/bulk/enrol"
+
     },
     "CONTENT": {
       "SEARCH": "content/v1/search",
@@ -210,7 +212,8 @@
       "GET_DETAILS": "course/v1/batch/read",
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
-      "REMOVE_USERS": "course/v1/batch/user/remove"
+      "REMOVE_USERS": "course/v1/batch/user/remove",
+      "UNENROL_ASSESSMENT": "content/course/v1/admin/bulk/unenrol"
     },
     "ADMIN": {
       "USER_SEARCH": "user/v3/search",
