@@ -276,7 +276,7 @@
                 <div class="ui dropdown right top pointing">
                   <div class="sbt-guest-profile" aria-haspopup="true" aria-controls="overlaySidebarID"
                     aria-label="Guest User" tabindex="0" name="Guest" *ngIf='!userProfile && !guestUser'
-                    (click)="toggleSideMenu(true)"><img src="./assets/images/profile-icon.svg" alt="Guest User"
+                    (click)="toggleSideMenu(true)" title="Click here to login"><img src="./assets/images/profile-icon.svg" alt="Guest User"
                       width="48"></div>
                   <ngx-avatar aria-haspopup="true" aria-controls="overlaySidebarID" *ngIf='!userProfile && guestUser' tabindex="0" (click)="toggleSideMenu(true)"
                     [style]="avtarDesktopStyle" [size]="38" initialsSize="1" name="{{guestUser?.formatedName || 'Guest'}}"
