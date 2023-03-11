@@ -97,8 +97,8 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
       return null;
     }
 
-    // All and myDownloads Tab should not carry any filters from other tabs / user can apply fresh filters
-    if (data.contentType === 'mydownloads' || data.contentType === 'all' || data.contentType === 'workspace') {
+    // All, myDownloads, workspace, resultEvaluation Tab should not carry any filters from other tabs / user can apply fresh filters
+    if (data.contentType === 'mydownloads' || data.contentType === 'all' || data.contentType === 'workspace'  || data.contentType ===  'resultEvaluation') {
       params = _.omit(params, ['board', 'medium', 'gradeLevel', 'subject', 'se_boards', 'se_mediums', 'se_gradeLevels', 'se_subjects']);
     }
     if (this.userService.loggedIn) {
@@ -165,6 +165,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
     const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaaAssessment');
     const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace');
+    const resultEvaluationIndex = this.contentTypes.findIndex(cty => cty.contentType === 'resultEvaluation');
 
     if (this.userType != 'administrator' && index !== -1) {
       this.contentTypes[index].isEnabled = false;
@@ -182,6 +183,10 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
     if(this.userRole!= 'NODAL_OFFICER' && nodalIndex !== -1){
       this.contentTypes[nodalIndex].isEnabled = false
     }
+
+    if(this.userRole != 'ORG_ADMIN' && resultEvaluationIndex !== -1){
+      this.contentTypes[resultEvaluationIndex].isEnabled = false;
+    } 
 
     if(!this.userService.loggedIn) {
       _.forEach(this.contentTypes, (contentType) => {

@@ -31,7 +31,8 @@
        "allContentRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
        "collaboratingRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
        "alltextbookRole": ["ORG_ADMIN"],
-       "nodalOfficer": ["NODAL_OFFICER"]
+       "nodalOfficer": ["NODAL_OFFICER"],
+       "resultEvaluationRole": ["ORG_ADMIN"]
        
     },
     "organizationRole":{
@@ -42,7 +43,7 @@
     },
      "ROLES":{
        "announcement": ["ANNOUNCEMENT_SENDER"],
-       "workspace":["CONTENT_CREATOR" , "CONTENT_CREATION" , "CONTENT_REVIEWER" , "CONTENT_REVIEW" , "FLAG_REVIEWER" , "COURSE_MENTOR" ,"BOOK_REVIEWER","BOOK_CREATOR","NODAL_OFFICER"],
+       "workspace":["CONTENT_CREATOR" , "CONTENT_CREATION" , "CONTENT_REVIEWER" , "CONTENT_REVIEW" , "FLAG_REVIEWER" , "COURSE_MENTOR" ,"BOOK_REVIEWER","BOOK_CREATOR","NODAL_OFFICER", "ORG_ADMIN"],
        "createRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
        "draftRole": ["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
        "inreviewRole":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],
@@ -63,7 +64,8 @@
        "alltextbookRole": ["ORG_ADMIN"],
        "uciAdmin": ["ORG_ADMIN"],
        "programDashboardRole":["PROGRAM_MANAGER","PROGRAM_DESIGNER"],
-       "nodalOfficer": ["NODAL_OFFICER"]
+       "nodalOfficer": ["NODAL_OFFICER"],
+       "resultEvaluationRole": ["ORG_ADMIN"]
     }
     ,"WORKSPACEAUTHGARDROLES":[
     {
@@ -77,6 +79,10 @@
     {
         "roles":["ORG_ADMIN"],
         "roleName":"alltextbookRole","url":"workspace/content/alltextbooks","tab":"ALLTEXTBOOKS"
+    },
+    {
+        "roles":["ORG_ADMIN"],
+        "roleName":"resultEvaluationRole","url":"workspace/content/resultEvaluation/1","tab":"RESULTEVALUATION"
     },
     {
         "roles":["CONTENT_CREATOR","CONTENT_CREATION","CONTENT_REVIEWER","CONTENT_REVIEW","BOOK_CREATOR"],

@@ -7,7 +7,8 @@ import {
   BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, AssessmentsListComponent, StudentsListComponent
+  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, AssessmentsListComponent, StudentsListComponent, ResultEvaluationComponent,
+  AssessmentListComponent
 } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
@@ -303,7 +304,27 @@ const routes: Routes = [
           }, roles: 'collaboratingRole',
           breadcrumbs: [{ label: 'Home', url: '/home' }, { label: 'Profile', url: '/profile' }, { label: 'My Workspace', url: '' }]
         }
-      }
+      },
+      {
+        path: 'resultEvaluation/:pageNumber', component: ResultEvaluationComponent, canActivate: [AuthGuard],
+        data: {
+          telemetry: {
+            env: telemetryEnv, pageid: 'workspace-result-evaluation', subtype: 'paginate', uri: 'workspace/content/resultEvaluation',
+            type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+          }, roles: 'resultEvaluationRole',
+        },
+        children: [
+          {
+            path: '', component: AssessmentListComponent,
+            data: {
+              telemetry: {
+                env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list',
+                type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+              },
+            }
+          }
+        ]
+      },
     ]
   },
   {
