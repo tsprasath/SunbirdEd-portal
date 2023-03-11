@@ -426,7 +426,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             }
         };
         console.log('requestBody - ', requestBody);
-        this.courseBatchService.addCandidateToBatch(requestBody)
+        this.courseBatchService.enrollUsersToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
                 this.toasterService.success(this.resourceService.messages.smsg.m0034);
@@ -511,7 +511,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 userId: userIds
             }
         };
-        this.courseBatchService.abortAssessment(requestBody).pipe(takeUntil(this.destroySubject$))
+        this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
         .subscribe((res)=>{
           console.log('resData',res)
         },(err) => {
