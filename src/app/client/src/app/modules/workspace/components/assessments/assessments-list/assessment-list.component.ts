@@ -315,7 +315,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     handleAssignAssessment(assessment): void {
-        this.route.navigate(['/workspace/content/assessments/assign/1'], { state: {assessment: assessment, pageNumber: this.pageNumber} });
+        this.route.navigate(['/workspace/content/assessments/assign/all/1'], { state: {assessment: assessment, pageNumber: this.pageNumber} });
     }
 
     inview(event) {

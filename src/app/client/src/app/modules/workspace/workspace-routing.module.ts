@@ -7,7 +7,8 @@ import {
   BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, AssessmentsListComponent, StudentsListComponent
+  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, 
+  AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent
 } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
@@ -263,38 +264,36 @@ const routes: Routes = [
           },
         }
       },
-      // {
-      //   path: 'assessments', component: AssessmentsComponent,
-      //   data: {
-      //     telemetry: {
-      //       env: telemetryEnv, pageid: 'workspace-content-assessments', subtype: 'paginate', uri: 'workspace/content/assessments',
-      //       type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
-      //     },
-      //   },
-      //   children: [
-      //     {
-      //       path: '', pathMatch: 'full', redirectTo: 'list/1'
-      //     },
-      //     {
-      //       path: 'list/:pageNumber', component: AssessmentsListComponent,
-      //       data: {
-      //         telemetry: {
-      //           env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list/1',
-      //           type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
-      //         },
-      //       }
-      //     },
-      //     {
-      //       path: 'assign/:pageNumber', component: StudentsListComponent,
-      //       data: {
-      //         telemetry: {
-      //           env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign/1',
-      //           type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
-      //         },
-      //       }
-      //     }
-      //   ]
-      // },
+      {
+        path: 'assessments/assign', component: AssignAssessmentsComponent,
+        data: {
+          telemetry: {
+            env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign/1',
+            type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+          },
+        },
+        children: [
+          {
+            path: 'all/:pageNumber', component: StudentsListComponent,
+            data: {
+              telemetry: {
+                env: telemetryEnv, pageid: 'workspace-content-assessement-assign-all', subtype: 'paginate', uri: 'workspace/content/assessments/assign/all/1',
+                type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+              },
+            }
+          },
+          {
+            path: 'pendingForSubmission/:pageNumber', component: StudentsListComponent,
+            data: {
+              telemetry: {
+                env: telemetryEnv, pageid: 'workspace-content-assessement-assign-pending-for-submission', subtype: 'paginate', uri: 'workspace/content/assessments/assign/pendingForSubmission/1',
+                type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+              },
+            }
+          },
+        ]
+
+      },
       {
         path: 'alltextbooks/:pageNumber', component: AllTextbooksComponent, canActivate: [AuthGuard],
         data: {
