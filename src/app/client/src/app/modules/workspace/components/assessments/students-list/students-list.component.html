@@ -24,14 +24,14 @@
                 </div>
             </div>
         </div>
-        <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
+        <!-- <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
             <button mat-button [matMenuTriggerFor]="beforeMenu" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}">Assessment Actions</button>
             <mat-menu #beforeMenu="matMenu" xPosition="before">
                 <button mat-menu-item (click)="handleAssignStudent()">Assign assessment</button>
                 <button mat-menu-item (click)="handleFBAssessment('abort')">Abort assessment</button>
                 <button mat-menu-item (click)="handleFBAssessment('submit')">Submit for evaluation</button>
             </mat-menu>
-        </div>
+        </div> -->
     </div>
 </div>
 
@@ -73,14 +73,19 @@
                 <div>{{ (student?.framework?.board) ? student?.framework?.board[0] : 'NA' }}</div>
             </td>
             <td>
-                <div>NA</div>
+                <div>{{(student?.assessmentAssigned) ? 'Assigned' : 'Not Assigned'}}</div>
             </td>
             <td class="text-center">
-                <mat-checkbox (change)="handleCheckBoxChange($event, student)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [disabled]="student.assessmentAssigned"></mat-checkbox>
+                <mat-checkbox (change)="handleCheckBoxChange($event, student)"  class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [checked]="student.checked" [disabled]="student.assessmentAssigned" ></mat-checkbox>
             </td>
         </tr>
     </tbody>
 </table>
+<div class="sb-modal-actions">
+    <button type="submit" (click)="handleAssignStudent()" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}" style="float: right;" tabindex="0">
+        {{ 'Assign Assessment' }}
+    </button>
+</div>
 <div class="ui grid">
     <div class="two wide column"></div>
     <div class="ten wide column">
@@ -102,8 +107,8 @@
     </div>
 </div>
 
-<sui-modal *ngIf="enableFeedback" [mustScroll]="true" [isClosable]="false" [transitionDuration]="0" [size]="'normal'"
-    class="sb-modal sb-course-modal" #modal [appTelemetryImpression]="telemetryImpression">
+<sui-modal *ngIf="enableFeedback" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
+    class="sb-modal sb-course-modal" #modal (dismissed)="this.enableFeedback = false" [appTelemetryImpression]="telemetryImpression">
 
     <i class="icon close" (click)="modal.deny('denied');handleCloseModal();" tabindex="0"></i>
 
@@ -126,7 +131,7 @@
 
         <!--Actions-->
         <div class="sb-modal-actions">
-            <button type="submit"  [disabled]="!abortForm.valid" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
+            <button type="submit"  [disabled]="abortForm.invalid" [ngClass]="{'sb-btn-disabled': abortForm.invalid}" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
                 {{ feedbackText }}
             </button>
         </div>

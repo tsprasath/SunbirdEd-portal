@@ -17,7 +17,7 @@ import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagi
 
 import { WorkSpace } from './../../../classes/workspace';
 import { WorkSpaceService } from './../../../services';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-students-list',
@@ -247,7 +247,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
 
         this.abortForm = new FormGroup({
-            feedback: new FormControl(''),
+            feedback: new FormControl('',Validators.required),
           });   
     }
 
@@ -467,7 +467,10 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         }
         
         this.allStudents.forEach((obj) => {
-            this.checkUncheck($event, obj);
+            if(!obj.assessmentAssigned){
+                this.checkUncheck($event, obj);
+            }
+           
         })
     }
 
@@ -504,19 +507,24 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     handleSubmitData(modal?): void {
-        //console.warn('bbbb',this.abortForm.value);
+        console.warn('bbbb',this.abortForm);
         console.log('modal - ', modal);
         const batch = this.assessment.batches[0];
-        const userIds = this.allStudents.map((obj) => {
-            if (obj.checked) {
-                return obj.id
+        const userIds = _.compact(_.map(this.allStudents, (student) =>  {
+            if (student.checked && student['assessmentAssigned']) {
+                return student.id
             };
-        });
+        }))
+        // const userIds = this.allStudents.map((obj) => {
+        //     if (obj.checked && obj['assessmentAssigned']) {
+        //         return obj.id
+        //     };
+        // });
         const requestBody = {
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userId: userIds
+                userIds: userIds
             }
         };
         this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
