@@ -10,7 +10,7 @@
                     <!-- <button class="sb-btn-primary" routerLink="/workspace/content/assessments/list">
                         <i aria-hidden="true" class="arrow left icon"></i>
                     </button> -->
-                    <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mr-auto" routerLink="/workspace/content/assessments/list">
+                    <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mr-auto" (click)="navigateToAssessments()">
                         <i class="icon-svg icon-svg--xxs icon-back mr-4">
                             <svg class="icon icon-svg--primary">
                                 <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
@@ -76,7 +76,7 @@
                 <div>NA</div>
             </td>
             <td class="text-center">
-                <mat-checkbox (change)="handleCheckBoxChange($event, student)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
+                <mat-checkbox (change)="handleCheckBoxChange($event, student)" [checked]="student.checked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [disabled]="student.assessmentAssigned"></mat-checkbox>
             </td>
         </tr>
     </tbody>

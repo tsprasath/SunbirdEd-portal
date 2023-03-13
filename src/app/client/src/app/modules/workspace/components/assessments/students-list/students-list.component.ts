@@ -316,7 +316,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     /**
-    * This method sets the make an api call to get all UpForReviewContent with page No and offset
+    * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
         this.showLoader = true;
@@ -325,17 +325,15 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             const sortType = bothParams.queryParams.sortType;
             this.sort = {
                 [sort_by]: _.toString(sortType)
-            };
+            };  
         } else {
             this.sort = { lastUpdatedOn: this.config.appConfig.WORKSPACE.lastUpdatedOn };
         }
 
         const searchParams = {
-            // filters: {
-            //     "profileUserType.type" : "student"
-            // },
             filters: {
-                "roles" : []
+                "roles" : [],
+                "profileUserType.type" : "student"  
             },
             limit: limit,
             offset: (pageNumber - 1) * (limit),
@@ -350,9 +348,14 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             .subscribe((data: ServerResponse) => {
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
-                    this.allStudents.forEach((obj) => {
-                        obj['action'] = this.participantsList.includes(obj.id) ? 1 : 0;
-                        obj['checked'] = false;
+                    this.allStudents.forEach((student) => {
+                        if(this.participantsList.includes(student.id)){
+                            student['assessmentAssigned'] = true;
+                            student['checked'] = true;
+                        } else {
+                            student['assessmentAssigned'] = false;
+                            student['checked'] = false;
+                        }
                     });
                     this.totalCount = data.result.response.count;
                     this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
@@ -393,6 +396,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.disableAssessmentAction = true;     
     }
 
+    navigateToAssessments()  {
+        const routerStateObj: any = this.location.getState();
+        this.router.navigate(['workspace/content/assessments/list', routerStateObj?.pageNumber]);
+    }
+
     inview(event) {
         _.forEach(event.inview, (inview, key) => {
             const obj = _.find(this.inviewLogs, (o) => {
@@ -413,16 +421,16 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
     handleAssignStudent(): void {
         const batch = this.assessment.batches[0];
-        const userIds = this.allStudents.map((obj) => {
-            if (obj.checked) {
-                return obj.id
+        const userIds = _.compact(_.map(this.allStudents, (student) =>  {
+            if (student.checked && !student['assessmentAssigned']) {
+                return student.id
             };
-        });
+        }))
         const requestBody = {
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userId: userIds
+                userIds: userIds
             }
         };
         console.log('requestBody - ', requestBody);

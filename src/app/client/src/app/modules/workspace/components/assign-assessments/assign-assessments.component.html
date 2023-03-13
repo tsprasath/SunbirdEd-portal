@@ -1,0 +1,40 @@
+<div class="sb-g">
+    <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6">
+        <div class="d-flex flex-dr">
+            <div class="d-flex flex-ai-center">
+                <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mr-auto" (click)="navigateToAssessments()">
+                    <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                        <svg class="icon icon-svg--primary">
+                            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                        </svg>
+                    </i>
+                </button>
+            </div>
+            <div class="d-flex flex-dc ml-16">
+                <h4 class="header font-weight-bold mb8">{{ assessment?.name }}</h4>
+                <div class="fsmall">{{ assessment?.description }}</div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
+        <button mat-button [matMenuTriggerFor]="beforeMenu" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}">Assessment Actions</button>
+        <mat-menu #beforeMenu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="handleAssignStudent()">Assign assessment</button>
+            <button mat-menu-item (click)="handleFBAssessment('abort')">Abort assessment</button>
+            <button mat-menu-item (click)="handleFBAssessment('submit')">Submit for evaluation</button>
+        </mat-menu>
+    </div> -->
+</div>
+<nav mat-tab-nav-bar>
+    <a mat-tab-link *ngFor="let link of navLinks"
+     (click)="activeLink = link"
+     [active]="activeLink == link"> {{link}} </a>
+    <a mat-tab-link disabled>Disabled Link</a>
+    <a mat-tab-link
+       (click)="navigateToLink('pendingForSubmissionll')"
+       [active]="activeLink == 'pendingForSubmission'"> Pending for submission </a>
+    <a mat-tab-link
+       (click)="navigateToLink('all')"
+       [active]="activeLink == 'all'"> All </a>
+</nav>
+<router-outlet></router-outlet>
