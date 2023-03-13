@@ -32,3 +32,4 @@ export * from './content-editors/new-collection-editor/new-collection-editor.com
 export * from './assessments/assessments.component';
 export * from './assessments/assessments-list/assessment-list.component';
 export * from './assessments/students-list/students-list.component';
+export * from './assign-assessments/assign-assessments.component';

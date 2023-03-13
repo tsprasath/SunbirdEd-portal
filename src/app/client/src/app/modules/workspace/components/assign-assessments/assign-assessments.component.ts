@@ -27,7 +27,7 @@ export class AssignAssessmentsComponent implements OnInit, OnDestroy {
 
     constructor(
       activatedRoute: ActivatedRoute,
-      route: Router,
+      private router: Router,
       private location: Location,
     ) { 
       const routerStateObj: any = this.location.getState();
@@ -35,20 +35,27 @@ export class AssignAssessmentsComponent implements OnInit, OnDestroy {
       this.navLinks = [
         {
             label: 'Pending for Submission',
-            link: '/pendingForSubmission/1',
+            path: '/pendingForSubmission/1',
             index: 0
         }, {
             label: 'All',
-            link: '/all/1',
+            path: '/all/1',
             index: 1
         }
     ];
+    this.activeLink= "/all/1";
     }
 
     ngOnInit() { }
 
     navigateToLink(selectedLink: string) {
-      
+      this.activeLink = selectedLink;
+      this.router.navigate(['workspace/content/assessments/assign'+ selectedLink], { state: {assessment: this.assessment} });
+    }
+
+    navigateToAssessments()  {
+      const routerStateObj: any = this.location.getState();
+      this.router.navigate(['workspace/content/assessments/list', routerStateObj?.pageNumber]);
     }
 
     ngOnDestroy(): void {

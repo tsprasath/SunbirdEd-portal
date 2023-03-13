@@ -16,25 +16,10 @@
             </div>
         </div>
     </div>
-    <!-- <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6 d-flex flex-ai-center flex-jc-flex-end">
-        <button mat-button [matMenuTriggerFor]="beforeMenu" class="sb-btn sb-btn-primary sb-btn-normal sb-btn-border" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}">Assessment Actions</button>
-        <mat-menu #beforeMenu="matMenu" xPosition="before">
-            <button mat-menu-item (click)="handleAssignStudent()">Assign assessment</button>
-            <button mat-menu-item (click)="handleFBAssessment('abort')">Abort assessment</button>
-            <button mat-menu-item (click)="handleFBAssessment('submit')">Submit for evaluation</button>
-        </mat-menu>
-    </div> -->
 </div>
-<nav mat-tab-nav-bar>
+<nav mat-tab-nav-bar mat-align-tabs="center">
     <a mat-tab-link *ngFor="let link of navLinks"
-     (click)="activeLink = link"
-     [active]="activeLink == link"> {{link}} </a>
-    <a mat-tab-link disabled>Disabled Link</a>
-    <a mat-tab-link
-       (click)="navigateToLink('pendingForSubmissionll')"
-       [active]="activeLink == 'pendingForSubmission'"> Pending for submission </a>
-    <a mat-tab-link
-       (click)="navigateToLink('all')"
-       [active]="activeLink == 'all'"> All </a>
+     (click)="navigateToLink(link.path)"
+     [active]="activeLink === link.path"> {{link.label}} </a>
 </nav>
 <router-outlet></router-outlet>
