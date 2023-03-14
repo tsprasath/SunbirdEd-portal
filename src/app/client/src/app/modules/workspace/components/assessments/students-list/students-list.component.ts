@@ -433,15 +433,15 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.courseBatchService.enrollUsersToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
-                this.toasterService.success(this.resourceService.messages.smsg.m0036);
+                this.toasterService.success(this.resourceService.messages.smsg.m0099);
                 this.disableAssessmentAction = true;
                 _.compact(_.map(this.allStudents, (student) =>  {
                     userIds.forEach(ids=>{
-                        if(student == ids){
+                        if(student.id == ids){
                           student.assessmentAssigned = true
                         }
                     })
-                    student.assessmentAssigned = true
+                    // student.assessmentAssigned = true
                 }))
                   
                 //student.assessmentAssigned

@@ -208,4 +208,13 @@ export class CourseBatchService {
     }
     return this.learnerService.post(option)
   }
+  
+  submitforEval(request){
+   const option = {
+    url: this.configService.urlConFig.URLS.COURSE.SUBMIT_FOR_EVAL,
+    data: request
+   }
+   return this.learnerService.post(option)
+  }
+
 }

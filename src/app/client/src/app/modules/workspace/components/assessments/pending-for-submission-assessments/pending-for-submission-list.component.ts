@@ -539,7 +539,8 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userIds: []
+                userIds: [],
+                comment:this.feedbackForm.value.feedback
             }
         };
         if(this.isAbortForm){
@@ -549,9 +550,21 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 };
             }));
             requestBody.request.userIds = userIds;
+            console.log(requestBody.request.userIds)
             this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
+                this.toasterService.success(this.resourceService.messages.smsg.m00101)
               console.log('resData',res)
+              this.disableAbortAction = true
+              _.compact(_.map(this.allStudents, (student) =>  {
+                userIds.forEach(ids=>{
+                    if(student.id == ids){
+                      student.assessmentAssigned = false
+                      this.getAssessmentStatus(student)
+                    }
+                })
+                // student.assessmentAssigned = true
+            }))
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
@@ -563,9 +576,20 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
                 if (student?.assessmentCompleted) {
                     return student.id
-                };
+                };  
             }));
             requestBody.request.userIds = userIds;
+            this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+                this.toasterService.success(this.resourceService.messages.smsg.m00102 )
+                console.log('ssss',res)
+            },(err) => {
+                if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+                } else {
+                    this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+                }
+            });
         }
        
         console.log('rB',requestBody);
