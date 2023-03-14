@@ -1,44 +1,52 @@
 
-import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { combineLatest } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
-import { SuiModalService, ModalTemplate } from 'ng2-semantic-ui-v9';
+import { SuiModalService } from 'ng2-semantic-ui-v9';
 import { IImpressionEventInput } from '@sunbird/telemetry';
-import { SearchService, UserService, ISort, FrameworkService } from '@sunbird/core';
-import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService } from '@sunbird/shared';
+import { SearchService, UserService, ISort, FrameworkService, LearnerService } from '@sunbird/core';
+import { CourseBatchService } from '@sunbird/learn';
+import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, NavigationHelperService } from '@sunbird/shared';
 
 import { WorkSpace } from '../../../classes/workspace';
 import { WorkSpaceService } from '../../../services';
+
 @Component({
-    selector: 'app-assessment-list',
-    templateUrl: './assessment-list.component.html',
-    styleUrls: ['./assessment-list.component.scss']
+    selector: 'app-result-evaluation-all-list',
+    templateUrl: './all-list.component.html',
+    styleUrls: ['./all-list.component.scss']
 })
 
-export class AssessmentListComponent extends WorkSpace implements OnInit, AfterViewInit, OnDestroy {
-
-    @ViewChild('modalTemplate')
-    public modalTemplate: ModalTemplate<{ data: string }, string, string>;
+export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit, AfterViewInit, OnDestroy {
 
     /**
-     * To navigate to other pages
-     */
-    route: Router;
+     * state for content editior
+    */
+    state: string;
+
 
     /**
      * To send activatedRoute.snapshot to router navigation
-     * service for redirection 
+     * service for redirection to draft  component
     */
     private activatedRoute: ActivatedRoute;
 
     /**
-     * Contains list of assessments submitted for result evaluation
+     * Contains unique contentIds id
     */
-    allAssessments: Array<IContents> = [];
+    contentIds: string;
+
+    /**
+     * Contains list of students
+    */
+    allStudents: any[] = [];
 
     /**
      * To show / hide loader
@@ -56,6 +64,16 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
     noResult = false;
 
     /**
+     * lock popup data for locked contents
+    */
+    lockPopupData: object;
+
+    /**
+     * To show content locked modal
+    */
+    showLockedContentModal = false;
+
+    /**
      * To show / hide error
     */
     showError = false;
@@ -66,7 +84,7 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
     noResultMessage: INoResultMessage;
 
     /**
-      * For showing pagination on assesssment list
+      * For showing pagination on draft list
     */
     private paginationService: PaginationService;
 
@@ -76,12 +94,12 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
     public config: ConfigService;
 
     /**
-    * Contains page limit of assessment list
+    * Contains page limit of inbox list
     */
     pageLimit: number;
 
     /**
-    * Current page number of assessment list
+    * Current page number of inbox list
     */
     pageNumber = 1;
 
@@ -161,15 +179,24 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
     */
     public collectionData: Array<any>;
 
+    participantsList: any[] = [];
+    isChecked: boolean = false;
+    enableFeedback: boolean = false;
+    feedbackText: string = '';
+    disableAssessmentAction: boolean = true;
+    checkedArray: string[] = [];
+    maxCount:number = 250
+
     /**
      * To show/hide collection modal
      */
     public collectionListModal = false;
     public isQuestionSetFilterEnabled: boolean;
+    private destroySubject$ = new Subject();
 
     /**
       * Constructor to create injected service(s) object
-      Default method of AssessmentList Component class
+      Default method of Draft Component class
       * @param {SearchService} SearchService Reference of SearchService
       * @param {UserService} UserService Reference of UserService
       * @param {Router} route Reference of Router
@@ -183,32 +210,44 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
         public navigationhelperService: NavigationHelperService,
         public workSpaceService: WorkSpaceService,
         public frameworkService: FrameworkService,
+        private router: Router,
+        private location: Location,
         paginationService: PaginationService,
         activatedRoute: ActivatedRoute,
-        route: Router,
         userService: UserService,
         toasterService: ToasterService,
         resourceService: ResourceService,
         config: ConfigService,
-        public modalService: SuiModalService) {
+        public learnerService: LearnerService,
+        public modalService: SuiModalService,
+        private courseBatchService: CourseBatchService) {
+
         super(searchService, workSpaceService, userService);
         this.paginationService = paginationService;
-        this.route = route;
         this.activatedRoute = activatedRoute;
         this.toasterService = toasterService;
         this.resourceService = resourceService;
         this.config = config;
+        this.state = 'allcontent';
         this.loaderMessage = {
-            'loaderMessage': this.resourceService?.messages?.stmsg?.m0110,
+            'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
     }
 
     ngOnInit() {
+        this.workSpaceService.questionSetEnabled$
+            .subscribe((response: any) => {
+                this.isQuestionSetFilterEnabled = response.questionSetEnablement;
+            });
+
+        this.filterType = this.config.appConfig.allmycontent.filterType;
+        this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
+
         combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(
                 debounceTime(10),
-                map(([params, queryParams]) => ({ params, queryParams }))
+                map(([params, queryParams]) => ({ params, queryParams }) )
             )
             .subscribe(bothParams => {
                 if (bothParams.params.pageNumber) {
@@ -216,7 +255,7 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
                 }
                 this.queryParams = bothParams.queryParams;
                 this.query = this.queryParams['query'];
-                this.fecthAllAssessments(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                this.getParticipantsList(bothParams);                
             });
     }
 
@@ -238,43 +277,72 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
         });
     }
 
+    getParticipantsList(bothParams): void {
+        const batchDetails = {
+            "request": {
+                "batch": {
+                    "batchId": "01373435756892979223"
+                }
+            }
+        };
+
+        this.courseBatchService.getParticipantList(batchDetails)
+            .pipe(takeUntil(this.destroySubject$))
+            .subscribe((data) => {
+                this.participantsList = data;
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+            }, (err: ServerResponse) => {
+                this.showLoader = false;
+                this.noResult = false;
+                this.showError = true;
+                this.toasterService.error(this.resourceService.messages.fmsg.m0081);
+            });
+    }
+
     /**
-    * This method to make an api call to get all assessments submitted for result evaluation with page No and offset
+    * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
-    fecthAllAssessments(limit: number, pageNumber: number, bothParams) {
+    fecthAllContent(limit: number, pageNumber: number, bothParams) {
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
             const sort_by = bothParams.queryParams.sort_by;
             const sortType = bothParams.queryParams.sortType;
             this.sort = {
                 [sort_by]: _.toString(sortType)
-            };
+            };  
         } else {
             this.sort = { lastUpdatedOn: this.config.appConfig.WORKSPACE.lastUpdatedOn };
         }
-        const preStatus = ['Live']
-        const primaryCategories = _.compact(_.concat(this.frameworkService['_channelData'].contentPrimaryCategories, this.frameworkService['_channelData'].collectionPrimaryCategories));
+
         const searchParams = {
             filters: {
-                status: bothParams.queryParams.status ? bothParams.queryParams.status : preStatus,
-                // tslint:disable-next-line:max-line-length
-                primaryCategory: _.get(bothParams, 'queryParams.primaryCategory') || (!_.isEmpty(primaryCategories) ? primaryCategories : this.config.appConfig.WORKSPACE.Assessments.primaryCategories),
-                subject: bothParams.queryParams.subject,
-                medium: bothParams.queryParams.medium,
-                gradeLevel: bothParams.queryParams.gradeLevel
+                "roles" : [],
+                "profileUserType.type" : "student"  
             },
             limit: limit,
             offset: (pageNumber - 1) * (limit),
+            pageNumber: this.pageNumber || 1,
             query: _.toString(bothParams.queryParams.query),
-            sort_by: this.sort
+            sort_by: this.sort,
+            type: 'studentList'
         };
 
         this.search(searchParams)
+            .pipe(takeUntil(this.destroySubject$))
             .subscribe((data: ServerResponse) => {
-                if (data.result.count && (!_.isEmpty(data.result.content) || (!_.isEmpty(data.result.content)))) {
-                    this.allAssessments = data.result.content;
-                    this.totalCount = data.result.count;
-                    this.pager = this.paginationService.getPager(data.result.count, pageNumber, limit);
+                if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
+                    this.allStudents = data.result.response.content;
+                    this.allStudents.forEach((student) => {
+                        if(this.participantsList.includes(student.id)){
+                            student['assessmentAssigned'] = true;
+                            student['checked'] = true;
+                        } else {
+                            student['assessmentAssigned'] = false;
+                            student['checked'] = false;
+                        }
+                    });
+                    this.totalCount = data.result.response.count;
+                    this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
                     this.showLoader = false;
                     this.noResult = false;
                 } else {
@@ -289,8 +357,27 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
                 this.showLoader = false;
                 this.noResult = false;
                 this.showError = true;
-                this.toasterService.error(this.resourceService.messages?.fmsg?.m0081);
+                this.toasterService.error(this.resourceService.messages.fmsg.m0081);
             });
+    }
+
+    /**
+     * This method helps to navigate to different pages.
+     * If page number is less than 1 or page number is greater than total number
+     * of pages is less which is not possible, then it returns.
+     *
+     * @param {number} page Variable to know which page has been clicked
+     *
+     * @example handleNavigateToPage(1)
+     */
+    handleNavigateToPage(page: number): undefined | void {
+        if (page < 1 || page > this.pager.totalPages) {
+            return;
+        }
+        this.pageNumber = page;
+        this.router.navigate(['workspace/content/resultEvaluation/all', this.pageNumber], { queryParams: this.queryParams });
+        this.isChecked = false;
+        this.disableAssessmentAction = true;     
     }
 
     inview(event) {
@@ -311,24 +398,44 @@ export class AssessmentListComponent extends WorkSpace implements OnInit, AfterV
         this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
-    /**
-     * This method helps to navigate to different pages.
-     * If page number is less than 1 or page number is greater than total number
-     * of pages is less which is not possible, then it returns.
-     *
-     * @param {number} page Variable to know which page has been clicked
-     *
-     * @example navigateToPage(1)
-     */
-    navigateToPage(page: number): undefined | void {
-        if (page < 1 || page > this.pager.totalPages) {
+
+    handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
+        if (studentObj?.id) {
+            this.checkUncheck($event, studentObj);
             return;
         }
-        this.pageNumber = page;
-        this.route.navigate(['workspace/content/resultEvaluation', this.pageNumber], { queryParams: this.queryParams });
+        
+        this.allStudents.forEach((obj) => {
+            if(!obj.assessmentAssigned){
+                this.checkUncheck($event, obj);
+            }
+           
+        })
+    }
+
+    checkUncheck($event: MatCheckboxChange, obj: any): void {
+        if ($event.checked) {
+            obj['checked'] = true;
+            this.shiftUnShiftArray('push', obj);
+        } else {
+            obj['checked'] = false;
+            this.shiftUnShiftArray('pop', obj);
+        }
+
+        this.disableAssessmentAction = this.checkedArray.length ? false : true;
+    }
+
+    shiftUnShiftArray(flag: string, obj: any): void {
+        if (flag === 'push') {
+            if (!this.checkedArray.includes(obj.id)) {
+                this.checkedArray.push(obj.id);
+            }
+        } else {
+            this.checkedArray.splice(this.checkedArray.indexOf(obj.id), 1); 
+        }
     }
 
     ngOnDestroy(): void {
-
+        this.destroySubject$.unsubscribe();
     }
 }

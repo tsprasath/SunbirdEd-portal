@@ -8,7 +8,8 @@ import {
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
   AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, 
-  AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent, PendingForSubmissionListComponent, ResultEvaluationComponent, AssessmentListComponent
+  AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent, PendingForSubmissionListComponent, ResultEvaluationComponent,
+  ResultEvalutionAllListComponent, ResultEvalutionPendingListComponent
 } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
@@ -325,7 +326,7 @@ const routes: Routes = [
         }
       },
       {
-        path: 'resultEvaluation/:pageNumber', component: ResultEvaluationComponent, canActivate: [AuthGuard],
+        path: 'resultEvaluation', component: ResultEvaluationComponent, canActivate: [AuthGuard],
         data: {
           telemetry: {
             env: telemetryEnv, pageid: 'workspace-result-evaluation', subtype: 'paginate', uri: 'workspace/content/resultEvaluation',
@@ -334,15 +335,24 @@ const routes: Routes = [
         },
         children: [
           {
-            path: '', component: AssessmentListComponent,
+            path: 'all/:pageNumber', component: ResultEvalutionAllListComponent,
             data: {
               telemetry: {
-                env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list',
+                env: telemetryEnv, pageid: 'workspace-content-result-evaluation-all', subtype: 'paginate', uri: 'workspace/content/resultEvaluation/all/1',
                 type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
               },
             }
-          }
-        ]
+          },
+          {
+            path: 'pendingForEvaluation/:pageNumber', component:  ResultEvalutionPendingListComponent,
+            data: {
+              telemetry: {
+                env: telemetryEnv, pageid: 'workspace-content-result-evaluation-pending', subtype: 'paginate', uri: 'workspace/content/resultEvaluation/pendingForEvaluation/1',
+                type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+              },
+            }
+          },
+        ],
       },
     ]
   },

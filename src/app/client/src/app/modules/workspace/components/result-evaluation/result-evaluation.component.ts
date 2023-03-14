@@ -9,12 +9,39 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 
 export class ResultEvaluationComponent implements OnInit, OnDestroy {
+   /**
+     * to store all nav links
+    */
+    navLinks: any[];
+    /**
+     * to store selected link value
+    */
+    activeLink: string;
+
     constructor(
       activatedRoute: ActivatedRoute,
-      route: Router,
-    ) { }
+      private router: Router,
+    ) { 
+      this.navLinks = [
+        {
+            label: 'Pending',
+            path: '/pendingForEvaluation/1',
+            index: 0
+        }, {
+            label: 'All',
+            path: '/all/1',
+            index: 1
+        }
+    ];
+    this.activeLink= "/all/1";
+    }
 
     ngOnInit() { }
+
+    navigateToLink(selectedLink: string) {
+      this.activeLink = selectedLink;
+      this.router.navigate(['workspace/content/resultEvaluation'+ selectedLink]);
+    }
 
     ngOnDestroy(): void {
 

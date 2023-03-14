@@ -76,3 +76,18 @@
         margin: 4px 0px;
     }
 }
+
+::ng-deep.custom-select {
+    .mat-checkbox-layout {
+        margin: 0rem !important;
+    }
+}
+
+.mat-button.sb-btn {
+    line-height: 20px;
+}
+
+.sb-form-control {
+    resize: none;
+}
+
