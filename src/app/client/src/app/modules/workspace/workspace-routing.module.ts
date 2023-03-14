@@ -7,8 +7,8 @@ import {
   BatchListComponent, BatchPageSectionComponent, UpdateBatchComponent,
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
-  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, AssessmentsListComponent, StudentsListComponent, ResultEvaluationComponent,
-  AssessmentListComponent
+  AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, 
+  AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent, PendingForSubmissionListComponent, ResultEvaluationComponent, AssessmentListComponent
 } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
@@ -244,36 +244,55 @@ const routes: Routes = [
         }
       },
       {
-        path: 'assessments', component: AssessmentsComponent, canActivate: [AuthGuard],
+        path: 'assessments', pathMatch: 'full', redirectTo: 'assessments/list/1'
+      },
+      {
+        path: 'assessments/list/:pageNumber', component: AssessmentsListComponent,
         data: {
           telemetry: {
-            env: telemetryEnv, pageid: 'workspace-content-assessments', subtype: 'paginate', uri: 'workspace/content/assessments',
+            env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list/1',
             type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
-          }, roles: 'nodalOfficer',
+          },
+        }
+      },
+      {
+        path: 'assessments/assign/:pageNumber', component: StudentsListComponent,
+        data: {
+          telemetry: {
+            env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign/1',
+            type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+          },
+        }
+      },
+      {
+        path: 'assessments/assign', component: AssignAssessmentsComponent,
+        data: {
+          telemetry: {
+            env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign/1',
+            type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
+          },
         },
         children: [
           {
-            path: '', pathMatch: 'full', redirectTo: 'list'
-          },
-          {
-            path: 'list', component: AssessmentsListComponent,
+            path: 'all/:pageNumber', component: StudentsListComponent,
             data: {
               telemetry: {
-                env: telemetryEnv, pageid: 'workspace-content-assessmentsList', subtype: 'paginate', uri: 'workspace/content/assessments/list',
+                env: telemetryEnv, pageid: 'workspace-content-assessement-assign-all', subtype: 'paginate', uri: 'workspace/content/assessments/assign/all/1',
                 type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
               },
             }
           },
           {
-            path: 'assign', component: StudentsListComponent,
+            path: 'pendingForSubmission/:pageNumber', component: PendingForSubmissionListComponent,
             data: {
               telemetry: {
-                env: telemetryEnv, pageid: 'workspace-content-studentsList', subtype: 'paginate', uri: 'workspace/content/assessments/assign',
+                env: telemetryEnv, pageid: 'workspace-content-assessement-assign-pending-for-submission', subtype: 'paginate', uri: 'workspace/content/assessments/assign/pendingForSubmission/1',
                 type: 'list', mode: 'view', object: { type: objectType, ver: '1.0' }
               },
             }
-          }
+          },
         ]
+
       },
       {
         path: 'alltextbooks/:pageNumber', component: AllTextbooksComponent, canActivate: [AuthGuard],

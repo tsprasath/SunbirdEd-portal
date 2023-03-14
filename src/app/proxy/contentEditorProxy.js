@@ -218,23 +218,6 @@ module.exports = function (app) {
       userResDecorator: userResDecorator
     })
   )
-  
-  app.delete([
-    '/action/questionset/v1/retire/:QuestionSet_Id'
-    ],
-    isAPIWhitelisted.isAllowed(),
-    addCorsHeaders,
-    proxyUtils.verifyToken(),
-    proxy(learnerURL, {
-      limit: reqDataLimitOfContentUpload,
-      proxyReqOptDecorator: proxyUtils.decorateRequestHeaders(learnerURL),
-      proxyReqPathResolver: function (req) {
-        let originalUrl = req.originalUrl.replace('/action/', '') 
-        return require('url').parse(learnerURL + originalUrl).path
-      },
-      userResDecorator: userResDecorator
-    })
-  )
 
   // Question & QuestionSet API's END
 

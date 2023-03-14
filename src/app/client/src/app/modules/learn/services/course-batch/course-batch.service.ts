@@ -193,11 +193,19 @@ export class CourseBatchService {
     return certificateDescription;
   }
 
-  addCandidateToBatch(request): Observable<any> {
+  enrollUsersToBatch(request): Observable<any> {
     const option = {
-      url: this.configService.urlConFig.URLS.COURSE.ENROLL_USER_TO_BATCH,
+      url: this.configService.urlConFig.URLS.COURSE.ENROLL_USERS_TO_COURSE,
       data: request
     };
     return this.learnerService.post(option);
+  }
+
+  unenrollUsersToBatch(request):Observable<any> {
+    const option = {
+      url: this.configService.urlConFig.URLS.COURSE.UNENROLL_USERS_TO_COURSE,
+      data:request
+    }
+    return this.learnerService.post(option)
   }
 }

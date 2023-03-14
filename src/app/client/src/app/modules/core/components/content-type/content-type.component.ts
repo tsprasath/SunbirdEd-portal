@@ -195,7 +195,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
         }
       });  
     }
-
+    
   }
 
   processFormData(formData) {
