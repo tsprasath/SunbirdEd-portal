@@ -17,7 +17,10 @@ import {
   UpforreviewContentplayerComponent, FlagConentplayerComponent, ReviewsubmissionsContentplayerComponent,
   PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
   AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent,
-  CollaborationContentFilterComponent, WorkspaceContentFilterComponent, AllTextbooksComponent, NewCollectionEditorComponent, AssessmentsComponent, AssessmentsListComponent, StudentsListComponent
+  CollaborationContentFilterComponent, WorkspaceContentFilterComponent, 
+  AllTextbooksComponent, NewCollectionEditorComponent, 
+  AssessmentsListComponent, StudentsListComponent, AssignAssessmentsComponent,
+  PendingForSubmissionListComponent
 } from './components';
 import { DateFilterXtimeAgoPipe } from './pipes';
 import { NgInviewModule } from 'angular-inport';
@@ -28,6 +31,7 @@ import { PlayerHelperModule } from '@sunbird/player-helper';
 import { ContentSearchModule } from '@sunbird/content-search';
 import { CollectionEditorLibraryModule } from '@project-sunbird/sunbird-collection-editor-v9';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule} from '@angular/material/menu';
 
 @NgModule({
   imports: [
@@ -45,7 +49,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     PlayerHelperModule,
     ContentSearchModule,
     CollectionEditorLibraryModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatMenuModule
   ],
   declarations: [WorkspaceComponent, WorkspacesidebarComponent, DateFilterXtimeAgoPipe,
     CreateContentComponent, DraftComponent, ReviewSubmissionsComponent,
@@ -68,9 +73,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CollaborationContentFilterComponent,
     WorkspaceContentFilterComponent,
     NewCollectionEditorComponent,
-    AssessmentsComponent,
     AssessmentsListComponent,
-    StudentsListComponent
+    StudentsListComponent,
+    AssignAssessmentsComponent,
+    PendingForSubmissionListComponent
   ],
   providers: [WorkSpaceService, EditorService, BatchService, ReviewCommentsService, DateFilterXtimeAgoPipe]
 })

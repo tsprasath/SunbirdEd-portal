@@ -183,6 +183,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
       this.contentTypes[nodalIndex].isEnabled = false
     }
 
+
     if(!this.userService.loggedIn) {
       _.forEach(this.contentTypes, (contentType) => {
         if(contentType?.hideForGuestUser) {
@@ -190,7 +191,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
         }
       });  
     }
-
+    
   }
 
   processFormData(formData) {

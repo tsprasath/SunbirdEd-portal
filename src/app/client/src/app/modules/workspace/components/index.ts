@@ -29,6 +29,7 @@ export * from './batch-page-section/batch-page-section.component';
 export * from './workspace-content-filter/workspace-content-filter.component';
 export * from './all-textbooks/all-textbooks.component';
 export * from './content-editors/new-collection-editor/new-collection-editor.component';
-export * from './assessments/assessments.component';
 export * from './assessments/assessments-list/assessment-list.component';
 export * from './assessments/students-list/students-list.component';
+export * from './assign-assessments/assign-assessments.component';
+export * from './assessments/pending-for-submission-assessments/pending-for-submission-list.component'

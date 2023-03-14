@@ -88,7 +88,7 @@ export class WorkSpaceService {
         }
       }
     };
-    return this.actionService.delete(option);
+    return this.publicDataService.delete(option);
   }
 
 

@@ -260,7 +260,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     /**
-    * This method sets the make an api call to get all UpForReviewContent with page No and offset
+    * This method sets the make an api call to get all PIAA assessments with page No and offset
     */
     fecthAllAssessments(limit: number, pageNumber: number, bothParams) {
         this.showLoader = true;
@@ -315,7 +315,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     handleAssignAssessment(assessment): void {
-        this.route.navigate(['/workspace/content/assessments/assign'], { state: {assessment: assessment} });
+        this.route.navigate(['/workspace/content/assessments/assign/all/1'], { state: {assessment: assessment, pageNumber: this.pageNumber} });
     }
 
     inview(event) {
@@ -350,7 +350,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
             return;
         }
         this.pageNumber = page;
-        this.route.navigate(['workspace/content/assessments/list', this.pageNumber], { queryParams: this.queryParams });
+        this.route.navigate(['workspace/content/assessments/list', this.pageNumber], { queryParams: this.queryParams });        
     }
 
     ngOnDestroy(): void {
