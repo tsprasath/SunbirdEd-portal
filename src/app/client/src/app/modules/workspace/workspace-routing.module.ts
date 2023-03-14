@@ -8,7 +8,7 @@ import {
   UpforreviewContentplayerComponent, ReviewsubmissionsContentplayerComponent,
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
   AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, 
-  AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent
+  AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent, PendingForSubmissionListComponent
 } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
@@ -283,7 +283,7 @@ const routes: Routes = [
             }
           },
           {
-            path: 'pendingForSubmission/:pageNumber', component: StudentsListComponent,
+            path: 'pendingForSubmission/:pageNumber', component: PendingForSubmissionListComponent,
             data: {
               telemetry: {
                 env: telemetryEnv, pageid: 'workspace-content-assessement-assign-pending-for-submission', subtype: 'paginate', uri: 'workspace/content/assessments/assign/pendingForSubmission/1',
