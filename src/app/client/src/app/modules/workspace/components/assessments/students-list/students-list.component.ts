@@ -252,6 +252,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     ngOnInit() {
+        console.log('as',this.assessment)
         this.workSpaceService.questionSetEnabled$
             .subscribe((response: any) => {
                 this.isQuestionSetFilterEnabled = response.questionSetEnablement;
@@ -437,7 +438,18 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.courseBatchService.enrollUsersToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
-                this.toasterService.success(this.resourceService.messages.smsg.m0034);
+                this.toasterService.success(this.resourceService.messages.smsg.m0036);
+                this.disableAssessmentAction = true;
+                _.compact(_.map(this.allStudents, (student) =>  {
+                    userIds.forEach(ids=>{
+                        if(student == ids){
+                          student.assessmentAssigned = true
+                        }
+                    })
+                    student.assessmentAssigned = true
+                }))
+                  
+                //student.assessmentAssigned
             }, (err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
