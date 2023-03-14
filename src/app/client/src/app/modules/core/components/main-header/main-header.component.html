@@ -281,7 +281,7 @@
                   <ngx-avatar aria-haspopup="true" aria-controls="overlaySidebarID" *ngIf='!userProfile && guestUser' tabindex="0" (click)="toggleSideMenu(true)"
                     [style]="avtarDesktopStyle" [size]="38" initialsSize="1" name="{{guestUser?.formatedName || 'Guest'}}"
                     [attr.aria-label]="'Welcome ' + (guestUser?.formatedName || 'Guest') + ', ' + 'Click here to continue to your profile'"
-                    [title]="'Welcome ' + (guestUser?.formatedName || 'Guest') + ', ' + 'Click here to continue to your profile'">
+                    [title]="'Welcome ' + (guestUser?.formatedName || 'Guest') + ', ' + 'Click here to login and continue to your profile'">
                   </ngx-avatar>
                   <ngx-avatar aria-haspopup="true" aria-controls="overlaySidebarID" *ngIf='userProfile' tabindex="0" (click)="toggleSideMenu(true)"
                     [style]="SbtavtarDesktopStyle" [size]="48" initialsSize="1" name="{{userProfile?.firstName}}"
