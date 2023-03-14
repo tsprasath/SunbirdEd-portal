@@ -18,12 +18,9 @@ import {
   PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
   AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent,
   CollaborationContentFilterComponent, WorkspaceContentFilterComponent, 
-  AllTextbooksComponent, 
-  NewCollectionEditorComponent, 
-  AssessmentsComponent, 
-  AssessmentsListComponent, 
-  StudentsListComponent,
-  AssignAssessmentsComponent,
+  AllTextbooksComponent, NewCollectionEditorComponent, 
+  AssessmentsListComponent, StudentsListComponent, AssignAssessmentsComponent,
+  PendingForSubmissionListComponent
 } from './components';
 import { DateFilterXtimeAgoPipe } from './pipes';
 import { NgInviewModule } from 'angular-inport';
@@ -76,10 +73,10 @@ import { MatMenuModule} from '@angular/material/menu';
     CollaborationContentFilterComponent,
     WorkspaceContentFilterComponent,
     NewCollectionEditorComponent,
-    AssessmentsComponent,
     AssessmentsListComponent,
     StudentsListComponent,
-    AssignAssessmentsComponent
+    AssignAssessmentsComponent,
+    PendingForSubmissionListComponent
   ],
   providers: [WorkSpaceService, EditorService, BatchService, ReviewCommentsService, DateFilterXtimeAgoPipe]
 })

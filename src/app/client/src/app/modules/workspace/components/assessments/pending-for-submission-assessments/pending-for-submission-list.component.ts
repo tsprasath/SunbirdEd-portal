@@ -20,22 +20,19 @@ import { WorkSpaceService } from './../../../services';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
-    selector: 'app-students-list',
-    templateUrl: './students-list.component.html',
-    styleUrls: ['./students-list.component.scss']
+    selector: 'app-pending-for-submission-list',
+    templateUrl: './pending-for-submission-list.component.html',
+    styleUrls: ['./pending-for-submission-list.component.scss']
 })
 
-export class StudentsListComponent extends WorkSpace implements OnInit, AfterViewInit, OnDestroy {
-
-    @ViewChild('modalTemplate')
-    public modalTemplate: ModalTemplate<{ data: string }, string, string>;
+export class PendingForSubmissionListComponent extends WorkSpace implements OnInit, AfterViewInit, OnDestroy {
 
     /**
      * state for content editior
     */
     state: string;
 
-    abortForm:FormGroup
+    feedbackForm:FormGroup
 
     /**
      * To send activatedRoute.snapshot to router navigation
@@ -191,9 +188,25 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     participantsList: any[] = [];
     isChecked: boolean = false;
     enableFeedback: boolean = false;
-    feedbackText: string = '';
-    disableAssessmentAction: boolean = true;
-    checkedArray: string[] = [];
+    /**
+    *To store the flag to open abort or submission popup 
+    */
+    isAbortForm: boolean = true;
+    feedbackText: string= '';
+    /**
+    *To store the flag to disable/enable abort button
+    */
+    disableAbortAction: boolean = true;
+
+    /**
+    *To store the flag to disable/enable submit for evaluation button
+    */
+    disableEvaluationAction: boolean = true;
+
+    /**
+    *To store the selected student for submission or abort
+    */
+    selectedStudents: any[] = [];
     maxCount:number = 250
 
     /**
@@ -246,13 +259,12 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         };
         this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
 
-        this.abortForm = new FormGroup({
+        this.feedbackForm = new FormGroup({
             feedback: new FormControl('',Validators.required),
           });   
     }
 
     ngOnInit() {
-        console.log('as',this.assessment)
         this.workSpaceService.questionSetEnabled$
             .subscribe((response: any) => {
                 this.isQuestionSetFilterEnabled = response.questionSetEnablement;
@@ -350,12 +362,13 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
                     this.allStudents.forEach((student) => {
+                        student['checked'] = false;
+                        student['assessmentAssigned'] = false;
+                        student['assessmentCompleted']= false;
                         if(this.participantsList.includes(student.id)){
                             student['assessmentAssigned'] = true;
-                            student['checked'] = true;
                         } else {
                             student['assessmentAssigned'] = false;
-                            student['checked'] = false;
                         }
                     });
                     this.totalCount = data.result.response.count;
@@ -392,9 +405,9 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             return;
         }
         this.pageNumber = page;
-        this.router.navigate(['workspace/content/assessments/assign', this.pageNumber], { queryParams: this.queryParams });
+        this.router.navigate(['workspace/content/assessments/assign/pendingForSubmission', this.pageNumber], { queryParams: this.queryParams });
         this.isChecked = false;
-        this.disableAssessmentAction = true;     
+        this.disableAbortAction = true;     
     }
 
     inview(event) {
@@ -433,18 +446,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.courseBatchService.enrollUsersToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
-                this.toasterService.success(this.resourceService.messages.smsg.m0036);
-                this.disableAssessmentAction = true;
-                _.compact(_.map(this.allStudents, (student) =>  {
-                    userIds.forEach(ids=>{
-                        if(student == ids){
-                          student.assessmentAssigned = true
-                        }
-                    })
-                    student.assessmentAssigned = true
-                }))
-                  
-                //student.assessmentAssigned
+                this.toasterService.success(this.resourceService.messages.smsg.m0034);
             }, (err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
@@ -474,7 +476,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         }
         
         this.allStudents.forEach((obj) => {
-            if(!obj.assessmentAssigned){
+            if(obj.assessmentAssigned || obj.assessmentCompleted){
                 this.checkUncheck($event, obj);
             }
            
@@ -490,63 +492,97 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             this.shiftUnShiftArray('pop', obj);
         }
 
-        this.disableAssessmentAction = this.checkedArray.length ? false : true;
+        if (_.findIndex(this.selectedStudents,  {assessmentAssigned: true}) !== -1) {
+            this.disableAbortAction = false;
+        }else {
+            this.disableAbortAction = true;
+        }
+
+        if (_.findIndex(this.selectedStudents,  {assessmentCompleted: true}) !== -1) {
+            this.disableEvaluationAction = false;
+        }else {
+            this.disableEvaluationAction = true;
+        }
     }
 
     shiftUnShiftArray(flag: string, obj: any): void {
         if (flag === 'push') {
-            if (!this.checkedArray.includes(obj.id)) {
-                this.checkedArray.push(obj.id);
+            if (_.findIndex(this.selectedStudents,  {id: obj.id}) === -1) {
+                this.selectedStudents.push(obj);
             }
         } else {
-            this.checkedArray.splice(this.checkedArray.indexOf(obj.id), 1); 
+            this.selectedStudents.splice(_.findIndex(this.selectedStudents,  {id: obj.id}), 1); 
         }
     }
 
     handleCloseModal(): void {
         this.enableFeedback = false;
-        console.log('this.enableFeedback - ', this.enableFeedback);
     }
 
-    handleFBAssessment(flag: string): void {
-        this.feedbackText = (flag === 'abort') ? 'Abort assessment' : 'Submit for Evaluation';
+    openFeedbackPopup(flag: string): void {
+        if(flag === 'abort'){
+            this.feedbackText = 'Abort assessment';
+            this.isAbortForm =  true;
+        } else{
+            this.feedbackText =  'Submit for Evaluation';
+            this.isAbortForm =  false;
+        }
         this.enableFeedback = true;
     }
 
     handleSubmitData(modal?): void {
-        console.warn('bbbb',this.abortForm);
+        console.warn('bbbb',this.feedbackForm.value.feedback);
         console.log('modal - ', modal);
+
         const batch = this.assessment.batches[0];
-        const userIds = _.compact(_.map(this.allStudents, (student) =>  {
-            if (student.checked && student['assessmentAssigned']) {
-                return student.id
-            };
-        }))
-        // const userIds = this.allStudents.map((obj) => {
-        //     if (obj.checked && obj['assessmentAssigned']) {
-        //         return obj.id
-        //     };
-        // });
-        const requestBody = {
+        let requestBody = {
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userIds: userIds
+                userIds: []
             }
         };
-        this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
-        .subscribe((res)=>{
-          console.log('resData',res)
-        },(err) => {
-            if (err.error && err.error.params && err.error.params.errmsg) {
-                this.toasterService.error(err.error.params.errmsg);
-            } else {
-                this.toasterService.error(this.resourceService.messages.fmsg.m0103);
-            }
-        })
-        console.log('rB',requestBody)
+        if(this.isAbortForm){
+            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
+                if (student?.assessmentAssigned) {
+                    return student.id
+                };
+            }));
+            requestBody.request.userIds = userIds;
+            this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+              console.log('resData',res)
+            },(err) => {
+                if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+                } else {
+                    this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+                }
+            });
+        } else{
+            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
+                if (student?.assessmentCompleted) {
+                    return student.id
+                };
+            }));
+            requestBody.request.userIds = userIds;
+        }
+       
+        console.log('rB',requestBody);
 
         modal.deny('denied');        
+    }
+
+    getAssessmentStatus(student: any) {
+        let status  = '';
+        if(student?.assessmentAssigned){
+            status=  "Assigned";
+        } else if(student?.assessmentCompleted) {
+            status = "Completed"
+        }else {
+            status=  "Not assigned";
+        }
+        return status;
     }
 
     ngOnDestroy(): void {
