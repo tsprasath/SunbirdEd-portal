@@ -168,8 +168,7 @@
       "GET_REPORTS_METADATA": "course-reports/metadata",
       "ENROLL_USERS_TO_COURSE": "course/v1/admin/bulk/enrol",
       "UNENROLL_USERS_TO_COURSE": "course/v1/admin/bulk/unenrol",
-      "SUBMIT_FOR_EVAL": "v1/course/admin/course/eval"
-
+      "SUBMIT_FOR_EVAL": "course/v1/course/admin/course/eval"
     },
     "CONTENT": {
       "SEARCH": "content/v1/search",
