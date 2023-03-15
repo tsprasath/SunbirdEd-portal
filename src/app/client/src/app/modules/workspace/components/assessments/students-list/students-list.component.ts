@@ -436,6 +436,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                     this.toasterService.error(err.error.params.errmsg);
                 } else {
                     this.toasterService.error(this.resourceService?.messages?.fmsg?.m0104);
+
                 }
             })
     }
