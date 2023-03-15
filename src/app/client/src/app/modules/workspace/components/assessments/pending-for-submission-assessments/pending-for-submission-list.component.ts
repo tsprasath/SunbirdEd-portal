@@ -515,7 +515,8 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         }
     }
 
-    handleCloseModal(): void {
+    closeModal(): void {
+        this.feedbackForm.reset();
         this.enableFeedback = false;
     }
 
@@ -530,9 +531,9 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         this.enableFeedback = true;
     }
 
-    handleSubmitData(modal?): void {
+    handleSubmitData(): void {
         console.warn('bbbb',this.feedbackForm.value.feedback);
-        console.log('modal - ', modal);
+       
 
         const batch = this.assessment.batches[0];
         let requestBody = {
@@ -555,21 +556,23 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00101)
               console.log('resData',res)
-              this.disableAbortAction = true
-              _.compact(_.map(this.allStudents, (student) =>  {
+              this.closeModal();
+              this.disableAbortAction = true;
+              _.forEach(this.allStudents, (student) =>  {
                 userIds.forEach(ids=>{
                     if(student.id == ids){
-                      student.assessmentAssigned = false
-                      this.getAssessmentStatus(student)
+                      student.assessmentAssigned = false;
+                      student.checked = false;
+                      this.getAssessmentStatus(student);
                     }
                 })
                 // student.assessmentAssigned = true
-            }))
+            })
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
                 } else {
-                    this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+                    this.toasterService.error(this.resourceService.messages.fmsg.m0105);
                 }
             });
         } else{
@@ -591,10 +594,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             //     }
             // });
         }
-       
-        console.log('rB',requestBody);
-
-        modal.deny('denied');        
+          
     }
 
     getAssessmentStatus(student: any) {
