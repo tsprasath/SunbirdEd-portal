@@ -515,16 +515,17 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
         }
     }
 
-    handleCloseModal(): void {
+    closeModal(): void {
+        this.feedbackForm.reset();
         this.enableFeedback = false;
     }
 
     openFeedbackPopup(flag: string): void {
         if(flag === 'issue'){
-            this.feedbackText = 'Add reason before issuing the certificate';
+            this.feedbackText = this.resourceService.frmelmnts.lbl.reasonToIssueCert;
             this.isIssueCertificate =  true;
         } else{
-            this.feedbackText =  'Specify the reason to not issue the certificate';
+            this.feedbackText =  this.resourceService.frmelmnts.lbl.reasonToNotIssueCert;
             this.isIssueCertificate =  false;
         }
         this.enableFeedback = true;
@@ -532,8 +533,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
 
     handleSubmitData(modal?): void {
         console.warn('bbbb',this.feedbackForm.value.feedback);
-        console.log('modal - ', modal);
-
         const batch = this.assessment.batches[0];
         let requestBody = {
             request: {
@@ -567,10 +566,8 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             }));
             requestBody.request.userIds = userIds;
         }
-       
-        console.log('rB',requestBody);
 
-        modal.deny('denied');        
+        this.closeModal();     
     }
 
     getAssessmentStatus(student: any) {

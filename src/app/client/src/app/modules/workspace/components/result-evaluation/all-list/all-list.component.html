@@ -20,10 +20,11 @@
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.assessmentName }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.positionAndCompetency }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.date }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalFeedback }}</th>
+            <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalFeedback }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalDetails }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.result }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
+            <th class="one wide"></th>
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
@@ -55,6 +56,14 @@
             </td>
             <td>
                 <div>NA</div>
+            </td>
+            <td class="text-center">
+                <button class="ui default basic compact icon button"
+                    appTelemetryInteract
+                  [telemetryInteractObject]="{id:student?.id}"
+                  [telemetryInteractEdata]="{id:'goToScoreDetails',type:'click',pageid:'result-evaluation-all-list'}">
+                  <i class="right arrow icon"></i>
+                </button>
             </td>
         </tr>
     </tbody>

@@ -13,12 +13,16 @@
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.assessmentName }}</th>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.positionAndCompetency }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.date }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalFeedback }}</th>
+            <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalFeedback }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalDetails }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.result }}</th>
             <th class="one wide text-center">
                 <mat-checkbox (change)="handleCheckBoxChange($event)" [(ngModel)]="isChecked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
             </th>
+            <th class="one wide">
+
+            </th>
+            
         </tr>
     </thead>
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
@@ -50,6 +54,14 @@
             </td>
             <td class="text-center">
                 <mat-checkbox (change)="handleCheckBoxChange($event, student)"  class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [checked]="student.checked" ></mat-checkbox>
+            </td>
+            <td class="text-center">
+                <button class="ui primary basic compact icon button"
+                    appTelemetryInteract
+                  [telemetryInteractObject]="{id:student?.id}"
+                  [telemetryInteractEdata]="{id:'goToScoreDetails',type:'click',pageid:'result-evaluation-pending-list'}">
+                  <i class="right arrow icon"></i>
+                </button>
             </td>
         </tr>
     </tbody>
@@ -86,36 +98,35 @@
     </div> 
 </div>
 
-<sui-modal *ngIf="enableFeedback" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-    class="sb-modal sb-course-modal" #modal (dismissed)="this.enableFeedback = false" [appTelemetryImpression]="telemetryImpression">
-
-    <i class="icon close" (click)="modal.deny('denied');handleCloseModal();" tabindex="0"></i>
-
-    <!-- This section will show as usual creation popup -->
-    <div>
-        <!--Header-->
-        <div class="sb-modal-header">
-            {{ feedbackText }}
-        </div>
-        <!--/Header-->
-
-        <!--Content-->
-        <form [formGroup]="feedbackForm" (ngSubmit)="handleSubmitData(modal)">
-        <div class="sb-modal-content o-y-visible">
-            <textarea class="sb-form-control"  formControlName="feedback" (keydown)="handleKeyDown($event)" placeholder="Enter feedback" maxlength="250" rows="10"></textarea>
-            <small class="mt-4 pull-right sb-color-grey fxsmall counter">{{ maxCount }}
-                {{ resourceService?.frmelmnts?.lbl?.characterleft }}</small>
-        </div>
-        <!--/Content-->
-
-        <!--Actions-->
-        <div class="sb-modal-actions">
-            <button type="submit"  [disabled]="feedbackForm.invalid" [ngClass]="{'sb-btn-disabled': feedbackForm.invalid}" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
-                {{ isIssueCertificate ? 'Issue' : 'Not issue' }}
+<app-modal-wrapper *ngIf="enableFeedback" [config]="{disableClose: false, size: small}" (dismiss)="closeModal()">
+    <ng-template sbModalContent let-data>
+      <div class="sb-modal">
+        <div class="transition ui dimmer page modals active visible">
+          <div class="ui modal transition active visible normal">
+            <button aria-label="close dialog" mat-dialog-close class="mat-close-btn">
+              <span>&times;</span>
             </button>
+            <form [formGroup]="feedbackForm" (ngSubmit)="handleSubmitData(modal)">
+                <div class="sb-modal-header">
+                    {{ feedbackText }}
+                </div>
+                <div class="sb-modal-content o-y-visible">
+                    <textarea class="sb-form-control"  formControlName="feedback" (keydown)="handleKeyDown($event)" placeholder="Enter feedback" maxlength="250" rows="10"></textarea>
+                    <small class="mt-4 pull-right sb-color-grey fxsmall counter">{{ maxCount }}
+                            {{ resourceService?.frmelmnts?.lbl?.characterleft }}</small>
+                </div>
+                <div class="sb-modal-actions">
+                <button button type="submit"  [disabled]="feedbackForm.invalid" [ngClass]="{'sb-btn-disabled': feedbackForm.invalid}" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
+                    {{ isIssueCertificate ? resourceService?.frmelmnts?.btn?.issue : resourceService?.frmelmnts?.btn?.notIssue }}
+                </button>
+                <button class="sb-btn sb-btn-normal sb-btn-outline-primary" tabindex="0"
+                    (click)="closeModal()">
+                    {{resourceService.frmelmnts?.btn?.cancel}}
+                </button>
+                </div>
+            </form>
+          </div>
         </div>
-        </form>
-    </div>
-
-    <!--/Actions-->
-</sui-modal>
+      </div>
+    </ng-template>
+  </app-modal-wrapper>
