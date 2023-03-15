@@ -551,17 +551,17 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 };  
             }));
             requestBody.request.userIds = userIds;
-            // this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
-            // .subscribe((res)=>{
-            //     this.toasterService.success(this.resourceService.messages.smsg.m00102 )
-            //     console.log('ssss',res)
-            // },(err) => {
-            //     if (err.error && err.error.params && err.error.params.errmsg) {
-            //         this.toasterService.error(err.error.params.errmsg);
-            //     } else {
-            //         this.toasterService.error(this.resourceService.messages.fmsg.m0103);
-            //     }
-            // });
+            this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+                this.toasterService.success(this.resourceService.messages.smsg.m00102 )
+                console.log('ssss',res)
+            },(err) => {
+                if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+                } else {
+                    this.toasterService.error(this.resourceService.messages.fmsg.m0106);
+                }
+            });
         }
           
     }

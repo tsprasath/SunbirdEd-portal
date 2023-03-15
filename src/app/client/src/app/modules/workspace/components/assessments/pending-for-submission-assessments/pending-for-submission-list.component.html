@@ -46,6 +46,18 @@
         </tr>
     </tbody>
 </table>
+
+<div class="ui grid">
+    <div class="twelve wide column">
+        <button type="submit" (click)="openFeedbackPopup('submit')" class="sb-btn sb-btn-normal sb-btn-primary ml-10" [disabled]="disableEvaluationAction" [ngClass]="{'sb-btn-disabled': disableEvaluationAction}" tabindex="1" style="float: right;">
+            {{ 'Submit for evaluation' }}
+        </button>
+        <button type="submit" (click)="openFeedbackPopup('abort')" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAbortAction" [ngClass]="{'sb-btn-disabled': disableAbortAction}" tabindex="0" style="float: right;">
+            {{ 'Abort Assessment' }}
+        </button>
+    </div>
+</div>
+
 <div class="ui grid">
     <div class="two wide column"></div>
     <div class="ten wide column">
@@ -65,16 +77,6 @@
             </div>
         </div>
     </div>
-</div>
-
-<div class="sb-modal-actions">
-    <button type="submit" (click)="openFeedbackPopup('submit')" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableEvaluationAction" [ngClass]="{'sb-btn-disabled': disableEvaluationAction}" tabindex="1" style="float: right;">
-        {{ 'Submit for evaluation' }}
-    </button>
-    <button type="submit" (click)="openFeedbackPopup('abort')" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAbortAction" [ngClass]="{'sb-btn-disabled': disableAbortAction}" tabindex="0" style="float: right;">
-        {{ 'Abort Assessment' }}
-    </button>
-    
 </div>
 
 

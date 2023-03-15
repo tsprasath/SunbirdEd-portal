@@ -61,11 +61,15 @@
         </tr>
     </tbody>
 </table>
-<div class="sb-modal-actions">
-    <button type="submit" (click)="handleAssignStudent()" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}" style="float: right;" tabindex="0">
-        {{ 'Assign Assessment' }}
-    </button>
+
+<div class="ui grid">
+    <div class="twelve wide column">
+        <button type="submit" (click)="handleAssignStudent()" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}" style="float: right;" tabindex="0">
+            {{ 'Assign Assessment' }}
+        </button>
+    </div>
 </div>
+
 <div class="ui grid">
     <div class="two wide column"></div>
     <div class="ten wide column">
