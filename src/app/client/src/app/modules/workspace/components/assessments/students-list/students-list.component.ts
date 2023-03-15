@@ -27,15 +27,10 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 export class StudentsListComponent extends WorkSpace implements OnInit, AfterViewInit, OnDestroy {
 
-    @ViewChild('modalTemplate')
-    public modalTemplate: ModalTemplate<{ data: string }, string, string>;
-
     /**
      * state for content editior
     */
     state: string;
-
-    abortForm:FormGroup
 
     /**
      * To send activatedRoute.snapshot to router navigation
@@ -190,8 +185,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     assessment: any = {}
     participantsList: any[] = [];
     isChecked: boolean = false;
-    enableFeedback: boolean = false;
-    feedbackText: string = '';
     disableAssessmentAction: boolean = true;
     checkedArray: string[] = [];
     maxCount:number = 250
@@ -245,10 +238,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
         this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
-
-        this.abortForm = new FormGroup({
-            feedback: new FormControl('',Validators.required),
-          });   
     }
 
     ngOnInit() {
@@ -435,21 +424,19 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             .subscribe((res) => {
                 this.toasterService.success(this.resourceService.messages.smsg.m0099);
                 this.disableAssessmentAction = true;
-                _.compact(_.map(this.allStudents, (student) =>  {
-                    userIds.forEach(ids=>{
-                        if(student.id == ids){
+                _.forEach(this.allStudents, (student) =>  {
+                    userIds.forEach(id=>{
+                        if(student.id === id){
                           student.assessmentAssigned = true
                         }
-                    })
-                    // student.assessmentAssigned = true
-                }))
-                  
-                //student.assessmentAssigned
+                    });
+                });
             }, (err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
                 } else {
-                    this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+                    this.toasterService.error(this.resourceService?.messages?.fmsg?.m0104);
+
                 }
             })
     }
@@ -501,52 +488,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         } else {
             this.checkedArray.splice(this.checkedArray.indexOf(obj.id), 1); 
         }
-    }
-
-    handleCloseModal(): void {
-        this.enableFeedback = false;
-        console.log('this.enableFeedback - ', this.enableFeedback);
-    }
-
-    handleFBAssessment(flag: string): void {
-        this.feedbackText = (flag === 'abort') ? 'Abort assessment' : 'Submit for Evaluation';
-        this.enableFeedback = true;
-    }
-
-    handleSubmitData(modal?): void {
-        console.warn('bbbb',this.abortForm);
-        console.log('modal - ', modal);
-        const batch = this.assessment.batches[0];
-        const userIds = _.compact(_.map(this.allStudents, (student) =>  {
-            if (student.checked && student['assessmentAssigned']) {
-                return student.id
-            };
-        }))
-        // const userIds = this.allStudents.map((obj) => {
-        //     if (obj.checked && obj['assessmentAssigned']) {
-        //         return obj.id
-        //     };
-        // });
-        const requestBody = {
-            request: {
-                batchId: batch?.batchId,
-                courseId: this.assessment?.identifier,
-                userIds: userIds
-            }
-        };
-        this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
-        .subscribe((res)=>{
-          console.log('resData',res)
-        },(err) => {
-            if (err.error && err.error.params && err.error.params.errmsg) {
-                this.toasterService.error(err.error.params.errmsg);
-            } else {
-                this.toasterService.error(this.resourceService.messages.fmsg.m0103);
-            }
-        })
-        console.log('rB',requestBody)
-
-        modal.deny('denied');        
     }
 
     ngOnDestroy(): void {

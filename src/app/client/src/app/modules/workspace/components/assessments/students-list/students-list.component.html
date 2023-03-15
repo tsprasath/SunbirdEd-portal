@@ -61,11 +61,15 @@
         </tr>
     </tbody>
 </table>
-<div class="sb-modal-actions">
-    <button type="submit" (click)="handleAssignStudent()" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}" style="float: right;" tabindex="0">
-        {{ 'Assign Assessment' }}
-    </button>
+
+<div class="ui grid">
+    <div class="twelve wide column">
+        <button type="submit" (click)="handleAssignStudent()" class="sb-btn sb-btn-normal sb-btn-primary" [disabled]="disableAssessmentAction" [ngClass]="{'sb-btn-disabled': disableAssessmentAction}" style="float: right;" tabindex="0">
+            {{ 'Assign Assessment' }}
+        </button>
+    </div>
 </div>
+
 <div class="ui grid">
     <div class="two wide column"></div>
     <div class="ten wide column">
@@ -86,37 +90,3 @@
         </div>
     </div>
 </div>
-
-<sui-modal *ngIf="enableFeedback" [mustScroll]="true" [isClosable]="true" [transitionDuration]="0" [size]="'normal'"
-    class="sb-modal sb-course-modal" #modal (dismissed)="this.enableFeedback = false" [appTelemetryImpression]="telemetryImpression">
-
-    <i class="icon close" (click)="modal.deny('denied');handleCloseModal();" tabindex="0"></i>
-
-    <!-- This section will show as usual creation popup -->
-    <div>
-        <!--Header-->
-        <div class="sb-modal-header">
-            Provide feedback and {{ feedbackText }}
-        </div>
-        <!--/Header-->
-
-        <!--Content-->
-        <form [formGroup]="abortForm" (ngSubmit)="handleSubmitData(modal)">
-            <div class="sb-modal-content o-y-visible">
-                <textarea class="sb-form-control"  formControlName="feedback" (keydown)="handleKeyDown($event)" placeholder="Enter feedback" maxlength="250" rows="10"></textarea>
-                <small class="mt-4 pull-right sb-color-grey fxsmall counter">{{ maxCount }}
-                    {{ resourceService?.frmelmnts?.lbl?.characterleft }}</small>
-            </div>
-            <!--/Content-->
-
-            <!--Actions-->
-            <div class="sb-modal-actions">
-                <button type="submit"  [disabled]="abortForm.invalid" [ngClass]="{'sb-btn-disabled': abortForm.invalid}" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
-                    {{ feedbackText }}
-                </button>
-            </div>
-        </form>
-    </div>
-
-    <!--/Actions-->
-</sui-modal>
