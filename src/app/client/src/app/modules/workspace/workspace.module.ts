@@ -20,7 +20,8 @@ import {
   CollaborationContentFilterComponent, WorkspaceContentFilterComponent, 
   AllTextbooksComponent, NewCollectionEditorComponent, 
   AssessmentsListComponent, StudentsListComponent, AssignAssessmentsComponent,
-  PendingForSubmissionListComponent
+  PendingForSubmissionListComponent,
+  ResultEvaluationComponent, ResultEvalutionAllListComponent, ResultEvalutionPendingListComponent
 } from './components';
 import { DateFilterXtimeAgoPipe } from './pipes';
 import { NgInviewModule } from 'angular-inport';
@@ -75,8 +76,10 @@ import { MatMenuModule} from '@angular/material/menu';
     NewCollectionEditorComponent,
     AssessmentsListComponent,
     StudentsListComponent,
+    ResultEvaluationComponent,
     AssignAssessmentsComponent,
-    PendingForSubmissionListComponent
+    PendingForSubmissionListComponent,
+    ResultEvalutionAllListComponent, ResultEvalutionPendingListComponent
   ],
   providers: [WorkSpaceService, EditorService, BatchService, ReviewCommentsService, DateFilterXtimeAgoPipe]
 })

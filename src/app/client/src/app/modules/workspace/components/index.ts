@@ -31,5 +31,8 @@ export * from './all-textbooks/all-textbooks.component';
 export * from './content-editors/new-collection-editor/new-collection-editor.component';
 export * from './assessments/assessments-list/assessment-list.component';
 export * from './assessments/students-list/students-list.component';
+export * from './result-evaluation/result-evaluation.component';
 export * from './assign-assessments/assign-assessments.component';
-export * from './assessments/pending-for-submission-assessments/pending-for-submission-list.component'
+export * from './assessments/pending-for-submission-assessments/pending-for-submission-list.component';
+export * from './result-evaluation/all-list/all-list.component';
+export * from './result-evaluation/pending-list/pending-list.component';
