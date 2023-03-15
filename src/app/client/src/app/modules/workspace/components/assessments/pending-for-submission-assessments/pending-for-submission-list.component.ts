@@ -428,34 +428,6 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
-    handleAssignStudent(): void {
-        const batch = this.assessment.batches[0];
-        const userIds = _.compact(_.map(this.allStudents, (student) =>  {
-            if (student.checked && !student['assessmentAssigned']) {
-                return student.id
-            };
-        }))
-        const requestBody = {
-            request: {
-                batchId: batch?.batchId,
-                courseId: this.assessment?.identifier,
-                userIds: userIds
-            }
-        };
-        console.log('requestBody - ', requestBody);
-        this.courseBatchService.enrollUsersToBatch(requestBody)
-            .pipe(takeUntil(this.destroySubject$))
-            .subscribe((res) => {
-                this.toasterService.success(this.resourceService.messages.smsg.m0034);
-            }, (err) => {
-                if (err.error && err.error.params && err.error.params.errmsg) {
-                    this.toasterService.error(err.error.params.errmsg);
-                } else {
-                    this.toasterService.error(this.resourceService.messages.fmsg.m0103);
-                }
-            })
-    }
-
     handleKeyDown(event: KeyboardEvent){
         if(this.maxCount == 0 && event.key !== 'Backspace' ){
          event.preventDefault();
@@ -531,9 +503,6 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
     }
 
     handleSubmitData(modal?): void {
-        console.warn('bbbb',this.feedbackForm.value.feedback);
-        console.log('modal - ', modal);
-
         const batch = this.assessment.batches[0];
         let requestBody = {
             request: {
