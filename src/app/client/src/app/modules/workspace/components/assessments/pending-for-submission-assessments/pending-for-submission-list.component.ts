@@ -372,9 +372,9 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                         }
                     });
                     //Un-commemnt below code to test submit evaluation api until we have api with correct assessment statuses
-                    // this.allStudents[0]['checked'] = false;
-                    // this.allStudents[0]['assessmentAssigned'] = false;
-                    // this.allStudents[0]['assessmentCompleted']= true;
+                    this.allStudents[0]['checked'] = false;
+                    this.allStudents[0]['assessmentAssigned'] = false;
+                    this.allStudents[0]['assessmentCompleted']= true;
                     this.totalCount = data.result.response.count;
                     this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
                     this.showLoader = false;
@@ -557,7 +557,8 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             requestBody.request.userIds = userIds;
             this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
-                this.toasterService.success(this.resourceService.messages.smsg.m00102 )
+                this.toasterService.success(this.resourceService.messages.smsg.m00102)
+                this.closeModal();
                 console.log('ssss',res)
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
