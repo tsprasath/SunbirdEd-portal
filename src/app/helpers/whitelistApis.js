@@ -446,9 +446,7 @@ const API_LIST = {
     },
     '/learner/course/v1/course/admin/course/eval': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.COURSE_MENTOR,
-      ROLE.NODAL_OFFICER  
-      ]
+      ROLE_CHECK: [ROLE.COURSE_MENTOR, ROLE.NODAL_OFFICER]
     },
 
 
