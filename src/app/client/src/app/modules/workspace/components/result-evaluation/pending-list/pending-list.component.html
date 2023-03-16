@@ -54,7 +54,7 @@
                 <mat-checkbox (change)="handleCheckBoxChange($event, student)"  class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [checked]="student.checked" ></mat-checkbox>
             </td>
             <td class="text-center">
-                <button class="ui primary basic compact icon button"
+                <button class="ui default basic compact icon button"
                     appTelemetryInteract
                   [telemetryInteractObject]="{id:student?.id}"
                   [telemetryInteractEdata]="{id:'goToScoreDetails',type:'click',pageid:'result-evaluation-pending-list'}">

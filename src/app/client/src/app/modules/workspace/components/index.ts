@@ -36,3 +36,4 @@ export * from './assign-assessments/assign-assessments.component';
 export * from './assessments/pending-for-submission-assessments/pending-for-submission-list.component';
 export * from './result-evaluation/all-list/all-list.component';
 export * from './result-evaluation/pending-list/pending-list.component';
+export * from './result-evaluation/score-detail/score-detail.component';

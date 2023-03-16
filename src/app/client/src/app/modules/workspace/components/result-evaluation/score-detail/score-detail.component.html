@@ -1,0 +1,84 @@
+<div class="sb-g mb-20">
+    <div class="sb-g-col-xs-12 sb-g-col-md-6 sb-g-col-lg-6">
+        <div class="d-flex flex-dr">
+            <div class="d-flex flex-ai-center">
+                <button class="sb-btn sb-btn-normal sb-btn-link sb-btn-link-primary sb-left-icon-btn mr-auto" (click)="navigateBack()">
+                    <i class="icon-svg icon-svg--xxs icon-back mr-4">
+                        <svg class="icon icon-svg--primary">
+                            <use xlink:href="assets/images/sprite.svg#arrow-long-left"></use>
+                        </svg>
+                    </i>
+                </button>
+            </div>
+            <div class="d-flex flex-dc ml-16">
+                <h4 class="header">Score Detail</h4>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ui grid">
+    <div class="eight wide column">
+        <h4 class="mb-20 text-center">{{scoreDetail?.assessmentName}}, {{scoreDetail?.assessmentDate}}</h4>
+        <div class="gray-container mb-20 p-20">
+            Position:{{scoreDetail?.framework?.board}}
+        </div>
+        <h5 class="mb-10">Competencies attempted</h5>
+        <ng-container *ngFor="let compentency of scoreDetail?.competencies">
+            <div class="lightgray-container mb-20">
+                <div class="ui grid p-20">
+                    <div class="eight wide column">
+                        <h6 class="mb-5">{{compentency?.name}}</h6>
+                        <p *ngFor="let level of compentency?.levels">{{level?.name}}</p>
+                    </div>
+                    <div class="four wide column text-center">
+                        <h6>{{compentency?.score}}</h6>
+                    </div>
+                </div>
+                <hr/>
+                <div class="p-10">
+                    {{compentency?.totalQuestion}} questions:  {{compentency?.correctAnswer}} correct answers,  {{compentency?.incorrectAnswer}} incorrect answer
+                </div>
+            </div>
+
+        </ng-container>
+        <div class="ui grid mt-20">
+            <div class="two wide column">
+                <button type="submit" (click)="navigateBack()" class="sb-btn sb-btn-normal ml-10">
+                    {{ 'Exit' }}
+                </button>
+            </div>
+            <div class="ten wide column">
+                <button  class="sb-btn sb-btn-normal sb-btn-primary ml-10"   tabindex="1" style="float: right;">
+                    {{ 'Issue certificate' }}
+                </button>
+                <button  class="sb-btn sb-btn-normal sb-btn-primary"  tabindex="0" style="float: right;">
+                    {{ 'Not issue certificate' }}
+                </button>
+            </div> 
+        </div>
+
+
+
+
+    </div>
+    <div class="four wide column">
+        <h5>Score summary</h5>
+        <div class="lightgray-container mb-5 p-10">
+            Total correct:{{scoreDetail?.scoreSummary?.totalCorrect}}
+        </div>
+        <div class="lightgray-container mb-5 p-10">
+            Total incorrect:{{scoreDetail?.scoreSummary?.totalIncorrect}}
+        </div>
+        <div class="lightgray-container mb-5 p-10">
+            Total time spent:{{scoreDetail?.scoreSummary?.totalTimeSpent}}
+        </div>
+        <div class="gray-container mb-20 p-10">
+            Total result:{{scoreDetail?.scoreSummary?.totalResult}}
+        </div>
+        <h5>Nodal Feedback</h5>
+        <div class="lightgray-container p-20">
+            {{scoreDetail?.nodalFeedback}}
+        </div>
+    </div>
+
+</div>
