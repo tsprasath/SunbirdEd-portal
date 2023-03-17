@@ -6,7 +6,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 
 import { combineLatest } from 'rxjs';
 import { Subject } from 'rxjs';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, max, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
 import { SuiModalService, ModalTemplate } from 'ng2-semantic-ui-v9';
@@ -438,7 +438,9 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
          return
         }
         if(event.key === 'Backspace'){
-          this.maxCount = this.maxCount + 1
+            if(this.maxCount<=249){
+                this.maxCount = this.maxCount + 1
+            }
         }
         else {
             this.maxCount = this.maxCount - 1
@@ -505,6 +507,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             this.isAbortForm =  false;
         }
         this.enableFeedback = true;
+        this.maxCount = 250
     }
 
     handleSubmitData(): void {
@@ -524,11 +527,9 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 };
             }));
             requestBody.request.userIds = userIds;
-            console.log(requestBody.request.userIds);
             this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00101)
-              console.log('resData',res)
               this.closeModal();
               this.disableAbortAction = true;
               _.forEach(this.allStudents, (student) =>  {
@@ -558,7 +559,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00102 )
-                console.log('ssss',res)
+                this.closeModal()
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);

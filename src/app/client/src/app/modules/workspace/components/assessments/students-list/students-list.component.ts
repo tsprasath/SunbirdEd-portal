@@ -418,7 +418,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 userIds: userIds
             }
         };
-        console.log('requestBody - ', requestBody);
         this.courseBatchService.enrollUsersToBatch(requestBody)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((res) => {
@@ -439,19 +438,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
                 }
             })
-    }
-
-    handleKeyDown(event: KeyboardEvent){
-        if(this.maxCount == 0 && event.key !== 'Backspace' ){
-         event.preventDefault();
-         return
-        }
-        if(event.key === 'Backspace'){
-          this.maxCount = this.maxCount + 1
-        }
-        else {
-            this.maxCount = this.maxCount - 1
-        }
     }
 
     handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
