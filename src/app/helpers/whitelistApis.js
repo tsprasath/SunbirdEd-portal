@@ -434,19 +434,15 @@ const API_LIST = {
     },
     '/learner/course/v1/admin/bulk/unenrol': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.COURSE_MENTOR,
-      ROLE.NODAL_OFFICER  
-      ]
+      ROLE_CHECK: [ROLE.NODAL_OFFICER]
     },
     '/learner/course/v1/admin/bulk/enrol': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.COURSE_MENTOR,
-      ROLE.NODAL_OFFICER  
-      ]
+      ROLE_CHECK: [ROLE.NODAL_OFFICER]
     },
     '/learner/course/v1/course/admin/course/eval': {
       checksNeeded: ['ROLE_CHECK'],
-      ROLE_CHECK: [ROLE.COURSE_MENTOR, ROLE.NODAL_OFFICER]
+      ROLE_CHECK: [ROLE.NODAL_OFFICER]
     },
 
 
