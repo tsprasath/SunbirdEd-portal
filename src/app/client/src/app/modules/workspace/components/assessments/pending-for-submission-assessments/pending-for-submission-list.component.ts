@@ -559,6 +559,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00102 )
+                this.closeModal()
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
