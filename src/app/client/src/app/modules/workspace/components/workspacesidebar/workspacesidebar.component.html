@@ -16,7 +16,7 @@
   </a>
 
   <a appTelemetryInteract [telemetryInteractEdata]="setInteractData('result-evaluation-button')" *ngIf='permissionService.permissionAvailable' [class.active]="router.isActive('/workspace/content/resultEvaluation') " appPermission
-  [permission]='resultEvaluationRole' class="item" [routerLink]="['resultEvaluation',1]"   matTooltip="View assessments submitted for result evaluation"
+  [permission]='resultEvaluationRole' class="item" [routerLink]="['resultEvaluation/all',1]"   matTooltip="View assessments submitted for result evaluation"
   [matTooltipPosition]="'right'">
     {{resourceService?.frmelmnts?.snav?.resultEvaluation}}
   </a>
