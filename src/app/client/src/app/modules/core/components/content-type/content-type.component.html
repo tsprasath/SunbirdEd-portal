@@ -35,7 +35,7 @@
 </ng-container>
 
 <ng-container *ngIf="isLayoutAvailable() && !showBackButton">
-  <div class="sb-linkmenu m-0 d-flex flex-ai-center" role="navigation" aria-label="Main menu" *ngIf="userRole!= 'NODAL_OFFICER'">
+  <div class="sb-linkmenu m-0 d-flex flex-ai-center" role="navigation" aria-label="Main menu" *ngIf="!userRoles.includes('NODAL_OFFICER')">
     <ng-container *ngFor="let contentType of contentTypes">
       <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" *ngIf="contentType.isEnabled && contentType?.isOnlineOnly" tabindex="0" (click)="showContentType(contentType)" (keyup.enter)="showContentType(contentType)" appOnlineOnly
          [ngClass]="{'active': selectedContentType === contentType.contentType}"
@@ -52,7 +52,7 @@
     </ng-container>
   </div>
 
-  <div class="sb-linkmenu m-0 d-flex flex-ai-center" role="navigation" aria-label="Main menu" *ngIf="userRole == 'NODAL_OFFICER'">
+  <div class="sb-linkmenu m-0 d-flex flex-ai-center" role="navigation" aria-label="Main menu" *ngIf="userRoles.includes('NODAL_OFFICER')">
     <ng-container *ngFor="let contentType of contentTypes">
       <a aria-current="page" [attr.aria-selected]="selectedContentType === contentType.contentType ? true : false" *ngIf="contentType.isEnabled && contentType?.isOnlineOnly && contentType?.contentType == 'workspace'" tabindex="0" (click)="showContentType(contentType)" (keyup.enter)="showContentType(contentType)" appOnlineOnly
          [ngClass]="{'active': selectedContentType === contentType.contentType}"

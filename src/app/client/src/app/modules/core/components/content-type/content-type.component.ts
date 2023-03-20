@@ -24,7 +24,7 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   public unsubscribe$ = new Subject<void>();
   subscription: any;
   userType: any;
-  userRole:any;
+  userRoles:any[] = [];
   returnTo: string;
   constructor(
     public formService: FormService,
@@ -142,12 +142,13 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
       if (this.userService.loggedIn) {
         this.userService.userData$.pipe(takeUntil(this.unsubscribe$)).subscribe((profileData: IUserData) => {
           if (_.get(profileData, 'userProfile.profileUserType.type')) {
-          this.userType = profileData.userProfile['profileUserType']['type'];
-          this.userRole = profileData.userProfile['roles'].length ? profileData.userProfile['roles'][0]['role'] : ''; 
+            this.userType = profileData.userProfile['profileUserType']['type'];
           }
+
+          this.userRoles = profileData.userProfile['roles'].length ? _.map(profileData.userProfile['roles'], 'role') : []; 
           this.makeFormChange();
         });
-      } else {
+      } else {  
         const user = localStorage.getItem('userType');
         if (user) {
           this.userType = user;
@@ -163,8 +164,8 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
   }
   makeFormChange() {
     const index = this.contentTypes.findIndex(cty => cty.contentType === 'observation');
-    const studentIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaaAssessment');
-    const nodalIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace');
+    const piaaIndex = this.contentTypes.findIndex(cty => cty.contentType === 'piaaAssessment');
+    const workspaceIndex = this.contentTypes.findIndex(cty => cty.contentType === 'workspace');
     const resultEvaluationIndex = this.contentTypes.findIndex(cty => cty.contentType === 'resultEvaluation');
 
     if (this.userType != 'administrator' && index !== -1) {
@@ -176,15 +177,15 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
       }
     }
 
-    if(this.userType != 'student' && this.userRole !== "BOOK_CREATOR" && studentIndex !== -1){
-      this.contentTypes[studentIndex].isEnabled = false;
+    if( (!_.isEmpty(this.userRoles) &&  !_.includes(this.userRoles, 'PUBLIC') &&  !_.includes(this.userRoles, 'CONTENT_CREATOR') )  && piaaIndex !== -1){
+      this.contentTypes[piaaIndex].isEnabled = false;
     }
 
-    if(this.userRole!= 'NODAL_OFFICER' && nodalIndex !== -1){
-      this.contentTypes[nodalIndex].isEnabled = false
+    if( ((!_.isEmpty(this.userRoles) &&  !_.includes(this.userRoles, 'NODAL_OFFICER') ) || _.isEmpty(this.userRoles)) && workspaceIndex !== -1){
+      this.contentTypes[workspaceIndex].isEnabled = false
     }
 
-    if(this.userRole != 'ORG_ADMIN' && resultEvaluationIndex !== -1){
+    if( ((!_.isEmpty(this.userRoles) &&  !_.includes(this.userRoles, 'ORG_ADMIN') ) || _.isEmpty(this.userRoles)) && resultEvaluationIndex !== -1){
       this.contentTypes[resultEvaluationIndex].isEnabled = false;
     } 
 
