@@ -279,10 +279,12 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
             filters: {
                 status: bothParams.queryParams.status ? bothParams.queryParams.status : preStatus,
                 // tslint:disable-next-line:max-line-length
-                primaryCategory: _.get(bothParams, 'queryParams.primaryCategory') || (!_.isEmpty(primaryCategories) ? primaryCategories : this.config.appConfig.WORKSPACE.Assessments.primaryCategories),
+                primaryCategory: this.config.appConfig.WORKSPACE.Assessments.primaryCategories,
+                se_boards:bothParams.queryParams.board,
                 subject: bothParams.queryParams.subject,
-                medium: bothParams.queryParams.medium,
-                gradeLevel: bothParams.queryParams.gradeLevel
+                se_mediums: bothParams.queryParams.medium,
+                se_gradeLevels: bothParams.queryParams.gradeLevel,
+                se_difficultyLevels:bothParams.queryParams.difficultyLevel
             },
             limit: limit,
             offset: (pageNumber - 1) * (limit),
