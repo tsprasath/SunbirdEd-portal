@@ -1345,6 +1345,11 @@
     "inPageredirectUrl": "/learn",
     "searchPageredirectUrl": "/search/Courses/1"
   },
+  "assessment": {
+    "filterType": "assessments",
+    "inPageredirectUrl": "workspace/content/assessments/list/1",
+    "searchPageredirectUrl": "workspace/content/assessments/list/1"
+  },
   "formApiTypes": {
     "home": "home",
     "textbook": "textbook",
