@@ -128,7 +128,6 @@ export class WorkspaceContentFilterComponent implements OnInit {
   }
 
   setFilterTypeAndRedirectURL() {
-
     if (_.includes(this.route.url, 'published')) {
       this.filterType = this.config.appConfig.published.filterType;
       this.redirectUrl = this.config.appConfig.published.inPageredirectUrl;
@@ -138,7 +137,11 @@ export class WorkspaceContentFilterComponent implements OnInit {
     } else if (_.includes(this.route.url, 'alltextbooks')) {
       this.filterType = this.config.appConfig.alltextbooks.filterType;
       this.redirectUrl = this.config.appConfig.alltextbooks.inPageredirectUrl;
-    } else {
+    } else if(_.includes(this.route.url, 'assessments')){
+       this.filterType = this.config.appConfig.assessment.filterType;
+       this.redirectUrl = this.config.appConfig.assessment.inPageredirectUrl;
+    }
+     else {
       this.filterType = this.config.appConfig.allmycontent.filterType;
       this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
     }
