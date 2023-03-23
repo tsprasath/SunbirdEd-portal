@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { WorkSpace } from '../../../classes/workspace';
 import { WorkSpaceService } from '../../../services';
 import { SearchService, UserService} from '@sunbird/core';
+import { IScoreDetails } from '@sunbird/shared';
 
 @Component({
     selector: 'app-score-detail',
@@ -21,7 +22,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
     */
     activeLink: string;
 
-    scoreDetail: any;
+    scoreDetails: IScoreDetails;
 
     constructor(
       private router: Router,
@@ -30,9 +31,10 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
       public userService: UserService,
     ) { 
         super(searchService, workSpaceService, userService);
-        this.scoreDetail= {
+        this.scoreDetails= {
+            assessmentId: "1",
             assessmentName:  "GNM - First Year - Anatomy & Biology",
-            assessmentDate: "16/03/2023",
+            assessmentDate: "2023-03-16T18:30:00.000Z",
             framework:  {
                 board: "GNM",
             },
@@ -40,12 +42,12 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
                 totalCorrect: 15,
                 totalIncorrect: 5,
                 totalTimeSpent: "1h 15m",
-                totalResult: "75%",
+                totalResult: 75,
             },
             nodalFeedback: "Assessment taken as per schedule and guideline",
-            competencies:[{
+            competenciesScores:[{
                 name: "Pregency Identification",
-                score: "75%",
+                score: 75,
                 levels: [
                     {
                         name: "Understands health of mails and femails"
@@ -57,7 +59,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
             },
             {
                 name: "Normal Delivery",
-                score: "90%",
+                score:75,
                 levels: [
                     {
                         name: "Understands components  of noraml delivery"
@@ -69,7 +71,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
             },
             {
                 name: "AMSTL",
-                score: "75%",
+                score: 75,
                 levels: [
                     {
                         name: "Understands health of mails and femails"
@@ -81,7 +83,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
             },
             {
                 name: "Birth Planning and Preparedness for PW and HRP",
-                score: "90%",
+                score: 90,
                 levels: [
                     {
                         name: "Understands components  of noraml delivery"
