@@ -1350,6 +1350,16 @@
     "inPageredirectUrl": "workspace/content/assessments/list/1",
     "searchPageredirectUrl": "workspace/content/assessments/list/1"
   },
+  "allCandidateList": {
+    "filterType": "assign",
+    "inPageredirectUrl": "workspace/content/assessments/assign/all/1",
+    "searchPageredirectUrl": "workspace/content/assessments/assign/all/1"
+  },
+  "pendingList": {
+    "filterType": "pendingForSubmission",
+    "inPageredirectUrl": "workspace/content/assessments/assign/pendingForSubmission/1",
+    "searchPageredirectUrl": "workspace/content/assessments/assign/pendingForSubmission/1"
+  },
   "formApiTypes": {
     "home": "home",
     "textbook": "textbook",
