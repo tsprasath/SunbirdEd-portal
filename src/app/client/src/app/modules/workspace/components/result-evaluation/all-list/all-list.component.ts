@@ -380,6 +380,10 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
         this.disableAssessmentAction = true;     
     }
 
+    goToScoreDetails() {
+        this.router.navigate(['workspace/content/resultEvaluation/score/1']);
+    }
+
     inview(event) {
         _.forEach(event.inview, (inview, key) => {
             const obj = _.find(this.inviewLogs, (o) => {

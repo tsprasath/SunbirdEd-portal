@@ -9,7 +9,7 @@ import {
   FlagConentplayerComponent, PublishedPopupComponent, RequestChangesPopupComponent, LimitedPublishedComponent,
   AllContentComponent, FlagReviewerComponent, CollaboratingOnComponent, AllTextbooksComponent, NewCollectionEditorComponent, 
   AssignAssessmentsComponent, AssessmentsListComponent, StudentsListComponent, PendingForSubmissionListComponent, ResultEvaluationComponent,
-  ResultEvalutionAllListComponent, ResultEvalutionPendingListComponent
+  ResultEvalutionAllListComponent, ResultEvalutionPendingListComponent, ScoreDetailComponent
 } from './components';
 import { AuthGuard } from '../core/guard/auth-gard.service';
 const telemetryEnv = 'workspace';
@@ -17,7 +17,7 @@ const objectType = 'workspace';
 const routes: Routes = [
   {
     path: 'content', component: WorkspaceComponent, canActivate: [AuthGuard], data: { roles: 'workspace' },
-    children: [
+    children: [ 
       {
         path: 'create', component: CreateContentComponent, canActivate: [AuthGuard],
         data: {
@@ -352,8 +352,18 @@ const routes: Routes = [
               },
             }
           },
+
         ],
       },
+      {
+        path: 'resultEvaluation/score/:assessmentId', component: ScoreDetailComponent, canActivate: [AuthGuard],
+          data: {
+            telemetry: {
+              env: telemetryEnv, pageid: 'workspace-result-evaluation-score', subtype: 'paginate', uri: 'workspace/content/resultEvaluation/score',
+              type: 'detail', mode: 'view', object: { type: objectType, ver: '1.0' }
+            }, roles: 'resultEvaluationRole',
+          },
+      }
     ]
   },
   {

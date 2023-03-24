@@ -61,7 +61,9 @@
                 <button class="ui default basic compact icon button"
                     appTelemetryInteract
                   [telemetryInteractObject]="{id:student?.id}"
-                  [telemetryInteractEdata]="{id:'goToScoreDetails',type:'click',pageid:'result-evaluation-all-list'}">
+                  [telemetryInteractEdata]="{id:'goToScoreDetails',type:'click',pageid:'result-evaluation-all-list'}"
+                  (click)="goToScoreDetails()"
+                  >
                   <i class="right arrow icon"></i>
                 </button>
             </td>
