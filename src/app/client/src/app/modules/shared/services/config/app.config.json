@@ -1360,6 +1360,16 @@
     "inPageredirectUrl": "workspace/content/assessments/assign/pendingForSubmission/1",
     "searchPageredirectUrl": "workspace/content/assessments/assign/pendingForSubmission/1"
   },
+  "resultEvaluation": {
+    "filterType": "resultEvaluation",
+    "inPageredirectUrl": "workspace/content/resultEvaluation/all/1",
+    "searchPageredirectUrl": "workspace/content/resultEvaluation/all/1"
+  },
+  "pendingForEvaluation": {
+    "filterType": "pendingForEvaluation",
+    "inPageredirectUrl": "workspace/content/resultEvaluation/pendingForEvaluation/1",
+    "searchPageredirectUrl": "workspace/content/resultEvaluation/pendingForEvaluation/1"
+  },
   "formApiTypes": {
     "home": "home",
     "textbook": "textbook",
