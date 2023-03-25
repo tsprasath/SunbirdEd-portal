@@ -168,6 +168,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showSwitchTheme = false
   showUserMergeAccount:boolean = true;
   showUserMyGroup: boolean = true;
+  userRoles:any[] = [];
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, public formService: FormService,
@@ -213,6 +214,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
                 this.setUserPreferences();
                 }
             }
+            this.userRoles = profileData.userProfile['roles'].length ? _.map(profileData.userProfile['roles'], 'role') : [];
           });
         }
       }
