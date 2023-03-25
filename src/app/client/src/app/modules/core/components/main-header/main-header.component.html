@@ -214,7 +214,7 @@
           <div
             class="sb-g-col-xs-12 sb-g-col-md-4 sb-g-col-lg-5 sb-g-col-xxxl-8 sbt-header-tool-bar flex-jc-center relative">
             <div class="sbt-search-bar-panel">
-              <app-search [layoutConfiguration]="layoutConfiguration" class="sbt-search-box large">
+              <app-search [layoutConfiguration]="layoutConfiguration" class="sbt-search-box large" *ngIf="!userRoles.includes('NODAL_OFFICER')">
               </app-search>
             </div>
             <div class="search-box-dropdown-list">
