@@ -242,6 +242,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
     ngOnInit() {
         console.log('as',this.assessment)
+        console.log(new Date())
         this.workSpaceService.questionSetEnabled$
             .subscribe((response: any) => {
                 this.isQuestionSetFilterEnabled = response.questionSetEnablement;
@@ -261,7 +262,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 }
                 this.queryParams = bothParams.queryParams;
                 this.query = this.queryParams['query'];
-                this.getParticipantsList(bothParams);                
+                // this.getParticipantsList(bothParams); 
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams)               
             });
     }
 
@@ -283,27 +285,27 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         });
     }
 
-    getParticipantsList(bothParams): void {
-        const batchDetails = {
-            "request": {
-                "batch": {
-                    "batchId": this.assessment.batches[0].batchId
-                }
-            }
-        };
+    // getParticipantsList(bothParams): void {
+    //     const batchDetails = {
+    //         "request": {
+    //             "batch": {
+    //                 "batchId": this.assessment.batches[0].batchId
+    //             }
+    //         }
+    //     };
 
-        this.courseBatchService.getParticipantList(batchDetails)
-            .pipe(takeUntil(this.destroySubject$))
-            .subscribe((data) => {
-                this.participantsList = data;
-                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
-            }, (err: ServerResponse) => {
-                this.showLoader = false;
-                this.noResult = false;
-                this.showError = true;
-                this.toasterService.error(this.resourceService.messages.fmsg.m0081);
-            });
-    }
+    //     this.courseBatchService.getParticipantList(batchDetails)
+    //         .pipe(takeUntil(this.destroySubject$))
+    //         .subscribe((data) => {
+    //             this.participantsList = data;
+    //             this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+    //         }, (err: ServerResponse) => {
+    //             this.showLoader = false;
+    //             this.noResult = false;
+    //             this.showError = true;
+    //             this.toasterService.error(this.resourceService.messages.fmsg.m0081);
+    //         });
+    // }
 
     /**
     * This method sets the make an api call to get all users with profileType as students with page No and offset
