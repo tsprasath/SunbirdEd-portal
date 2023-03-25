@@ -131,7 +131,17 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     /**
     sortingOptions ;
     */
-    public sortingOptions: Array<ISort>;
+     public sortingOptions: Array<ISort>;
+    // sortingOptions:any[] =   [
+    //     {
+    //         "field": "name",
+    //         "name": "Student Name"
+    //     },
+    //     {
+    //         "field": "createdOn",
+    //         "name": "Created On"
+    //     }
+    // ] 
 
     /**
     sortingOptions ;
@@ -237,7 +247,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+ 
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.AssignStudentsortingOptions;
     }
 
     ngOnInit() {

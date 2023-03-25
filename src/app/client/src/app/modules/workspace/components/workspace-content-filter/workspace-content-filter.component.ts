@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ResourceService, ConfigService, NavigationHelperService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
@@ -6,6 +6,8 @@ import { Subject, of} from 'rxjs';
 import { debounceTime, distinctUntilChanged, delay, flatMap } from 'rxjs/operators';
 import { IInteractEventEdata } from '@sunbird/telemetry';
 import { WorkSpaceService } from './../../services';
+import {  ISort } from '@sunbird/core';
+
 
 @Component({
   selector: 'app-workspace-content-filter',
@@ -67,6 +69,10 @@ export class WorkspaceContentFilterComponent implements OnInit {
   public redirectUrl: string;
   queryParams: any;
   filterIntractEdata: IInteractEventEdata;
+  /**
+   * sorting options needs to be applied
+   */
+  @Input() sortingByOptions: Array<ISort>;
 
   /**
    * Constructor to create injected service(s) object
@@ -90,11 +96,12 @@ export class WorkspaceContentFilterComponent implements OnInit {
     this.position = 'bottom right';
     this.route.onSameUrlNavigation = 'reload';
     this.label = this.config.dropDownConfig.FILTER.WORKSPACE.label;
-    this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
+    this.sortingOptions =  this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
     this.workspaceService= workspaceService;
   }
 
   ngOnInit() {
+    this.sortingOptions = this.sortingByOptions?.length ? this.sortingByOptions:this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
     this.setFilterTypeAndRedirectURL();
     this.activatedRoute.queryParams
       .subscribe(params => {

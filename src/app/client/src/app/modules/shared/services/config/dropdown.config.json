@@ -303,7 +303,28 @@
                     "name": "Status"
 
                 }
+            ],
+            "AssignStudentsortingOptions":  [
+                {
+                    "field": "name",
+                    "name": "Student Name"
+                },
+                {
+                    "field": "createdOn",
+                    "name": "Created On"
+                }
+            ],
+            "pendingStudentsortingOptions":  [
+                {
+                    "field": "name",
+                    "name": "Student Name"
+                },
+                {
+                    "field": "createdOn",
+                    "name": "Created On"
+                }
             ]
+
         },
         "SEARCH": {
             "search": {
