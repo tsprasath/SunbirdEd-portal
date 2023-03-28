@@ -444,6 +444,18 @@ const API_LIST = {
       checksNeeded: ['ROLE_CHECK'],
       ROLE_CHECK: [ROLE.NODAL_OFFICER]
     },
+    '/learner/course/v2/user/courses/admin/evaluationList':{
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [ROLE.ORG_ADMIN]
+    },
+    '/learner/course/v1/course/batch/piaa/cert/issue':{
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [ROLE.ORG_ADMIN]
+    },
+    '/learner/course/v1/course/admin/course/notissuecertificate':{
+      checksNeeded: ['ROLE_CHECK'],
+      ROLE_CHECK: [ROLE.ORG_ADMIN]
+    },
 
 
     //User related APIs
