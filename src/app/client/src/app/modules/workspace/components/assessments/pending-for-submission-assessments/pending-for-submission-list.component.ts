@@ -201,7 +201,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
     /**
     *To store the flag to disable/enable submit for evaluation button
     */
-    disableEvaluationAction: boolean = true;
+    disableEvaluationAction: boolean = false;
 
     /**
     *To store the selected student for submission or abort
@@ -514,9 +514,13 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         const batch = this.assessment.batches[0];
         let requestBody = {
             request: {
-                batchId: batch?.batchId,
-                courseId: this.assessment?.identifier,
-                userIds: [],
+                // batchId: batch?.batchId,
+                // courseId: this.assessment?.identifier,
+                // userIds: [],
+                // comment:this.feedbackForm.value.feedback
+                batchId: "0137596674264023040",
+                courseId: "do_1137596503549788161184",
+                userIds: ["e1a40001-7012-4f44-b02d-3ce3fb0fe69f","755f4ca9-b344-457d-9444-88375c876191","1fb088bd-e26f-4007-b283-d4ef72409de5"],
                 comment:this.feedbackForm.value.feedback
             }
         };
@@ -550,12 +554,12 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 }
             });
         } else{
-            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentCompleted) {
-                    return student.id
-                };  
-            }));
-            requestBody.request.userIds = userIds;
+            // const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
+            //     if (student?.assessmentCompleted) {
+            //         return student.id
+            //     };  
+            // }));
+            //requestBody.request.userIds = userIds;
             this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00102 )

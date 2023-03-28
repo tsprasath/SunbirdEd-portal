@@ -46,6 +46,90 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     contentIds: string;
 
     /**
+     * dummy response
+     */
+    EvaluationPendingList:any[] = [
+        {
+            "dateTime": 1679398815722,
+            "lastName": null,
+            "lastReadContentStatus": null,
+            "enrolledDate": 1679398815722,
+            "addedBy": "fdc84c5c-a7d5-e4b4-b9d0-1c956f8dd72e",
+            "active": true,
+            "batchId": "0137596674264023040",
+            "id": "e1a40001-7012-4f44-b02d-3ce3fb0fe69f",
+            "contentStatus": {},
+            "completionPercentage": null,
+            "issuedCertificates": [],
+            "firstName": "Student 1",
+            "certificates": [],
+            "lastContentAccessTime": null,
+            "completedOn": null,
+            "progress": 0,
+            "comment": null,
+            "certstatus": null,
+            "lastReadContentId": null,
+            "courseId": "do_1137596503549788161184",
+            "oldEnrolledDate": null,
+            "status": 3,
+            "assessmentAssigned":true,
+            "assessmentCompleted": true
+        },
+        {
+            "dateTime": 1678700736345,
+            "lastName": "",
+            "lastReadContentStatus": null,
+            "enrolledDate": 1678700736345,
+            "addedBy": "45507823-966b-1715-7d5d-7a461ecd532b",
+            "active": true,
+            "batchId": "0137596674264023040",
+            "id": "755f4ca9-b344-457d-9444-88375c876191",
+            "contentStatus": {},
+            "completionPercentage": null,
+            "issuedCertificates": [],
+            "firstName": "Student 2",
+            "certificates": [],
+            "lastContentAccessTime": null,
+            "completedOn": null,
+            "progress": 0,
+            "comment": "Assigned by mistake",
+            "certstatus": null,
+            "lastReadContentId": null,
+            "courseId": "do_1137596503549788161184",
+            "oldEnrolledDate": null,
+            "status": 3,
+            "assessmentAssigned":true,
+            "assessmentCompleted": true
+        },
+        {
+            "dateTime": 1679310080751,
+            "lastName": "",
+            "lastReadContentStatus": null,
+            "enrolledDate": 1679310080751,
+            "addedBy": "3b5d5d33-66cb-2c33-f22e-e730b8fadbe1",
+            "active": true,
+            "batchId": "0137596674264023040",
+            "id": "1fb088bd-e26f-4007-b283-d4ef72409de5",
+            "contentStatus": {},
+            "completionPercentage": null,
+            "issuedCertificates": [],
+            "firstName": "Student 3",
+            "certificates": [],
+            "lastContentAccessTime": null,
+            "completedOn": null,
+            "progress": 0,
+            "comment": null,
+            "certstatus": null,
+            "lastReadContentId": null,
+            "courseId": "do_1137596503549788161184",
+            "oldEnrolledDate": null,
+            "status": 3,
+            "assessmentAssigned":true,
+            "assessmentCompleted": true
+        },
+    ]
+
+    /**
      * Contains list of students
     */
     allStudents: any[] = [];
@@ -53,7 +137,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     /**
      * To show / hide loader
     */
-    showLoader = true;
+    showLoader = false;
 
     /**
      * loader message
@@ -265,6 +349,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     }
 
     ngOnInit() {
+        console.log('evalist',this.EvaluationPendingList)
         this.workSpaceService.questionSetEnabled$
             .subscribe((response: any) => {
                 this.isQuestionSetFilterEnabled = response.questionSetEnablement;
@@ -284,7 +369,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                 }
                 this.queryParams = bothParams.queryParams;
                 this.query = this.queryParams['query'];
-                this.getParticipantsList(bothParams);                
+                //this.getParticipantsList(bothParams);                
             });
     }
 
@@ -327,7 +412,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                 this.toasterService.error(this.resourceService.messages.fmsg.m0081);
             });
     }
-
+   
     /**
     * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
@@ -533,21 +618,38 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
 
     handleSubmitData(modal?): void {
         console.warn('bbbb',this.feedbackForm.value.feedback);
-        const batch = this.assessment.batches[0];
+      //  const batch = this.assessment.batches[0];
         let requestBody = {
+            // request: {
+            //     batchId: batch?.batchId,
+            //     courseId: this.assessment?.identifier,
+            //     userIds: []
+            // }
             request: {
-                batchId: batch?.batchId,
-                courseId: this.assessment?.identifier,
-                userIds: []
+                batchId: "0137596674264023040",
+                courseId: "do_1137596503549788161184",
+                userIds: ["e1a40001-7012-4f44-b02d-3ce3fb0fe69f", "755f4ca9-b344-457d-9444-88375c876191","1fb088bd-e26f-4007-b283-d4ef72409de5"],
+                comment:""
+                
             }
         };
         if(this.isIssueCertificate){
-            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentAssigned) {
-                    return student.id
-                };
-            }));
-            requestBody.request.userIds = userIds;
+            // const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
+            //     if (student?.assessmentAssigned) {
+            //         return student.id
+            //     };
+            // }));
+           // requestBody.request.userIds = userIds;
+            this.courseBatchService.adminIssueCertificate(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+                console.log('resData', res)
+            },(err)=>{
+               if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+               } else {
+                     this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+               }
+            });
             // this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
             // .subscribe((res)=>{
             //   console.log('resData',res)
@@ -559,12 +661,24 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             //     }
             // });
         } else{
-            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentCompleted) {
-                    return student.id
-                };
-            }));
-            requestBody.request.userIds = userIds;
+            // const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
+            //     if (student?.assessmentCompleted) {
+            //         return student.id
+            //     };
+            // }));
+            // requestBody.request.userIds = userIds;
+            requestBody.request.comment = this.feedbackForm.value.feedback;
+            this.courseBatchService.adminNotIssueCertificate(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+                console.log('resData', res)
+            },(err)=>{
+               if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+               } else {
+                     this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+               }
+            });
+
         }
 
         this.closeModal();     

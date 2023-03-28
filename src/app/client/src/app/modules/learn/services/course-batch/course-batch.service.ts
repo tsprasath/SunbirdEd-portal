@@ -217,4 +217,26 @@ export class CourseBatchService {
    return this.learnerService.post(option)
   }
 
+  adminEvaluationList(request){
+   const option = {
+    url: this.configService.urlConFig.URLS.COURSE.EVALUATION_LIST,
+    data: request
+   }
+   return this.learnerService.post(option)
+  }
+  adminIssueCertificate(request){
+    const option = {
+     url: this.configService.urlConFig.URLS.COURSE.ISSUE_CERTIFICATE,
+     data: request
+    }
+    return this.learnerService.post(option)
+   }
+   adminNotIssueCertificate(request){
+    const option = {
+     url: this.configService.urlConFig.URLS.COURSE.NOT_ISSUE_CERTIFICATE,
+     data: request
+    }
+    return this.learnerService.post(option)
+   }
+
 }

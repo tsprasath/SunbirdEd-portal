@@ -8,8 +8,7 @@
 <div *ngIf="noResult && !showLoader">
     <app-no-result [data]="noResultMessage"></app-no-result>
 </div>
-
-<table class="ui upForReviewTable table" *ngIf="allStudents.length > 0 && !showLoader && !noResult">
+<table class="ui upForReviewTable table" *ngIf="EvaluationPendingList.length > 0 && !showLoader && !noResult">
     <thead>
         <tr>
             <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
@@ -26,9 +25,10 @@
             </th>
         </tr>
     </thead>
+    
     <tbody [appTelemetryImpression]="telemetryImpression" in-view-container (inview)="inview($event)"
-        [throttle]="[1000]" [trigger]="allStudents">
-        <tr in-view-item class="UpForReviewListHover" *ngFor="let student of allStudents let i = index;" [id]="i"
+        [throttle]="[1000]" [trigger]="EvaluationPendingList">
+        <tr in-view-item class="UpForReviewListHover" *ngFor="let student of EvaluationPendingList let i = index;" [id]="i"
             [data]="student" appTelemetryInteract>
             <td tabindex="0">
                 <div class="UpReviewHeader">{{ student?.firstName | slice:0:30 }}

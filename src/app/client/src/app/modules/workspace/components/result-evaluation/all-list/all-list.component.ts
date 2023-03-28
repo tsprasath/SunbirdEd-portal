@@ -255,7 +255,8 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
                 }
                 this.queryParams = bothParams.queryParams;
                 this.query = this.queryParams['query'];
-                this.getParticipantsList(bothParams);                
+                this.getParticipantsList(bothParams);   
+               //this.fetchEvaluationList(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams)             
             });
     }
 
@@ -302,6 +303,17 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     /**
     * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
+
+    fetchEvaluationList(limit: number, pageNumber: number, bothParams){
+      const requestBody = {
+        "status":[3,4]
+      }
+
+      this.courseBatchService.adminEvaluationList(requestBody).pipe(takeUntil((this.destroySubject$)))
+      .subscribe((data:ServerResponse)=>{
+        console.log('evaluationList',data)
+      })
+    }
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
