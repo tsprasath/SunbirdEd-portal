@@ -51,7 +51,7 @@ export class ResultEvaluationComponent implements OnInit, OnDestroy {
 
     navigateToLink(selectedLink: string) {
       this.activeLink = selectedLink;
-      this.router.navigate(['workspace/content/resultEvaluation'+ selectedLink]);
+      this.router.navigate(['workspace/content/resultEvaluation'+ selectedLink], { state: {assessment: this.assessment, pageNumber: 1} });
     }
 
     navigateToAssessments()  {

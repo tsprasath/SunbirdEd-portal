@@ -179,6 +179,10 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     */
     public collectionData: Array<any>;
 
+     /**
+    *To store the assessment object   
+    */
+    assessment: any = {}
     participantsList: any[] = [];
     isChecked: boolean = false;
     enableFeedback: boolean = false;
@@ -191,7 +195,6 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
      * To show/hide collection modal
      */
     public collectionListModal = false;
-    public isQuestionSetFilterEnabled: boolean;
     private destroySubject$ = new Subject();
 
     /**
@@ -223,6 +226,8 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
         private courseBatchService: CourseBatchService) {
 
         super(searchService, workSpaceService, userService);
+        const routerStateObj: any = this.location.getState();
+        this.assessment = routerStateObj?.assessment;
         this.paginationService = paginationService;
         this.activatedRoute = activatedRoute;
         this.toasterService = toasterService;
@@ -236,11 +241,6 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     }
 
     ngOnInit() {
-        this.workSpaceService.questionSetEnabled$
-            .subscribe((response: any) => {
-                this.isQuestionSetFilterEnabled = response.questionSetEnablement;
-            });
-
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
@@ -281,7 +281,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": "01373435756892979223"
+                    "batchId": this.assessment.batches[0].batchId
                 }
             }
         };
@@ -333,12 +333,9 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
                     this.allStudents.forEach((student) => {
-                        if(this.participantsList.includes(student.id)){
-                            student['assessmentAssigned'] = true;
-                            student['checked'] = true;
-                        } else {
-                            student['assessmentAssigned'] = false;
-                            student['checked'] = false;
+                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                        if(assessmentInfo){
+                            student['assessmentInfo']  = assessmentInfo;
                         }
                     });
                     this.totalCount = data.result.response.count;
@@ -402,41 +399,32 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
         this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
+    getStatusText(student: any) {
+        let statusText = '';
+        switch(student?.assessmentInfo?.status) {
+            case 0: 
+                statusText= "Assigned";
+                 break;
+            case 1:
+                statusText= "In progress";
+                break;
+            case 2:
+                statusText= "Completed";
+                break;
+            case 3:
+                statusText= "Pending for evaluation"; 
+                break;
+            case 4:
+                if(student?.assessmentInfo?.certificates?.length){
+                    statusText= "Certificate issued";
+                } else {
+                    statusText= "Certificate not issued";
+                }
+                
+                break; 
 
-    handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
-        if (studentObj?.id) {
-            this.checkUncheck($event, studentObj);
-            return;
         }
-        
-        this.allStudents.forEach((obj) => {
-            if(!obj.assessmentAssigned){
-                this.checkUncheck($event, obj);
-            }
-           
-        })
-    }
-
-    checkUncheck($event: MatCheckboxChange, obj: any): void {
-        if ($event.checked) {
-            obj['checked'] = true;
-            this.shiftUnShiftArray('push', obj);
-        } else {
-            obj['checked'] = false;
-            this.shiftUnShiftArray('pop', obj);
-        }
-
-        this.disableAssessmentAction = this.checkedArray.length ? false : true;
-    }
-
-    shiftUnShiftArray(flag: string, obj: any): void {
-        if (flag === 'push') {
-            if (!this.checkedArray.includes(obj.id)) {
-                this.checkedArray.push(obj.id);
-            }
-        } else {
-            this.checkedArray.splice(this.checkedArray.indexOf(obj.id), 1); 
-        }
+        return statusText;
     }
 
     ngOnDestroy(): void {

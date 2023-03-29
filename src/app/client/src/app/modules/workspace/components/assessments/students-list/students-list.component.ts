@@ -332,7 +332,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
                     this.allStudents.forEach((student) => {
-                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id})
+                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
                         if(assessmentInfo){
                             student['assessmentInfo']  = assessmentInfo;
                             student['checked'] = true;

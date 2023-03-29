@@ -168,7 +168,9 @@
       "GET_REPORTS_METADATA": "course-reports/metadata",
       "ENROLL_USERS_TO_COURSE": "course/v1/admin/bulk/enrol",
       "UNENROLL_USERS_TO_COURSE": "course/v1/admin/bulk/unenrol",
-      "SUBMIT_FOR_EVAL": "course/v1/course/admin/course/eval"
+      "SUBMIT_FOR_EVAL": "course/v1/course/admin/course/eval",
+      "ISSUE_CERTIFICATE":"course/v1/course/batch/piaa/cert/issue",
+      "NOT_ISSUE_CERTIFICATE":"course/v1/course/admin/course/notissuecertificate"
     },
     "CONTENT": {
       "SEARCH": "content/v1/search",
