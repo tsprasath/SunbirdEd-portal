@@ -1,6 +1,7 @@
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-result-evaluation',
@@ -18,9 +19,17 @@ export class ResultEvaluationComponent implements OnInit, OnDestroy {
     */
     activeLink: string;
 
+    /**
+    *To store the assessment object   
+    */
+    assessment: any = {}
+
+    routerStateObj: any;
+
     constructor(
       activatedRoute: ActivatedRoute,
       private router: Router,
+      private location: Location,
     ) { 
       this.navLinks = [
         {
@@ -34,6 +43,8 @@ export class ResultEvaluationComponent implements OnInit, OnDestroy {
         }
     ];
     this.activeLink= "/all/1";
+    this.routerStateObj = this.location.getState();
+    this.assessment = this.routerStateObj?.assessment;
     }
 
     ngOnInit() { }
@@ -41,6 +52,10 @@ export class ResultEvaluationComponent implements OnInit, OnDestroy {
     navigateToLink(selectedLink: string) {
       this.activeLink = selectedLink;
       this.router.navigate(['workspace/content/resultEvaluation'+ selectedLink]);
+    }
+
+    navigateToAssessments()  {
+      this.router.navigate(['workspace/content/assessments/list', this.routerStateObj?.pageNumber]);
     }
 
     ngOnDestroy(): void {

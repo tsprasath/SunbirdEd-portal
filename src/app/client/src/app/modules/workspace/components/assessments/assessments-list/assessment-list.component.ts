@@ -2,14 +2,14 @@
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { combineLatest } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import * as _ from 'lodash-es';
 
 import { SuiModalService, ModalTemplate } from 'ng2-semantic-ui-v9';
 import { IImpressionEventInput } from '@sunbird/telemetry';
 import { SearchService, UserService, ISort, FrameworkService } from '@sunbird/core';
-import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService } from '@sunbird/shared';
+import { ServerResponse, PaginationService, ConfigService, ToasterService, IPagination, ResourceService, ILoaderMessage, INoResultMessage, IContents, NavigationHelperService, IUserData } from '@sunbird/shared';
 
 import { WorkSpace } from './../../../classes/workspace';
 import { WorkSpaceService } from './../../../services';
@@ -23,6 +23,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
 
     @ViewChild('modalTemplate')
     public modalTemplate: ModalTemplate<{ data: string }, string, string>;
+    public unsubscribe$ = new Subject<void>();
 
     /**
      * state for content editior
@@ -187,6 +188,10 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     public collectionListModal = false;
     public isQuestionSetFilterEnabled: boolean;
 
+    userRoles:any[] = [];
+
+    isOrgAdmin: boolean;
+
     /**
       * Constructor to create injected service(s) object
       Default method of Draft Component class
@@ -223,6 +228,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
             'loaderMessage': this.resourceService?.messages?.stmsg?.m0110,
         };
         this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
+        this.isOrgAdmin= false;
     }
 
     ngOnInit() {
@@ -237,7 +243,14 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
                 }
                 this.queryParams = bothParams.queryParams;
                 this.query = this.queryParams['query'];
-                this.fecthAllAssessments(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                if (this.userService.loggedIn) {
+                    this.userService.userData$.pipe(takeUntil(this.unsubscribe$)).subscribe((profileData: IUserData) => {
+                      this.userRoles = profileData.userProfile['roles'].length ? _.map(profileData.userProfile['roles'], 'role') : []; 
+                      this.isOrgAdmin = (!_.isEmpty(this.userRoles) && _.includes(this.userRoles, 'ORG_ADMIN') );
+                      this.fecthAllAssessments(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                    });
+                  }
+                
             });
     }
 
@@ -277,7 +290,6 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
         const primaryCategories = _.compact(_.concat(this.frameworkService['_channelData'].contentPrimaryCategories, this.frameworkService['_channelData'].collectionPrimaryCategories));
         const searchParams = {
             filters: {
-                status: bothParams.queryParams.status ? bothParams.queryParams.status : preStatus,
                 // tslint:disable-next-line:max-line-length
                 primaryCategory: this.config.appConfig.WORKSPACE.Assessments.primaryCategories,
                 se_boards:bothParams.queryParams.board,
@@ -291,6 +303,11 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
             query: _.toString(bothParams.queryParams.query),
             sort_by: this.sort
         };
+        if(this.isOrgAdmin) {
+            // searchParams.filters['batches.status'] = 3;
+        } else {
+            searchParams.filters['status'] = bothParams.queryParams.status ? bothParams.queryParams.status : preStatus;
+        }
 
         this.search(searchParams)
             .subscribe((data: ServerResponse) => {
@@ -317,7 +334,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     handleAssignAssessment(assessment): void {
-        this.route.navigate(['/workspace/content/assessments/assign/all/1'], { state: {assessment: assessment, pageNumber: this.pageNumber} });
+        this.route.navigate([this.isOrgAdmin ? '/workspace/content/resultEvaluation/all/1' : '/workspace/content/assessments/assign/all/1'], { state: {assessment: assessment, pageNumber: this.pageNumber} });
     }
 
     inview(event) {
@@ -356,6 +373,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     ngOnDestroy(): void {
-
+        this.unsubscribe$.next();
+        this.unsubscribe$.complete();
     }
 }

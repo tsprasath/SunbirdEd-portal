@@ -28,12 +28,12 @@
 <table class="ui upForReviewTable table" *ngIf="allStudents.length > 0 && !showLoader && !noResult">
     <thead>
         <tr>
-            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.attempted }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.idNo }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
-            <th class="one wide text-center">
+            <th class="four wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.attempted }}</th>
+            <!-- <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.idNo }}</th> -->
+            <!-- <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th> -->
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
+            <th class="two wide text-center">
                 <mat-checkbox (change)="handleCheckBoxChange($event)" [(ngModel)]="isChecked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
             </th>
         </tr>
@@ -48,19 +48,19 @@
                 </div>
             </td>
             <td>
-                <div>NA</div>
+                <div>{{ (student?.assessmentInfo && student?.assessmentInfo?.status > 2) ? (student?.assessmentInfo?.enrolledDate | dateFormat) : 'Not Attempted' }}</div>
             </td>
-            <td>
+            <!-- <td>
                 <div>{{ student?.userId }}</div>
-            </td>
-            <td>
+            </td> -->
+            <!-- <td>
                 <div>{{ (assessment?.se_boards) ? assessment?.se_boards[0] : 'NA' }}</div>
-            </td>
+            </td> -->
             <td>
-                <div>{{(student?.assessmentAssigned) ? 'Assigned' : 'Not Assigned'}}</div>
+                <div>{{(student?.assessmentInfo) ? getStatusText(student?.assessmentInfo?.status) : 'Not Assigned'}}</div>
             </td>
             <td class="text-center">
-                <mat-checkbox (change)="handleCheckBoxChange($event, student)"  class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [checked]="student.checked" [disabled]="student.assessmentAssigned" ></mat-checkbox>
+                <mat-checkbox (change)="handleCheckBoxChange($event, student)"  class="custom-select sb-mat__checkbox sb-mat__checkbox--primary" [checked]="student.checked" [disabled]="!!student?.assessmentInfo" ></mat-checkbox>
             </td>
         </tr>
     </tbody>

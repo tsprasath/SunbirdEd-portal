@@ -37,7 +37,7 @@
             </td>
             <td>
                 <div *ngIf="!assessment?.batches || assessment?.batches?.length === 0">No batch found</div>
-                <div class="assign-link" (click)="handleAssignAssessment(assessment)" *ngIf="assessment?.batches && assessment?.batches?.length">Assign</div>
+                <div class="assign-link" (click)="handleAssignAssessment(assessment)" *ngIf="assessment?.batches && assessment?.batches?.length">{{isOrgAdmin ? 'Evaluate'  : 'Assign'}}</div>
             </td>
         </tr>
     </tbody>

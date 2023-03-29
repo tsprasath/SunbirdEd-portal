@@ -193,7 +193,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
      * To show/hide collection modal
      */
     public collectionListModal = false;
-    public isQuestionSetFilterEnabled: boolean;
     private destroySubject$ = new Subject();
 
     /**
@@ -241,12 +240,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     ngOnInit() {
-        console.log('as',this.assessment)
-        this.workSpaceService.questionSetEnabled$
-            .subscribe((response: any) => {
-                this.isQuestionSetFilterEnabled = response.questionSetEnablement;
-            });
-
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
@@ -339,11 +332,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
                     this.allStudents.forEach((student) => {
-                        if(this.participantsList.includes(student.id)){
-                            student['assessmentAssigned'] = true;
+                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id})
+                        if(assessmentInfo){
+                            student['assessmentInfo']  = assessmentInfo;
                             student['checked'] = true;
-                        } else {
-                            student['assessmentAssigned'] = false;
+                        } else {    
                             student['checked'] = false;
                         }
                     });
@@ -407,7 +400,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     handleAssignStudent(): void {
         const batch = this.assessment.batches[0];
         const userIds = _.compact(_.map(this.allStudents, (student) =>  {
-            if (student.checked && !student['assessmentAssigned']) {
+            if (student.checked && !student['assessmentInfo']) {
                 return student.id
             };
         }))
@@ -426,7 +419,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 _.forEach(this.allStudents, (student) =>  {
                     userIds.forEach(id=>{
                         if(student.id === id){
-                          student.assessmentAssigned = true
+                          student['assessmentInfo'] = {status: 0}
                         }
                     });
                 });
@@ -447,7 +440,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         }
         
         this.allStudents.forEach((obj) => {
-            if(!obj.assessmentAssigned){
+            if(!obj.assessmentInfo){
                 this.checkUncheck($event, obj);
             }
            
@@ -474,6 +467,29 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         } else {
             this.checkedArray.splice(this.checkedArray.indexOf(obj.id), 1); 
         }
+    }
+
+    getStatusText(status: number) {
+        let statusText = '';
+        switch(status) {
+            case 0: 
+                statusText= "Assigned";
+                 break;
+            case 1:
+                statusText= "In progress";
+                break;
+            case 2:
+                statusText= "Completed";
+                break;
+            case 3:
+                statusText= "Sent for evaluation"; 
+                break;
+            case 4:
+                statusText= "Evaluation completed";
+                break; 
+
+        }
+        return statusText;
     }
 
     ngOnDestroy(): void {
