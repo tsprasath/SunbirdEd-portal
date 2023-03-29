@@ -19,12 +19,12 @@
 <table class="ui upForReviewTable table" *ngIf="allStudents.length > 0 && !showLoader && !noResult">
     <thead>
         <tr>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.assessmentName }}</th>
-            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.positionAndCompetency }}</th>
-            <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.date }}</th>
-            <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalFeedback }}</th>
-            <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalDetails }}</th>
+            <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.candidateName }}</th>
+            <!-- <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.assessmentName }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.positionAndCompetency }}</th> -->
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.date }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalFeedback }}</th>
+            <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.nodalDetails }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.result }}</th>
             <th class="one wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
             <th class="one wide"></th>
@@ -39,26 +39,26 @@
                     <i *ngIf="student?.firstName?.length > 30">...</i>
                 </div>
             </td>
+            <!-- <td>
+                <div>NA</div>
+            </td>
             <td>
                 <div>NA</div>
+            </td> -->
+            <td>
+                <div>{{ (student?.assessmentInfo && student?.assessmentInfo?.status >= 2) ? (student?.assessmentInfo?.enrolledDate | dateFormat) : 'Not Attempted' }}</div>
+            </td>
+            <td>
+                <div matTooltip="student?.assessmentInfo?.comment" [matTooltipPosition]="'right'">{{student?.assessmentInfo?.comment}}</div>
+            </td>
+            <td>
+                <div>{{student?.assessmentInfo?.addedBy}}</div>
             </td>
             <td>
                 <div>NA</div>
             </td>
             <td>
-                <div>NA</div>
-            </td>
-            <td>
-                <div matTooltip="Nodal officer feedback for this student Nodal officer feedback for this student Nodal officer feedback for this student Nodal officer feedback for this student Nodal officer feedback for this student" [matTooltipPosition]="'right'">Nodal offi...</div>
-            </td>
-            <td>
-                <div>NA</div>
-            </td>
-            <td>
-                <div>NA</div>
-            </td>
-            <td>
-                <div>NA</div>
+                <div>{{(student?.assessmentInfo) ? getStatusText(student) : 'Not Assigned'}}</div>
             </td>
             <td class="text-center">
                 <button class="ui default basic compact icon button"

@@ -213,7 +213,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
      * To show/hide collection modal
      */
     public collectionListModal = false;
-    public isQuestionSetFilterEnabled: boolean;
+
     private destroySubject$ = new Subject();
 
     /**
@@ -265,11 +265,6 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
     }
 
     ngOnInit() {
-        this.workSpaceService.questionSetEnabled$
-            .subscribe((response: any) => {
-                this.isQuestionSetFilterEnabled = response.questionSetEnablement;
-            });
-
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
@@ -361,20 +356,14 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             .subscribe((data: ServerResponse) => {
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
+                    
                     this.allStudents.forEach((student) => {
-                        student['checked'] = false;
-                        student['assessmentAssigned'] = false;
-                        student['assessmentCompleted']= false;
-                        if(this.participantsList.includes(student.id)){
-                            student['assessmentAssigned'] = true;
-                        } else {
-                            student['assessmentAssigned'] = false;
-                        }
+                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                        student['checked'] = false
+                        if(assessmentInfo){
+                            student['assessmentInfo'] = assessmentInfo;
+                        } 
                     });
-                    //Un-commemnt below code to test submit evaluation api until we have api with correct assessment statuses
-                    // this.allStudents[0]['checked'] = false;
-                    // this.allStudents[0]['assessmentAssigned'] = false;
-                    // this.allStudents[0]['assessmentCompleted']= true;
                     this.totalCount = data.result.response.count;
                     this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
                     this.showLoader = false;
@@ -452,13 +441,12 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             this.checkUncheck($event, studentObj);
             return;
         }
-        
-        this.allStudents.forEach((obj) => {
-            if(obj.assessmentAssigned || obj.assessmentCompleted){
-                this.checkUncheck($event, obj);
+
+        this.allStudents.forEach((student) => {
+            if(student?.assessmentInfo && student?.assessmentInfo?.status < 3) {
+                this.checkUncheck($event, student);
             }
-           
-        })
+        });
     }
 
     checkUncheck($event: MatCheckboxChange, obj: any): void {
@@ -470,17 +458,31 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             this.shiftUnShiftArray('pop', obj);
         }
 
-        if (_.findIndex(this.selectedStudents,  {assessmentAssigned: true}) !== -1) {
+        const studentsWithAssessmentInfo= _.filter(this.selectedStudents, (student)  => {return student?.assessmentInfo != null});
+        const studentsWithStatusBelowCompleted= _.filter(studentsWithAssessmentInfo, (student)  => {return student?.assessmentInfo?.status < 2});
+        const studentsWithStatusCompleted = _.filter(studentsWithAssessmentInfo, (student)  => {return student?.assessmentInfo?.status === 2});
+        if(studentsWithStatusBelowCompleted.length > 0) {
             this.disableAbortAction = false;
-        }else {
+        } else {
             this.disableAbortAction = true;
         }
 
-        if (_.findIndex(this.selectedStudents,  {assessmentCompleted: true}) !== -1) {
+        if(studentsWithStatusCompleted.length > 0) {
             this.disableEvaluationAction = false;
-        }else {
+        } else {
             this.disableEvaluationAction = true;
         }
+        // if (_.findIndex(this.selectedStudents,  {assessmentAssigned: true}) !== -1) {
+        //     this.disableAbortAction = false;
+        // }else {
+        //     this.disableAbortAction = true;
+        // }
+
+        // if (_.findIndex(this.selectedStudents,  {assessmentCompleted: true}) !== -1) {
+        //     this.disableEvaluationAction = false;
+        // }else {
+        //     this.disableEvaluationAction = true;
+        // }
     }
 
     shiftUnShiftArray(flag: string, obj: any): void {
@@ -522,7 +524,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         };
         if(this.isAbortForm){
             const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentAssigned) {
+                if (student?.assessmentInfo  && student?.assessmentInfo?.status < 2) {
                     return student.id
                 };
             }));
@@ -535,13 +537,11 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
               _.forEach(this.allStudents, (student) =>  {
                 userIds.forEach(ids=>{
                     if(student.id == ids){
-                      student.assessmentAssigned = false;
+                      delete student.assessmentInfo;
                       student.checked = false;
-                      this.getAssessmentStatus(student);
                     }
-                })
-                // student.assessmentAssigned = true
-            })
+                });
+            });
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
@@ -551,15 +551,23 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             });
         } else{
             const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentCompleted) {
+                if (student?.assessmentInfo  && student?.assessmentInfo?.status === 2) {
                     return student.id
                 };  
             }));
             requestBody.request.userIds = userIds;
             this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
-                this.toasterService.success(this.resourceService.messages.smsg.m00102 )
+                this.toasterService.success(this.resourceService.messages.smsg.m00102 );
                 this.closeModal()
+                _.forEach(this.allStudents, (student) =>  {
+                    userIds.forEach(ids=>{
+                        if(student.id == ids){
+                          student.assessmentInfo.status  = 3;
+                          student.checked = false;
+                        }
+                    });
+                });
             },(err) => {
                 if (err.error && err.error.params && err.error.params.errmsg) {
                     this.toasterService.error(err.error.params.errmsg);
@@ -571,16 +579,39 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
           
     }
 
-    getAssessmentStatus(student: any) {
-        let status  = '';
-        if(student?.assessmentAssigned){
-            status=  "Assigned";
-        } else if(student?.assessmentCompleted) {
-            status = "Completed"
-        }else {
-            status=  "Not assigned";
+    getAssessmentStatus(status: number) {
+        let statusText = '';
+        switch(status) {
+            case 0: 
+                statusText= "Assigned";
+                 break;
+            case 1:
+                statusText= "In progress";
+                break;
+            case 2:
+                statusText= "Completed";
+                break;
+            case 3:
+                statusText= "Sent for evaluation"; 
+                break;
+            case 4:
+                statusText= "Evaluation completed";
+                break; 
+
         }
-        return status;
+        return statusText;
+    }
+
+    getDisableCheckboxFlag(obj: any) {
+        let disableFlag = false;
+        if(obj?.assessmentInfo){
+            if(obj?.assessmentInfo?.status > 2) {
+                disableFlag =true;
+            }
+        } else {
+            disableFlag =true;
+        }
+        return disableFlag;
     }
 
     ngOnDestroy(): void {

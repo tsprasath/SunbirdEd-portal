@@ -213,7 +213,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
      * To show/hide collection modal
      */
     public collectionListModal = false;
-    public isQuestionSetFilterEnabled: boolean;
     private destroySubject$ = new Subject();
 
     /**
@@ -265,10 +264,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     }
 
     ngOnInit() {
-        this.workSpaceService.questionSetEnabled$
-            .subscribe((response: any) => {
-                this.isQuestionSetFilterEnabled = response.questionSetEnablement;
-            });
 
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
@@ -310,7 +305,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": "01373435756892979223"
+                    "batchId": this.assessment.batches[0].batchId
                 }
             }
         };
@@ -362,13 +357,10 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
                     this.allStudents = data.result.response.content;
                     this.allStudents.forEach((student) => {
+                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
                         student['checked'] = false;
-                        student['assessmentAssigned'] = false;
-                        student['assessmentCompleted']= false;
-                        if(this.participantsList.includes(student.id)){
-                            student['assessmentAssigned'] = true;
-                        } else {
-                            student['assessmentAssigned'] = false;
+                        if(assessmentInfo){
+                            student['assessmentInfo'] = assessmentInfo;
                         }
                     });
                     this.totalCount = data.result.response.count;
@@ -428,33 +420,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
         this.telemetryImpression = Object.assign({}, this.telemetryImpression);
     }
 
-    handleAssignStudent(): void {
-        const batch = this.assessment.batches[0];
-        const userIds = _.compact(_.map(this.allStudents, (student) =>  {
-            if (student.checked && !student['assessmentAssigned']) {
-                return student.id
-            };
-        }))
-        const requestBody = {
-            request: {
-                batchId: batch?.batchId,
-                courseId: this.assessment?.identifier,
-                userIds: userIds
-            }
-        };
-        console.log('requestBody - ', requestBody);
-        this.courseBatchService.enrollUsersToBatch(requestBody)
-            .pipe(takeUntil(this.destroySubject$))
-            .subscribe((res) => {
-                this.toasterService.success(this.resourceService.messages.smsg.m0034);
-            }, (err) => {
-                if (err.error && err.error.params && err.error.params.errmsg) {
-                    this.toasterService.error(err.error.params.errmsg);
-                } else {
-                    this.toasterService.error(this.resourceService.messages.fmsg.m0103);
-                }
-            })
-    }
 
     handleKeyDown(event: KeyboardEvent){
         if(this.maxCount == 0 && event.key !== 'Backspace' ){
@@ -475,11 +440,10 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             return;
         }
         
-        this.allStudents.forEach((obj) => {
-            if(obj.assessmentAssigned || obj.assessmentCompleted){
-                this.checkUncheck($event, obj);
-            }
-           
+        this.allStudents.forEach((student) => {
+            if(student?.assessmentInfo && student?.assessmentInfo?.status === 3) {
+                this.checkUncheck($event, student);
+            }   
         })
     }
 
@@ -492,16 +456,14 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             this.shiftUnShiftArray('pop', obj);
         }
 
-        if (_.findIndex(this.selectedStudents,  {assessmentAssigned: true}) !== -1) {
-            this.disableRejectCertificateAction = false;
-        }else {
-            this.disableRejectCertificateAction = true;
-        }
-
-        if (_.findIndex(this.selectedStudents,  {assessmentCompleted: true}) !== -1) {
+        const studentsWithAssessmentInfo= _.filter(this.selectedStudents, (student)  => {return student?.assessmentInfo != null});
+        const studentsWithStatusPendingForEval = _.filter(studentsWithAssessmentInfo, (student)  => {return student?.assessmentInfo?.status === 3});
+        if(studentsWithStatusPendingForEval.length > 0) {
             this.disableIssueCertificateAction = false;
-        }else {
+            this.disableRejectCertificateAction = false;
+        } else {
             this.disableIssueCertificateAction = true;
+            this.disableRejectCertificateAction = true;
         }
     }
 
@@ -534,52 +496,101 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     handleSubmitData(modal?): void {
         console.warn('bbbb',this.feedbackForm.value.feedback);
         const batch = this.assessment.batches[0];
+        const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
+            if (student?.assessmentInfo  && student?.assessmentInfo?.status === 3) {
+                return student.id
+            };
+        }));
         let requestBody = {
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userIds: []
+                userIds: userIds
             }
         };
         if(this.isIssueCertificate){
-            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentAssigned) {
-                    return student.id
-                };
-            }));
-            requestBody.request.userIds = userIds;
-            // this.courseBatchService.unenrollUsersToBatch(requestBody).pipe(takeUntil(this.destroySubject$))
-            // .subscribe((res)=>{
-            //   console.log('resData',res)
-            // },(err) => {
-            //     if (err.error && err.error.params && err.error.params.errmsg) {
-            //         this.toasterService.error(err.error.params.errmsg);
-            //     } else {
-            //         this.toasterService.error(this.resourceService.messages.fmsg.m0103);
-            //     }
-            // });
+            this.courseBatchService.issueCertificate(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+                this.closeModal();
+                this.disableIssueCertificateAction = true;
+                this.disableRejectCertificateAction = true;
+                _.forEach(this.allStudents, (student) =>  {
+                    userIds.forEach(ids=>{
+                        if(student.id == ids){
+                          student.assessmentInfo.status  = 4;
+                          student.assessmentInfo.certificates  = ["issued"];
+                          student.checked = false;
+                        }
+                    });
+                });
+            },(err)=>{
+               if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+               } else {
+                     this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+               }
+            });
         } else{
-            const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
-                if (student?.assessmentCompleted) {
-                    return student.id
-                };
-            }));
-            requestBody.request.userIds = userIds;
-        }
-
-        this.closeModal();     
+            requestBody.request['comment'] = this.feedbackForm.value.feedback;
+            this.courseBatchService.rejectCertificate(requestBody).pipe(takeUntil(this.destroySubject$))
+            .subscribe((res)=>{
+                this.closeModal();
+                this.disableIssueCertificateAction = true;
+                this.disableRejectCertificateAction = true;
+                _.forEach(this.allStudents, (student) =>  {
+                    userIds.forEach(ids=>{
+                        if(student.id == ids){
+                          student.assessmentInfo.status  = 4;
+                          student.checked = false;
+                        }
+                    });
+                });
+            },(err)=>{
+               if (err.error && err.error.params && err.error.params.errmsg) {
+                    this.toasterService.error(err.error.params.errmsg);
+               } else {
+                     this.toasterService.error(this.resourceService.messages.fmsg.m0103);
+               }
+            });
+        }   
     }
 
-    getAssessmentStatus(student: any) {
-        let status  = '';
-        if(student?.assessmentAssigned){
-            status=  "Assigned";
-        } else if(student?.assessmentCompleted) {
-            status = "Completed"
-        }else {
-            status=  "Not assigned";
+    getStatusText(student: any) {
+        let statusText = '';
+        switch(student?.assessmentInfo?.status) {
+            case 0: 
+                statusText= "Assigned";
+                 break;
+            case 1:
+                statusText= "In progress";
+                break;
+            case 2:
+                statusText= "Completed";
+                break;
+            case 3:
+                statusText= "Pending for evaluation"; 
+                break;
+            case 4:
+                if(student?.assessmentInfo?.certificates?.length){
+                    statusText= "Certificate issued";
+                } else {
+                    statusText= "Certificate not issued";
+                }
+                
+                break; 
+
         }
-        return status;
+        return statusText;
+    }
+
+    getDisableCheckboxFlag(obj: any) {
+        let disableFlag = true;
+        if(obj?.assessmentInfo){
+            if(obj?.assessmentInfo?.status === 3) {
+                disableFlag =false;
+            }
+        } 
+        return disableFlag;
     }
 
     ngOnDestroy(): void {

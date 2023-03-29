@@ -217,4 +217,20 @@ export class CourseBatchService {
    return this.learnerService.post(option)
   }
 
+  issueCertificate(request){
+    const option = {
+     url: this.configService.urlConFig.URLS.COURSE.ISSUE_CERTIFICATE,
+     data: request
+    }
+    return this.learnerService.post(option)
+   }
+
+   rejectCertificate(request){
+    const option = {
+     url: this.configService.urlConFig.URLS.COURSE.NOT_ISSUE_CERTIFICATE,
+     data: request
+    }
+    return this.learnerService.post(option)
+   }
+
 }
