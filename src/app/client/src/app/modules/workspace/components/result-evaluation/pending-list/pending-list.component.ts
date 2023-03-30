@@ -314,7 +314,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
-                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.ASSESSMENT.PAGE_LIMIT, this.pageNumber, bothParams);
             }, (err: ServerResponse) => {
                 this.showLoader = false;
                 this.noResult = false;
@@ -355,16 +355,18 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data: ServerResponse) => {
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
-                    this.allStudents = data.result.response.content;
-                    this.allStudents.forEach((student) => {
-                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
-                        student['checked'] = false;
-                        if(assessmentInfo){
-                            student['assessmentInfo'] = assessmentInfo;
-                        }
-                    });
-                    this.totalCount = data.result.response.count;
-                    this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
+                    // this.allStudents = data.result.response.content;
+                    // this.allStudents.forEach((student) => {
+                    //     const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                    //     student['checked'] = false;
+                    //     if(assessmentInfo){
+                    //         student['assessmentInfo'] = assessmentInfo;
+                    //     }
+                    // });
+                    // this.totalCount = data.result.response.count;
+                    //this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
+
+                    
                     this.showLoader = false;
                     this.noResult = false;
                 } else {

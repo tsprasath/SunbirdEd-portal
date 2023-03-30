@@ -290,7 +290,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
-                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.ASSESSMENT.PAGE_LIMIT, this.pageNumber, bothParams);
             }, (err: ServerResponse) => {
                 this.showLoader = false;
                 this.noResult = false;
@@ -331,15 +331,28 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data: ServerResponse) => {
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
-                    this.allStudents = data.result.response.content;
-                    this.allStudents.forEach((student) => {
+                    // this.allStudents = data.result.response.content;
+                    // this.allStudents.forEach((student) => {
+                    //     const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                    //     if(assessmentInfo){
+                    //         student['assessmentInfo']  = assessmentInfo;
+                    //     }
+                    // });
+                    // this.totalCount = data.result.response.count;
+                    // this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
+
+                    // below logic to only filter students who are paricipants from  all students list
+                    let allStudents= data.result.response.content;
+                    allStudents.forEach((student) => {
                         const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
                         if(assessmentInfo){
                             student['assessmentInfo']  = assessmentInfo;
                         }
                     });
-                    this.totalCount = data.result.response.count;
-                    this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
+                    this.allStudents= _.filter(allStudents, (student) => { return student?.assessmentInfo  !== null });
+                    this.totalCount =  this.allStudents.length;
+                    this.pager = this.paginationService.getPager(this.totalCount, pageNumber, limit);
+                    
                     this.showLoader = false;
                     this.noResult = false;
                 } else {
