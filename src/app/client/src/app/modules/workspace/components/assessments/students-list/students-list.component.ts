@@ -285,7 +285,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 }
             }
         };
-
         this.courseBatchService.getParticipantList(batchDetails)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
@@ -303,6 +302,10 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
+
+        const status = bothParams?.queryParams?.status ? _.map(bothParams.queryParams.status, (assessmentStatus) => {
+            return this.config.appConfig.WORKSPACE.Assessments.STATUS.findIndex((status) => status === assessmentStatus);
+        }) : []
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
             const sort_by = bothParams.queryParams.sort_by;

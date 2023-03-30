@@ -1182,6 +1182,13 @@
     "Assessments":{
       "primaryCategories":[
         "PIAA Assessment"
+      ],
+      "STATUS": [
+        "Assigned",
+        "In Progress",
+        "Completed",
+        "Pending Evaluation",
+        "Evaluation Completed"
       ]
     }
   },
