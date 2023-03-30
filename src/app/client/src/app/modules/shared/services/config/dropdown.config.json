@@ -262,7 +262,7 @@
                     "name": "Created On"
                 }
             ],
-            "AssignStudentsortingOptions":  [
+            "assignStudentsortingOptions":  [
                 {
                     "field": "name",
                     "name": "Student Name"
