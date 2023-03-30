@@ -303,9 +303,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
 
         const status = bothParams?.queryParams?.status ? _.map(bothParams.queryParams.status, (assessmentStatus) => {
-            return this.config.appConfig.WORKSPACE.STATUS.findIndex((status) => status === assessmentStatus);
+            return this.config.appConfig.WORKSPACE.Assessments.STATUS.findIndex((status) => status === assessmentStatus);
         }) : []
-        console.log('statusCount',status)
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
             const sort_by = bothParams.queryParams.sort_by;
