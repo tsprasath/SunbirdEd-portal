@@ -237,7 +237,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.adminStudentsortingOptions;     
     }
 
     ngOnInit() {
