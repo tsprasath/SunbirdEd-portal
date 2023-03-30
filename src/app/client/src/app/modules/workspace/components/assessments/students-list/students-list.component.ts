@@ -182,6 +182,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     /**
     *To store the assessment object   
     */
+
     assessment: any = {}
     participantsList: any[] = [];
     isChecked: boolean = false;
@@ -236,7 +237,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.AssignStudentsortingOptions;     
     }
 
     ngOnInit() {
@@ -433,6 +434,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             })
     }
 
+
     handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
         if (studentObj?.id) {
             this.checkUncheck($event, studentObj);
@@ -446,6 +448,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
            
         })
     }
+    
 
     checkUncheck($event: MatCheckboxChange, obj: any): void {
         if ($event.checked) {
