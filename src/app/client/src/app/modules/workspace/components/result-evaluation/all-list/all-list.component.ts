@@ -303,6 +303,10 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
+        const status = bothParams?.queryParams?.status ? _.map(bothParams.queryParams.status, (assessmentStatus) => {
+            return this.config.appConfig.WORKSPACE.STATUS.findIndex((status) => status === assessmentStatus);
+        }) : []
+        console.log(status)
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
             const sort_by = bothParams.queryParams.sort_by;

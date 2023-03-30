@@ -905,6 +905,13 @@
       "eTextBook",
       "TVLesson"
     ],
+    "STATUS": [
+      "Assigned",
+      "In Progress",
+      "Completed",
+      "Pending Evaluation",
+      "Evaluation Completed"
+    ],
     "primaryCategory": [
       "PIAA Question Set"
     ],
