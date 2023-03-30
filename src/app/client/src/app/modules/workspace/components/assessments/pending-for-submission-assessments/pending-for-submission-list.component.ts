@@ -257,7 +257,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.pendingStudentsortingOptions;     
 
         this.feedbackForm = new FormGroup({
             feedback: new FormControl('',Validators.required),
