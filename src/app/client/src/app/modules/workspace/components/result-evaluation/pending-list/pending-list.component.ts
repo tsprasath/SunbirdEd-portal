@@ -256,7 +256,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.adminPendingStudentsortingOptions;     
 
         this.feedbackForm = new FormGroup({
             feedback: new FormControl('',Validators.required),
@@ -366,6 +366,16 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                     // this.totalCount = data.result.response.count;
                     //this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
 
+                    let allStudents= data.result.response.content;
+                    allStudents.forEach((student) => {
+                        const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                        if(assessmentInfo){
+                            student['assessmentInfo']  = assessmentInfo;
+                        }
+                    });
+                    this.allStudents= _.filter(allStudents, (student) => { return student?.assessmentInfo  !== null });
+                    this.totalCount =  this.allStudents.length;
+                    this.pager = this.paginationService.getPager(this.totalCount, pageNumber, limit);
                     
                     this.showLoader = false;
                     this.noResult = false;

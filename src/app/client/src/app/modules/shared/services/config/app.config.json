@@ -1184,10 +1184,12 @@
         "PIAA Assessment"
       ],
       "PAGE_LIMIT": 50,
-      "STATUS":  [
+      "STATUS": [
         "Assigned",
-        "In progress"
-
+        "In Progress",
+        "Completed",
+        "Pending Evaluation",
+        "Evaluation Completed"
       ]
     }
   },

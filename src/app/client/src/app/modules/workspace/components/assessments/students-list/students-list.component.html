@@ -1,5 +1,5 @@
 <div class="mt-20">
-    <app-workspace-content-filter ></app-workspace-content-filter>
+    <app-workspace-content-filter [sortingByOptions]="sortingOptions" ></app-workspace-content-filter>
 </div>
 
 <div class="twelve wide column mt-20" *ngIf="showLoader">
@@ -34,7 +34,7 @@
             <!-- <th class="two wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.position }}</th> -->
             <th class="three wide UpReviewTableHeader">{{ resourceService?.frmelmnts?.lbl?.header?.status }}</th>
             <th class="two wide text-center">
-                <mat-checkbox (change)="handleCheckBoxChange($event)" [(ngModel)]="isChecked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
+                <mat-checkbox (change)="handleCheckBoxChange($event)"   [(ngModel)]="isChecked" class="custom-select sb-mat__checkbox sb-mat__checkbox--primary"></mat-checkbox>
             </th>
         </tr>
     </thead>

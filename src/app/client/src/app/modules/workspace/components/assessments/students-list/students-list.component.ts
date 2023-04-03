@@ -182,6 +182,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     /**
     *To store the assessment object   
     */
+
     assessment: any = {}
     participantsList: any[] = [];
     isChecked: boolean = false;
@@ -236,7 +237,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         this.loaderMessage = {
             'loaderMessage': this.resourceService.messages.stmsg.m0110,
         };
-        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;     
+        this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.AssignStudentsortingOptions;     
     }
 
     ngOnInit() {
@@ -284,7 +285,6 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                 }
             }
         };
-
         this.courseBatchService.getParticipantList(batchDetails)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
@@ -302,6 +302,10 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     * This method sets the make an api call to get all users with profileType as students with page No and offset
     */
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
+
+        const status = bothParams?.queryParams?.status ? _.map(bothParams.queryParams.status, (assessmentStatus) => {
+            return this.config.appConfig.WORKSPACE.ASSESSMENT.STATUS.findIndex((status) => status === assessmentStatus);
+        }) : []
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
             const sort_by = bothParams.queryParams.sort_by;
@@ -433,6 +437,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             })
     }
 
+
     handleCheckBoxChange($event: MatCheckboxChange, studentObj?: any) {
         if (studentObj?.id) {
             this.checkUncheck($event, studentObj);
@@ -446,6 +451,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
            
         })
     }
+    
 
     checkUncheck($event: MatCheckboxChange, obj: any): void {
         if ($event.checked) {
