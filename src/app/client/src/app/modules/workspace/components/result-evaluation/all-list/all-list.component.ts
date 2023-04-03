@@ -353,7 +353,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
                     //     }
                     // });
                     // this.allStudents= _.filter(allStudents, (student) => { return student?.assessmentInfo  !== null });
-                    this.totalCount =  this.allStudents.length;
+                    // this.totalCount =  this.allStudents.length;
                     this.pager = this.paginationService.getPager(this.totalCount, pageNumber, limit);
                     
                     this.showLoader = false;
