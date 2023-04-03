@@ -355,27 +355,27 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data: ServerResponse) => {
                 if (data.result.response.count && !_.isEmpty(data.result.response.content)) {
-                    // this.allStudents = data.result.response.content;
-                    // this.allStudents.forEach((student) => {
-                    //     const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
-                    //     student['checked'] = false;
-                    //     if(assessmentInfo){
-                    //         student['assessmentInfo'] = assessmentInfo;
-                    //     }
-                    // });
-                    // this.totalCount = data.result.response.count;
-                    //this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
-
-                    let allStudents= data.result.response.content;
-                    allStudents.forEach((student) => {
+                    this.allStudents = data.result.response.content;
+                    this.allStudents.forEach((student) => {
                         const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                        student['checked'] = false;
                         if(assessmentInfo){
-                            student['assessmentInfo']  = assessmentInfo;
+                            student['assessmentInfo'] = assessmentInfo;
                         }
                     });
-                    this.allStudents= _.filter(allStudents, (student) => { return student?.assessmentInfo  !== null });
-                    this.totalCount =  this.allStudents.length;
-                    this.pager = this.paginationService.getPager(this.totalCount, pageNumber, limit);
+                    this.totalCount = data.result.response.count;
+                    this.pager = this.paginationService.getPager(data.result.response.count, pageNumber, limit);
+
+                    // let allStudents= data.result.response.content;
+                    // allStudents.forEach((student) => {
+                    //     const assessmentInfo = _.find(this.participantsList, (participant) => {return participant.userId === student.id});
+                    //     if(assessmentInfo){
+                    //         student['assessmentInfo']  = assessmentInfo;
+                    //     }
+                    // });
+                    // this.allStudents= _.filter(allStudents, (student) => { return student?.assessmentInfo  !== null });
+                    // this.totalCount =  this.allStudents.length;
+                    // this.pager = this.paginationService.getPager(this.totalCount, pageNumber, limit);
                     
                     this.showLoader = false;
                     this.noResult = false;
