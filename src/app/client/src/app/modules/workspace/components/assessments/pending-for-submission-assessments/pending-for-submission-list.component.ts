@@ -314,7 +314,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
-                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.ASSESSMENT.PAGE_LIMIT, this.pageNumber, bothParams);
             }, (err: ServerResponse) => {
                 this.showLoader = false;
                 this.noResult = false;

@@ -247,7 +247,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
                     this.userService.userData$.pipe(takeUntil(this.unsubscribe$)).subscribe((profileData: IUserData) => {
                       this.userRoles = profileData.userProfile['roles'].length ? _.map(profileData.userProfile['roles'], 'role') : []; 
                       this.isOrgAdmin = (!_.isEmpty(this.userRoles) && _.includes(this.userRoles, 'ORG_ADMIN') );
-                      this.fecthAllAssessments(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                      this.fecthAllAssessments(this.config.appConfig.WORKSPACE.ASSESSMENT.PAGE_LIMIT, this.pageNumber, bothParams);
                     });
                   }
                 
@@ -291,7 +291,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
         const searchParams = {
             filters: {
                 // tslint:disable-next-line:max-line-length
-                primaryCategory: this.config.appConfig.WORKSPACE.Assessments.primaryCategories,
+                primaryCategory: this.config.appConfig.WORKSPACE.ASSESSMENT.PRIMARY_CATEGORY,
                 se_boards:bothParams.queryParams.board,
                 subject: bothParams.queryParams.subject,
                 se_mediums: bothParams.queryParams.medium,

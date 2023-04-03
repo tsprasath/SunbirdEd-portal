@@ -1179,10 +1179,11 @@
       "Multiple Choice Question",
       "Subjective Question"
     ],
-    "Assessments":{
-      "primaryCategories":[
+    "ASSESSMENT":{
+      "PRIMARY_CATEGORY":[
         "PIAA Assessment"
       ],
+      "PAGE_LIMIT": 50,
       "STATUS": [
         "Assigned",
         "In Progress",

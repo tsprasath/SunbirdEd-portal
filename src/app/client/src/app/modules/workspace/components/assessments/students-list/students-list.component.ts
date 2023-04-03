@@ -289,7 +289,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
-                this.fecthAllContent(this.config.appConfig.WORKSPACE.PAGE_LIMIT, this.pageNumber, bothParams);
+                this.fecthAllContent(this.config.appConfig.WORKSPACE.ASSESSMENT.PAGE_LIMIT, this.pageNumber, bothParams);
             }, (err: ServerResponse) => {
                 this.showLoader = false;
                 this.noResult = false;
@@ -304,7 +304,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     fecthAllContent(limit: number, pageNumber: number, bothParams) {
 
         const status = bothParams?.queryParams?.status ? _.map(bothParams.queryParams.status, (assessmentStatus) => {
-            return this.config.appConfig.WORKSPACE.Assessments.STATUS.findIndex((status) => status === assessmentStatus);
+            return this.config.appConfig.WORKSPACE.ASSESSMENT.STATUS.findIndex((status) => status === assessmentStatus);
         }) : []
         this.showLoader = true;
         if (bothParams.queryParams.sort_by) {
