@@ -4,7 +4,7 @@ import { Component, OnInit, ViewChild, OnDestroy, AfterViewInit } from '@angular
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest, Subject, forkJoin } from 'rxjs';
 import { takeUntil, mergeMap } from 'rxjs/operators';
-import { RouterNavigationService, ResourceService, ToasterService, NavigationHelperService } from '@sunbird/shared';
+import { RouterNavigationService, ResourceService, ToasterService, NavigationHelperService, ConfigService } from '@sunbird/shared';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { UserService } from '@sunbird/core';
 import { CourseConsumptionService, CourseBatchService } from './../../../services';
@@ -139,6 +139,8 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
   isEnableDiscussions: string;
   callCreateDiscussion = true;
   assessmentType: string;
+  certificateExpireYears: Array<number> = [];
+  certificateValidityTypes: Array<string> = [];
   
   /**
    * Constructor to create injected service(s) object
@@ -157,6 +159,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     public navigationhelperService: NavigationHelperService, private lazzyLoadScriptService: LazzyLoadScriptService,
     private telemetryService: TelemetryService,
     private csLibInitializerService: CsLibInitializerService,
+    public configService: ConfigService,
     private discussionService: DiscussionService) {
     this.resourceService = resourceService;
     this.router = route;
@@ -175,6 +178,8 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
    * Initialize form fields and getuserlist
   */
   ngOnInit() {
+    this.certificateExpireYears = this.configService.appConfig.COURSE_CERTIFICATE.EXPIRY_YEARS;
+    this.certificateValidityTypes = this.configService.appConfig.COURSE_CERTIFICATE.VALIDITY_TYPES;
     combineLatest(this.activatedRoute.params, this.activatedRoute.parent.params,
       this.activatedRoute.queryParams,
       (params, parentParams, queryParams) => ({ ...params, ...parentParams, ...queryParams })).pipe(
@@ -283,13 +288,24 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
       users: new FormControl(this.batchDetails.participants || []),
       enrollmentEndDate: new FormControl(enrollmentEndDate),
       issueCertificate: new FormControl(this.isCertificateIssued, [Validators.required]),
-      enableDiscussions: new FormControl(this.isEnableDiscussions, [Validators.required])
+      enableDiscussions: new FormControl(this.isEnableDiscussions, [Validators.required]),
+      certificateExpiresIn: new FormControl(10),
+      certificateValidityType: new FormControl('Lifetime')
     });
 
     if (this.assessmentType === 'piaa assessment') {
       this.batchUpdateForm.get('mentors').setValidators([Validators.required]);
       this.batchUpdateForm.updateValueAndValidity();
     }
+
+    this.batchUpdateForm.get("certificateValidityType").valueChanges.subscribe( value => {
+      if(value  === 'Limited') {
+        this.batchUpdateForm.get("certificateExpiresIn").setValidators([Validators.required]);
+      } else{
+        this.batchUpdateForm.get("certificateExpiresIn").clearValidators();
+      }
+      this.batchUpdateForm.updateValueAndValidity();
+    });
 
     this.batchUpdateForm.get('startDate').valueChanges.subscribe(value => {
       const startDate: any = dayjs(value);
@@ -434,6 +450,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     }
     const startDate = dayjs(this.batchUpdateForm.value.startDate).format('YYYY-MM-DD');
     const endDate = this.batchUpdateForm.value.endDate && dayjs(this.batchUpdateForm.value.endDate).format('YYYY-MM-DD');
+    const certificateExpiresIn = this.batchUpdateForm.value.certificateValidityType === 'Limited' ? this.batchUpdateForm.value.certificateExpiresIn : null;
     const requestBody = {
       id: this.batchId,
       courseId: this.courseId,
