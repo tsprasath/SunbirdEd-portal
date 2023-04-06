@@ -7,7 +7,7 @@ import { UserService, GeneraliseLabelService, PlayerService } from '@sunbird/cor
 import { AssessmentScoreService, CourseBatchService, CourseConsumptionService, CourseProgressService } from '@sunbird/learn';
 import { PublicPlayerService, ComponentCanDeactivate } from '@sunbird/public';
 import { ConfigService, ResourceService, ToasterService, NavigationHelperService,
-  ContentUtilsServiceService, ITelemetryShare, LayoutService } from '@sunbird/shared';
+  ContentUtilsServiceService, ITelemetryShare, LayoutService, UtilService, ConnectionService } from '@sunbird/shared';
 import * as _ from 'lodash-es';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { first, map, takeUntil, tap } from 'rxjs/operators';
@@ -45,6 +45,8 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
     private layoutService: LayoutService,
     public generaliseLabelService: GeneraliseLabelService,
     private CourseProgressService: CourseProgressService,
+    private utilService: UtilService,
+    private connectionService: ConnectionService,
     @Inject('CS_COURSE_SERVICE') private CsCourseService: CsCourseService,
     @Inject('SB_NOTIFICATION_SERVICE') private notificationService: NotificationServiceImpl
   ) {
@@ -114,6 +116,8 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
   isStatusChange = false;
   lastActiveContentBeforeModuleChange;
   contentRatingModal = false;
+  isDesktopApp= false;
+  isConnected= true;
   @HostListener('window:beforeunload')
   canDeactivate() {
     // returning true will navigate without confirmation
@@ -155,6 +159,12 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
   }
 
   ngOnInit() {
+   this.isDesktopApp  = this.utilService.isDesktopApp;
+    if(this.isDesktopApp) {
+      this.connectionService.monitor().pipe(takeUntil(this.unsubscribe)).subscribe(isConnected => {
+        this.isConnected = isConnected;
+      });
+    }
     this.layoutConfiguration = this.layoutService.initlayoutConfig();
     this.initLayout();
     this.subscribeToQueryParam();
@@ -198,6 +208,32 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
       }
     }, 500);
   }
+
+   async goBackToContents() {
+   this.showQSExitConfirmation = true
+     const previousPageUrl: any = this.courseConsumptionService.getCoursePagePreviousUrl;
+     this.courseConsumptionService.coursePagePreviousUrl = '';
+    
+   if (this.isDesktopApp && !this.isConnected) {
+    
+      this.router.navigate(['/mydownloads'], { queryParams: { selectedTab: 'mydownloads' } });
+      return;
+     }
+    
+    if (!previousPageUrl) {
+     this.router.navigate(['/resources'], { queryParams: { selectedTab: 'course' } });
+     return;
+     }
+    if (previousPageUrl.url.indexOf('/my-groups/') >= 0) {
+     this.navigationHelperService.goBack();
+     } else {
+     if (previousPageUrl.queryParams) {
+     this.router.navigate([previousPageUrl.url], {queryParams: previousPageUrl.queryParams});
+     } else {
+     this.router.navigate([previousPageUrl.url]);
+     }
+     }
+     }
 
   getLanguageChangeEvent() {
     this.resourceService.languageSelected$.pipe(takeUntil(this.unsubscribe)).subscribe(item => {
@@ -463,6 +499,9 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
   }
 
   onAssessmentEvents(event) {
+    if(_.get(event, 'edata.type') === 'EXIT' && this.courseProgress === 100) {
+        this.goBackToContents();
+       }
     /* istanbul ignore else */
     if (!this.batchId || _.get(this.enrolledBatchInfo, 'status') !== 1) {
       return;

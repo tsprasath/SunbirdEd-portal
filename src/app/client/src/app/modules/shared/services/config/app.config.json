@@ -851,9 +851,9 @@
           }
         ],
         "sideMenu": {
-          "showShare": true,
-          "showDownload": true,
-          "showExit": false
+          "showShare": false,
+          "showDownload": false,
+          "showExit": true
         }
       }
     },
