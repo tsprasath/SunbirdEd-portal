@@ -405,6 +405,9 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
       }
       this.mobileViewDisplay = 'none';
     }
+    if(_.get(event, 'edata.type') === 'EXIT')  {
+       this.assessmentEvents.emit(event);
+     }
   }
 
   generateContentReadEvent(event: any, newPlayerEvent?) {
