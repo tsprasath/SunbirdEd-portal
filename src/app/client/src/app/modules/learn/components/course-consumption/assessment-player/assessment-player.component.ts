@@ -118,6 +118,7 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
   contentRatingModal = false;
   isDesktopApp= false;
   isConnected= true;
+  isPiaAssessmentType:boolean;
   @HostListener('window:beforeunload')
   canDeactivate() {
     // returning true will navigate without confirmation
@@ -845,6 +846,7 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
     let maxAttemptsExceeded = false;
     this.showMaxAttemptsModal = false;
     let isLastAttempt = false;
+    this.isPiaAssessmentType = _.get(this.activeContent, 'primaryCategory') === 'PIAA Question Set'
     /* istanbul ignore if */
     if (_.get(this.activeContent, 'contentType') === 'SelfAssess') {
       const _contentIndex = _.findIndex(this.contentStatus, {contentId: _.get(this.activeContent, 'identifier')});
@@ -925,10 +927,10 @@ export class AssessmentPlayerComponent implements OnInit, OnDestroy, ComponentCa
   }
 
   onSelfAssessLastAttempt(event) {
-    if (_.get(event, 'data') === 'renderer:selfassess:lastattempt' || _.get(event, 'edata.isLastAttempt')) {
+    if (!this.isPiaAssessmentType && (_.get(event, 'data') === 'renderer:selfassess:lastattempt' || _.get(event, 'edata.isLastAttempt'))) {
       this.toasterService.error(_.get(this.resourceService, 'frmelmnts.lbl.selfAssessLastAttempt'));
     }
-    if (_.get(event, 'data') === 'renderer:maxLimitExceeded' || _.get(event, 'edata.maxLimitExceeded')) {
+    if (!this.isPiaAssessmentType && (_.get(event, 'data') === 'renderer:maxLimitExceeded' || _.get(event, 'edata.maxLimitExceeded'))) {
       this.showMaxAttemptsModal = true;
       this.showQSExitConfirmation = true;
     }
