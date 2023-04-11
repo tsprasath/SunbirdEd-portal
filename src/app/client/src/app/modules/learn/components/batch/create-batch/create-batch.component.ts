@@ -101,8 +101,10 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
   private discussionCsService: any;
   createForumRequest: any;
   showDiscussionForum: string;
-  selectedMentorList: Array<any> = []
-  selectedParticipantList: Array<any> = []
+  selectedMentorList: Array<any> = [];
+  selectedParticipantList: Array<any> = [];
+  certificateExpireYears: Array<number> = [];
+  certificateValidityTypes: Array<string> = [];
 
   /**
 	 * Constructor to create injected service(s) object
@@ -140,6 +142,8 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
    * Initialize form fields and getuserlist
   */
   ngOnInit() {
+    this.certificateExpireYears = this.configService.appConfig.COURSE_CERTIFICATE.EXPIRY_YEARS;
+    this.certificateValidityTypes = this.configService.appConfig.COURSE_CERTIFICATE.VALIDITY_TYPES;
     this.instance = _.upperCase(this.resourceService.instance);
     this.activatedRoute.parent.params.pipe(mergeMap((params) => {
       this.courseId = params.courseId;      
@@ -224,7 +228,18 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
       enrollmentEndDate: new FormControl(),
       issueCertificate: new FormControl(null, [Validators.required]),
       tncCheck: new FormControl(false, [Validators.requiredTrue]),
-      enableDiscussions: new FormControl('false', [Validators.required])
+      enableDiscussions: new FormControl('false', [Validators.required]),
+      certificateExpiresIn: new FormControl(10),
+      certificateValidityType: new FormControl('Lifetime')
+    });
+
+    this.createBatchForm.get("certificateValidityType").valueChanges.subscribe( value => {
+      if(value  === 'Limited') {
+        this.createBatchForm.get("certificateExpiresIn").setValidators([Validators.required]);
+      } else{
+        this.createBatchForm.get("certificateExpiresIn").clearValidators();
+      }
+      this.createBatchForm.updateValueAndValidity();
     });
 
     if (this.assessmentType === 'piaa assessment') {
@@ -270,6 +285,7 @@ export class CreateBatchComponent implements OnInit, OnDestroy, AfterViewInit {
     let mentors = this.createBatchForm.value.mentors || [];
     const startDate = dayjs(this.createBatchForm.value.startDate).format('YYYY-MM-DD');
     const endDate = this.createBatchForm.value.endDate && dayjs(this.createBatchForm.value.endDate).format('YYYY-MM-DD');
+    const certificateExpiresIn = this.createBatchForm.value.certificateValidityType === 'Limited' ? this.createBatchForm.value.certificateExpiresIn : null;
     const requestBody = {
       courseId: this.courseId,
       name: this.createBatchForm.value.name,
