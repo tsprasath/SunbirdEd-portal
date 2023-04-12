@@ -112,9 +112,9 @@ export class CourseBatchService {
       return _.get(response, 'result.batch.participants') || [];
     }));
   }
-  getStudentList(data) {
+  getbatchParticipantList(data) {
     const options = {
-      url: this.configService.urlConFig.URLS.BATCH.GET_STUDENT_LIST,
+      url: this.configService.urlConFig.URLS.BATCH.GET_BATCH_PARTICIPANT_LIST,
       data: data
     };
     return this.learnerService.post(options).pipe(map((response: any) => {

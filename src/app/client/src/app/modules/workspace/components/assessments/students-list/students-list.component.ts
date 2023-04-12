@@ -287,13 +287,12 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
                     "status": [],
                     "enrolled_date": ""
                 },
-                "limit": 2,
                 "sort_by": {
                     "dateTime": "desc"
                 }
             }
         };
-        this.courseBatchService.getStudentList(batchDetails)
+        this.courseBatchService.getbatchParticipantList(batchDetails)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
