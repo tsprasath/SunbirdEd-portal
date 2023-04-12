@@ -213,6 +213,7 @@
       "ADD_USERS": "course/v1/batch/user/add",
       "GET_DETAILS": "course/v1/batch/read",
       "GET_PARTICIPANT_LIST": "course/v1/batch/participants/list",
+      "GET_STUDENT_LIST":"course/v1/batch/admin/participants/list",
       "GET_BATCHS": "course/v1/batch/list",
       "REMOVE_USERS": "course/v1/batch/user/remove"
     },

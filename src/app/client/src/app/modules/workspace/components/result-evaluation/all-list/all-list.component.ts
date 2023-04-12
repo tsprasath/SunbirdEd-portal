@@ -282,11 +282,19 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
             "request": {
                 "batch": {
                     "batchId": this.assessment.batches[0].batchId
+                },
+                "filters": {
+                    "status": [],
+                    "enrolled_date": ""
+                },
+                "limit": 2,
+                "sort_by": {
+                    "dateTime": "desc"
                 }
             }
         };
 
-        this.courseBatchService.getParticipantList(batchDetails)
+        this.courseBatchService.getStudentList(batchDetails)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
@@ -394,7 +402,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     }
 
     goToScoreDetails() {
-        this.router.navigate(['workspace/content/resultEvaluation/score/1']);
+        this.router.navigate(['workspace/content/resultEvaluation/score/1'],{state :{assessment: this.assessment, pageNumber: this.pageNumber}});
     }
 
     inview(event) {
