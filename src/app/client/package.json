@@ -14,7 +14,7 @@
     "start-desktop": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --output-path=../../desktop/public/portal --watch=true --configuration=desktop-staging && mv ../../desktop/public/portal/index.html ../../desktop/public/portal/index.ejs",
     "prod-desktop": "node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build --prod --output-path=../../desktop/public/portal --configuration=desktop-production && mv ../../desktop/public/portal/index.html ../../desktop/public/portal/index.ejs",
     "proxy": "ng serve --proxy-config proxy.config.js",
-    "build": "node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build --prod --progress=false --outputPath=./../app_dist/dist --deployUrl dist/",
+    "build": "node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build --prod --progress=false --outputPath=./../app_dist/dist --deploy-url dist/",
     "post-build": "gulp post:build",
     "build-dev": "ng build --prod --build-optimizer=false --deployUrl dist/",
     "build-local": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --watch=true",
@@ -25,8 +25,7 @@
     "test-coverage": "jest --silent --ci --w 2 --collectCoverage=true --coverageReporters=lcov",
     "build-cdn": "node --max_old_space_size=8096 ./node_modules/@angular/cli/bin/ng build --prod --progress=false --outputPath=./../dist-cdn",
     "inject-cdn-fallback": "gulp inject:cdnFallBack:script",
-    "with-stats": "node --max_old_space_size=8096 node_modules/.bin/ng build --prod --stats-json",
-    "build-local":"node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --watch=true"
+    "with-stats": "node --max_old_space_size=8096 node_modules/.bin/ng build --prod --stats-json"
   },
   "nodemonConfig": {
     "ext": "png,jpeg,js,ts,html,json,css,scss"
