@@ -306,11 +306,19 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             "request": {
                 "batch": {
                     "batchId": this.assessment.batches[0].batchId
+                },
+                "filters": {
+                    "status": [3],
+                    "enrolled_date": ""
+                },
+                "limit": 2,
+                "sort_by": {
+                    "dateTime": "desc"
                 }
             }
         };
 
-        this.courseBatchService.getParticipantList(batchDetails)
+        this.courseBatchService.getStudentList(batchDetails)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
