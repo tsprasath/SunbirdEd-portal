@@ -112,6 +112,15 @@ export class CourseBatchService {
       return _.get(response, 'result.batch.participants') || [];
     }));
   }
+  getbatchParticipantList(data) {
+    const options = {
+      url: this.configService.urlConFig.URLS.BATCH.GET_BATCH_PARTICIPANT_LIST,
+      data: data
+    };
+    return this.learnerService.post(options).pipe(map((response: any) => {
+      return _.get(response, 'result.batch.participants') || [];
+    }));
+  }
 
   enrollToCourse(data) {
     const options = {

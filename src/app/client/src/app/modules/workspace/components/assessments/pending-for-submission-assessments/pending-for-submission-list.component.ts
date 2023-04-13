@@ -306,11 +306,18 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             "request": {
                 "batch": {
                     "batchId": this.assessment.batches[0].batchId
+                },
+                "filters": {
+                    "status": [],
+                    "enrolled_date": ""
+                },
+                "sort_by": {
+                    "dateTime": "desc"
                 }
             }
         };
 
-        this.courseBatchService.getParticipantList(batchDetails)
+        this.courseBatchService.getbatchParticipantList(batchDetails)
             .pipe(takeUntil(this.destroySubject$))
             .subscribe((data) => {
                 this.participantsList = data;
@@ -560,6 +567,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00102 );
                 this.closeModal()
+                this.disableEvaluationAction = true
                 _.forEach(this.allStudents, (student) =>  {
                     userIds.forEach(ids=>{
                         if(student.id == ids){
