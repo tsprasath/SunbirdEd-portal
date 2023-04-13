@@ -541,6 +541,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 this.toasterService.success(this.resourceService.messages.smsg.m00101)
               this.closeModal();
               this.disableAbortAction = true;
+              this.isChecked=false;
               _.forEach(this.allStudents, (student) =>  {
                 userIds.forEach(ids=>{
                     if(student.id == ids){
@@ -568,6 +569,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 this.toasterService.success(this.resourceService.messages.smsg.m00102 );
                 this.closeModal()
                 this.disableEvaluationAction = true
+                this.isChecked = false;
                 _.forEach(this.allStudents, (student) =>  {
                     userIds.forEach(ids=>{
                         if(student.id == ids){

@@ -427,6 +427,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             .subscribe((res) => {
                 this.toasterService.success(this.resourceService.messages.smsg.m0099);
                 this.disableAssessmentAction = true;
+                this.isChecked = false;
                 _.forEach(this.allStudents, (student) =>  {
                     userIds.forEach(id=>{
                         if(student.id === id){
