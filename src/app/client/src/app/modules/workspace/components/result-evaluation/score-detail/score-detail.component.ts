@@ -5,6 +5,7 @@ import { WorkSpace } from '../../../classes/workspace';
 import { WorkSpaceService } from '../../../services';
 import { SearchService, UserService} from '@sunbird/core';
 import { IScoreDetails } from '@sunbird/shared';
+import { Location } from '@angular/common';
 
 @Component({
     selector: 'app-score-detail',
@@ -17,11 +18,14 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
      * to store all nav links
     */
     navLinks: any[];
+    
     /**
      * to store selected link value
     */
     activeLink: string;
 
+    assessment:any= {}
+    pageNumber:any = null
     scoreDetails: IScoreDetails;
 
     constructor(
@@ -29,6 +33,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
       public workSpaceService: WorkSpaceService,
       public searchService: SearchService,
       public userService: UserService,
+      private location: Location,
     ) { 
         super(searchService, workSpaceService, userService);
         this.scoreDetails= {
@@ -95,12 +100,16 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
             }  
             ]
         }
+        const routerStateObj: any = this.location.getState();
+        this.assessment = routerStateObj?.assessment;
+        this.pageNumber = routerStateObj?.pageNumber;
+
     }
 
     ngOnInit() { }
 
     navigateBack() {
-      this.router.navigate(['workspace/content/resultEvaluation/all/1']);
+      this.router.navigate(['workspace/content/resultEvaluation/all/1'],{ state: {assessment: this.assessment, pageNumber: this.pageNumber} });
     }
 
     ngOnDestroy(): void {
