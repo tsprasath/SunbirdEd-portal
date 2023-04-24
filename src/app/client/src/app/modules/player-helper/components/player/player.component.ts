@@ -67,6 +67,11 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
   showQumlPlayer = false;
   contentId: string;
   collectionId:string;
+  /**
+   * To call searchService 
+   */
+  private searchService: SearchService;
+
 
   /**
  * Dom element reference of contentRatingModal
@@ -83,13 +88,14 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
     private deviceDetectorService: DeviceDetectorService, private userService: UserService, public formService: FormService
     , public contentUtilsServiceService: ContentUtilsServiceService, private contentService: ContentService,
     private cdr: ChangeDetectorRef, public playerService: PublicPlayerService, private utilService: UtilService,
-    private searchService: SearchService) {
+    searchService: SearchService) {
     this.buildNumber = (<HTMLInputElement>document.getElementById('buildNumber'))
       ? (<HTMLInputElement>document.getElementById('buildNumber')).value : '1.0';
     this.previewCdnUrl = (<HTMLInputElement>document.getElementById('previewCdnUrl'))
       ? (<HTMLInputElement>document.getElementById('previewCdnUrl')).value : undefined;
     this.isCdnWorking = (<HTMLInputElement>document.getElementById('cdnWorking'))
       ? (<HTMLInputElement>document.getElementById('cdnWorking')).value : 'no';
+    this.searchService = searchService;
   }
 
   @HostListener('window:orientationchange', ['$event'])
@@ -169,8 +175,12 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
     this.cdr.detectChanges();
     if (this.playerConfig) {
       this.playerOverlayImage = this.overlayImagePath ? this.overlayImagePath : _.get(this.playerConfig, 'metadata.appIcon');
-      //this.loadPlayer();
-      this.updateMetaDataUsingBP();
+      if(this.contentUtilsServiceService.isQuestionSetBP(this.playerConfig.metadata)) {
+        this.updateMetaDataUsingBP();
+      }  else{
+         this.loadPlayer();
+      }
+      
     }
   }
   loadCdnPlayer() {
@@ -575,13 +585,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
     }
   }
   /*
-    Method to check if Question Set Blueprint available fetch questions and update metadata with questions
+    Method to fetch questions using criterias and update each section's children with questions 
   */
   updateMetaDataUsingBP() {
     let metadata = {...this.playerConfig.metadata};
-    const childMimeType = _.map(metadata.children, 'mimeType');
-    const isSectionsAvailable =  childMimeType[0] === this.configService.appConfig.PLAYER_CONFIG.MIME_TYPE.questionset;
-    if(isSectionsAvailable) {
       let sectionQuestionsRequests =  [];
       let sectionQuestions=[];
       let questionResponseStartIndex = 0;
@@ -589,19 +596,8 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
         if(section.children.length === 0 && section.criterias && section.criterias.length > 0) {
           _.forEach(section.criterias, (criteria) => {
             if(criteria?.board && criteria?.medium && criteria?.gradeLevel && criteria?.subject){
-              let searchParams= {
-                filters: {
-                  primaryCategory: criteria?.selectedQuestionType,
-                  board: criteria?.board,
-                  medium: criteria?.medium,
-                  gradeLevel: criteria?.gradeLevel,
-                  subject: criteria?.subject,
-                  status: ["Live"],
-                  objectType:["Question"]
-                },
-                limit: criteria?.requiredQuestionCount
-              }
-              if(section?.difficultyLevel) {
+              let searchParams= this.contentUtilsServiceService.getCompositeSearchParams(criteria);
+              if(criteria?.difficultyLevel) {
                 searchParams.filters['difficultyLevel'] = section?.difficultyLevel;
               }
               sectionQuestionsRequests.push(this.searchService.compositeSearch(searchParams));
@@ -609,19 +605,30 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
           });
           sectionQuestions.push({identifier: section.identifier, questionResponseStartIndex: questionResponseStartIndex});
           questionResponseStartIndex = questionResponseStartIndex + section.criterias.length;
+        } else if(section.children.length === 0 && (section?.board && section?.medium && section?.gradeLevel && section?.subject)) { 
+          let searchParams= this.contentUtilsServiceService.getCompositeSearchParams(section);
+              if(section?.difficultyLevel) {
+                searchParams.filters['difficultyLevel'] = section?.difficultyLevel;
+              }
+              sectionQuestionsRequests.push(this.searchService.compositeSearch(searchParams));
+              sectionQuestions.push({identifier: section.identifier, questionResponseStartIndex: questionResponseStartIndex});
+              questionResponseStartIndex = questionResponseStartIndex + 1;
         }
       });
       if(sectionQuestionsRequests.length > 0) {
         forkJoin(sectionQuestionsRequests).subscribe((sectionQuestionsRes) => {
+          let childNodes= [...metadata.childNodes];
           _.forEach(metadata.children, (section) => {
             const sectionQuestion = _.find(sectionQuestions, {identifier: section.identifier});
             let questions = [];
-            const endIndex= sectionQuestion.questionResponseStartIndex +  section.criterias.length;
+            const endIndex= sectionQuestion.questionResponseStartIndex +  (section.criterias ? section.criterias.length : 1);
             for(let index= sectionQuestion.questionResponseStartIndex; index < endIndex; index++) {
               questions = _.concat(questions, sectionQuestionsRes[index]['result'].Question);
             }
             section.children = questions;
+            childNodes = _.concat(childNodes, _.map(section.children, 'identifier'));
           });
+          metadata.childNodes= [...childNodes]; // Updating parent childNodes with all questions identifire
           this.playerConfig.metadata= metadata;
           this.loadPlayer();
         }, (error) => {
@@ -631,10 +638,6 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
       } else {
         this.loadPlayer();
       }
-
-    }else {
-      this.loadPlayer();
-    }
   }
 
   ngOnDestroy() {
