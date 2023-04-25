@@ -615,20 +615,34 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
               questionResponseStartIndex = questionResponseStartIndex + 1;
         }
       });
+      console.log("Dynamic Question Set DatA-------->");
+      console.log("sectionQuestions-------->", sectionQuestions);
+
+
       if(sectionQuestionsRequests.length > 0) {
         forkJoin(sectionQuestionsRequests).subscribe((sectionQuestionsRes) => {
           let childNodes= [...metadata.childNodes];
           _.forEach(metadata.children, (section) => {
+            console.log(`-----------Section ${section.identifier} start----------`);
             const sectionQuestion = _.find(sectionQuestions, {identifier: section.identifier});
             let questions = [];
-            const endIndex= sectionQuestion.questionResponseStartIndex +  (section.criterias ? section.criterias.length : 1);
+            const criteriasCount = section.criterias ? section.criterias.length : 1;
+            const endIndex= sectionQuestion.questionResponseStartIndex +  criteriasCount;
+            console.log("sectionQuestionsRes-------->", sectionQuestionsRes);
+            console.log("sectionQuestion-------->", sectionQuestion);
+            console.log("start index-------->", sectionQuestion.questionResponseStartIndex);
+            console.log("end index-------->", endIndex);
             for(let index= sectionQuestion.questionResponseStartIndex; index < endIndex; index++) {
               questions = _.concat(questions, sectionQuestionsRes[index]['result'].Question);
             }
+            console.log("questions in section-------->", questions);
             section.children = questions;
             childNodes = _.concat(childNodes, _.map(section.children, 'identifier'));
+            console.log(`-----------Section ${section.identifier} end----------`);
           });
-          metadata.childNodes= [...childNodes]; // Updating parent childNodes with all questions identifire
+          // Updating parent childNodes with all questions identifire
+          metadata.childNodes= [...childNodes]; 
+          console.log("new Metadata-------->", metadata);
           this.playerConfig.metadata= metadata;
           this.loadPlayer();
         }, (error) => {
