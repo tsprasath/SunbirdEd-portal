@@ -644,6 +644,7 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
           metadata.childNodes= [...childNodes]; 
           console.log("new Metadata-------->", metadata);
           this.playerConfig.metadata= metadata;
+          this.cdr.detectChanges();
           this.loadPlayer();
         }, (error) => {
           console.log("Error in  fetching questions from criteria");
