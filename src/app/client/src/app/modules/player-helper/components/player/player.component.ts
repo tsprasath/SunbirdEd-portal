@@ -263,6 +263,10 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
   }
 
   checkForQumlPlayer() {
+    /*Check if Question Set blueprint exists and questions are not fetched yet- return back */
+    if(this.playerConfig.metadata && this.contentUtilsServiceService.isQuestionSetBP(this.playerConfig.metadata) && (this.playerConfig.metadata.children.length === this.playerConfig.metadata.childNodes.length)) {
+      return null;
+    }
     if (_.get(this.playerConfig, 'metadata.mimeType') === this.configService.appConfig.PLAYER_CONFIG.MIME_TYPE.questionset) {
       this.playerConfig.config.sideMenu.showDownload = false;
       if (!_.get(this.playerConfig, 'metadata.instructions')) {
@@ -644,7 +648,6 @@ export class PlayerComponent implements OnInit, AfterViewInit, OnChanges, OnDest
           metadata.childNodes= [...childNodes]; 
           console.log("new Metadata-------->", metadata);
           this.playerConfig.metadata= metadata;
-          this.cdr.detectChanges();
           this.loadPlayer();
         }, (error) => {
           console.log("Error in  fetching questions from criteria");
