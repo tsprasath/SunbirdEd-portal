@@ -5,7 +5,8 @@
   "layoutConfiguration": {
     "source": "",
     "name": "newLayout",
-    "options": ""
+    "options": "",
+    "layout":"v2"
   },
   "CommonSearch": {
     "contentType": [
