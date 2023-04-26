@@ -45,7 +45,7 @@
                 <div>{{ (student?.assessmentInfo && student?.assessmentInfo?.status >= 2) ? (student?.assessmentInfo?.enrolledDate | dateFormat) : 'Not Attempted' }}</div>
             </td>
             <td>
-                <div matTooltip="student?.assessmentInfo?.comment" [matTooltipPosition]="'right'">{{student?.assessmentInfo?.comment}}</div>
+                <div matTooltip="{{student?.assessmentInfo?.comment}}" [matTooltipPosition]="'right'">{{student?.assessmentInfo?.comment}}</div>
             </td>
             <td>
                 <div>{{student?.assessmentInfo?.addedBy}}</div>
