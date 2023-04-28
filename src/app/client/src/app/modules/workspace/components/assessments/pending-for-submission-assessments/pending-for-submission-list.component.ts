@@ -526,7 +526,8 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
                 userIds: [],
-                comment:this.feedbackForm.value.feedback
+                comment:this.feedbackForm.value.feedback,
+                status: null
             }
         };
         if(this.isAbortForm){
@@ -564,6 +565,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
                 };  
             }));
             requestBody.request.userIds = userIds;
+            requestBody.request.status = 3
             this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
                 this.toasterService.success(this.resourceService.messages.smsg.m00102 );

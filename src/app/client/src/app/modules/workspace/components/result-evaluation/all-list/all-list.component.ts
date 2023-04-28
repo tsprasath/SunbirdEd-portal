@@ -439,9 +439,9 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
                 break;
             case 4:
                 if(student?.assessmentInfo?.certificates?.length){
-                    statusText= "Certificate issued";
+                    statusText= "Evaluation Completed with Certificate issued";
                 } else {
-                    statusText= "Certificate not issued";
+                    statusText= "Evaluation Completed without Certificate not issued";
                 }
                 
                 break; 
