@@ -190,7 +190,7 @@ export class DraftComponent extends WorkSpace implements OnInit, AfterViewInit {
         this.config = config;
         this.state = 'draft';
         this.loaderMessage = {
-            'loaderMessage': this.resourceService.messages.stmsg.m0011,
+            'loaderMessage': this.resourceService?.messages?.stmsg?.m0011,
         };
     }
     ngOnInit() {

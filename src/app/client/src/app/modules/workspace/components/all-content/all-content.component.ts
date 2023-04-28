@@ -231,7 +231,7 @@ export class AllContentComponent extends WorkSpace implements OnInit, AfterViewI
     this.config = config;
     this.state = 'allcontent';
     this.loaderMessage = {
-      'loaderMessage': this.resourceService.messages.stmsg.m0110,
+      'loaderMessage': this.resourceService?.messages?.stmsg?.m0110,
     };
     this.sortingOptions = this.config.dropDownConfig.FILTER.RESOURCES.sortingOptions;
   }
