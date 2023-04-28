@@ -524,12 +524,20 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             request: {
                 batchId: batch?.batchId,
                 courseId: this.assessment?.identifier,
-                userIds: userIds
+                userIds: userIds,
+                status: null
             }
         };
         if(this.isIssueCertificate){
             this.courseBatchService.issueCertificate(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
+                if(res){
+                    requestBody.request.status = 4
+                    this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
+                    .subscribe((res)=>{
+                        console.log(res)
+                    })
+                }
                 this.closeModal();
                 this.disableIssueCertificateAction = true;
                 this.disableRejectCertificateAction = true;
@@ -591,9 +599,9 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                 break;
             case 4:
                 if(student?.assessmentInfo?.certificates?.length){
-                    statusText= "Certificate issued";
+                    statusText= "Evaluation Completed with Certificate issued";
                 } else {
-                    statusText= "Certificate not issued";
+                    statusText= "Evaluation Completed without Certificate not issued";
                 }
                 
                 break; 
