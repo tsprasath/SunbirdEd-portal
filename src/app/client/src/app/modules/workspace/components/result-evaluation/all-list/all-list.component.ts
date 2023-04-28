@@ -441,7 +441,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
                 if(student?.assessmentInfo?.certificates?.length){
                     statusText= "Evaluation Completed with Certificate issued";
                 } else {
-                    statusText= "Evaluation Completed without Certificate not issued";
+                    statusText= "Evaluation Completed without Certificate issued";
                 }
                 
                 break; 
