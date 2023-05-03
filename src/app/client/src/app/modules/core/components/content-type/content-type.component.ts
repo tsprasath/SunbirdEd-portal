@@ -181,13 +181,19 @@ export class ContentTypeComponent implements OnInit, OnDestroy {
       this.contentTypes[piaaIndex].isEnabled = false;
     }
 
-    if( ((!_.isEmpty(this.userRoles) &&  !_.includes(this.userRoles, 'NODAL_OFFICER') ) || _.isEmpty(this.userRoles)) && workspaceIndex !== -1){
+    if( ((!_.isEmpty(this.userRoles) &&  (!_.includes(this.userRoles, 'NODAL_OFFICER') && !_.includes(this.userRoles, 'PIAA_SETTER')) ) || _.isEmpty(this.userRoles)) && workspaceIndex !== -1){
       this.contentTypes[workspaceIndex].isEnabled = false
     }
 
     if( ((!_.isEmpty(this.userRoles) &&  !_.includes(this.userRoles, 'ORG_ADMIN') ) || _.isEmpty(this.userRoles)) && resultEvaluationIndex !== -1){
       this.contentTypes[resultEvaluationIndex].isEnabled = false;
     } 
+
+    if( (!_.isEmpty(this.userRoles) &&  _.includes(this.userRoles, 'PIAA_SETTER')  ) && workspaceIndex !== -1){
+      this.contentTypes[workspaceIndex].loggedInUserRoute.route = 'workspace/content/create';
+      this.contentTypes[workspaceIndex].loggedInUserRoute.queryParam = 'workspace/content/create';
+    }
+
 
     if(!this.userService.loggedIn) {
       _.forEach(this.contentTypes, (contentType) => {

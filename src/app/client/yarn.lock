@@ -14547,10 +14547,10 @@ update-browserslist-db@^1.0.9:
     escalade "^3.1.1"
     picocolors "^1.0.0"
 
-upsmf-collection-editor@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/upsmf-collection-editor/-/upsmf-collection-editor-1.0.1.tgz#79ba2a2c6580f7788d03c360a6c137715094eaa5"
-  integrity sha512-ox+yj4aK738dnioPFLqjMf+a5q2dcdVNF0sq+2lJcVsIXYpRMIkAJ/2zXuCHfrWmFzgp2qPiDtvLigXVWYuXKw==
+upsmf-collection-editor@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/upsmf-collection-editor/-/upsmf-collection-editor-1.0.2.tgz#6647c58f72bb119c4c9e3256d6f6bde2f4a1d876"
+  integrity sha512-71z5jKnhkjKPThvrVV9WOaHg2VbAFi4cgB9OtFIlYsa+NHhPVsjXqiXFRuwKxqdqW39fJ+n328jA+JVHyzE6Og==
   dependencies:
     tslib "^2.0.0"
 
