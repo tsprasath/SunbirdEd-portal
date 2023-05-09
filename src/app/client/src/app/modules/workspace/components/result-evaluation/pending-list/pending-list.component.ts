@@ -559,6 +559,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
             });
         } else{
             requestBody.request['comment'] = this.feedbackForm.value.feedback;
+            requestBody.request.status = 5
             this.courseBatchService.rejectCertificate(requestBody).pipe(takeUntil(this.destroySubject$))
             .subscribe((res)=>{
                 this.closeModal();
@@ -598,13 +599,11 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                 statusText= "Pending for evaluation"; 
                 break;
             case 4:
-                if(student?.assessmentInfo?.certificates?.length){
-                    statusText= "Evaluation Completed with Certificate issued";
-                } else {
-                    statusText= "Evaluation Completed without Certificate  issued";
-                }
-                
-                break; 
+                statusText= "Certificate issued";
+                break;
+            case 5:
+                statusText= "Certificate not  issued";
+                break;
 
         }
         return statusText;
