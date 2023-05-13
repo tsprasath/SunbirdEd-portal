@@ -438,13 +438,11 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
                 statusText= "Pending for evaluation"; 
                 break;
             case 4:
-                if(student?.assessmentInfo?.certificates?.length){
-                    statusText= "Evaluation Completed with Certificate issued";
-                } else {
-                    statusText= "Evaluation Completed without Certificate issued";
-                }
-                
-                break; 
+                statusText= "Certificate issued";
+                 break; 
+            case 5:
+                 statusText= "Certificate not issued";
+                 break;
 
         }
         return statusText;
