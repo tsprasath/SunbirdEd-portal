@@ -123,7 +123,7 @@
                 <button button type="submit"  [disabled]="feedbackForm.invalid" [ngClass]="{'sb-btn-disabled': feedbackForm.invalid}" class="sb-btn sb-btn-normal sb-btn-primary" tabindex="0">
                     {{ isIssueCertificate ? resourceService?.frmelmnts?.btn?.issue : resourceService?.frmelmnts?.btn?.notIssue }}
                 </button>
-                <button class="sb-btn sb-btn-normal sb-btn-outline-primary" tabindex="0"
+                <button class="sb-btn sb-btn-normal sb-btn-outline-primary" tabindex="0" type="button"
                     (click)="closeModal()">
                     {{resourceService.frmelmnts?.btn?.cancel}}
                 </button>
