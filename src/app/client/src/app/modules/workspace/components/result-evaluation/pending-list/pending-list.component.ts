@@ -188,6 +188,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     participantsList: any[] = [];
     isChecked: boolean = false;
     enableFeedback: boolean = false;
+    batchID:any;
     /**
     *To store the flag to open issue or reject popup 
     */
@@ -264,6 +265,10 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     }
 
     ngOnInit() {
+        this.activatedRoute.queryParams.subscribe((params) => {
+            this.batchID = params.id;
+            console.log('ddd',this.batchID)
+          });
 
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
@@ -305,7 +310,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": this.assessment.batches[0].batchId
+                    "batchId": this.batchID
                 },
                 "filters": {
                     "status": [],

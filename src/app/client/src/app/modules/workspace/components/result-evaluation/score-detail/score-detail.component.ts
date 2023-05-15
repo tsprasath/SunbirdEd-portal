@@ -27,6 +27,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
     assessment:any= {}
     pageNumber:any = null
     scoreDetails: IScoreDetails;
+    batchID:any
 
     constructor(
       private router: Router,
@@ -34,6 +35,7 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
       public searchService: SearchService,
       public userService: UserService,
       private location: Location,
+      private activatedRoute: ActivatedRoute
     ) { 
         super(searchService, workSpaceService, userService);
         this.scoreDetails= {
@@ -103,13 +105,17 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
         const routerStateObj: any = this.location.getState();
         this.assessment = routerStateObj?.assessment;
         this.pageNumber = routerStateObj?.pageNumber;
+        this.activatedRoute.queryParams.subscribe((params) => {
+            this.batchID = params.id;
+            console.log('ddd',this.batchID)
+          });
 
     }
 
     ngOnInit() { }
 
     navigateBack() {
-      this.router.navigate(['workspace/content/resultEvaluation/all/1'],{ state: {assessment: this.assessment, pageNumber: this.pageNumber} });
+      this.router.navigate(['workspace/content/resultEvaluation/all/1'],{ state: {assessment: this.assessment, pageNumber: this.pageNumber},queryParams:{id:this.batchID}});
     }
 
     ngOnDestroy(): void {

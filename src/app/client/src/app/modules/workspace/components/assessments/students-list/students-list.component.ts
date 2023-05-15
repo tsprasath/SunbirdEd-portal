@@ -118,6 +118,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     */
     queryParams: any;
 
+    batchID:any;
     /**
     redirectUrl;
     */
@@ -184,6 +185,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     */
 
     assessment: any = {}
+    batchAssessmentId:any = null
     participantsList: any[] = [];
     isChecked: boolean = false;
     disableAssessmentAction: boolean = true;
@@ -228,6 +230,8 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
 
         const routerStateObj: any = this.location.getState();
         this.assessment = routerStateObj?.assessment;
+        this.batchAssessmentId = routerStateObj?.id
+
         this.paginationService = paginationService;
         this.activatedRoute = activatedRoute;
         this.toasterService = toasterService;
@@ -241,8 +245,14 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     ngOnInit() {
+        console.log('idd',this.batchAssessmentId)
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
+
+        this.activatedRoute.queryParams.subscribe((params) => {
+            this.batchID = params.id;
+            console.log('ddd',this.batchID)
+          });
 
         combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(
@@ -281,7 +291,7 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": this.assessment.batches[0].batchId
+                    "batchId": this.batchID
                 },
                 "filters": {
                     "status": [],

@@ -119,7 +119,8 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
     route query param;
     */
     queryParams: any;
-
+ 
+    batchID:any
     /**
     redirectUrl;
     */
@@ -267,6 +268,10 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
     ngOnInit() {
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
+        this.activatedRoute.queryParams.subscribe((params) => {
+            this.batchID = params.id;
+            console.log('ddd',this.batchID)
+          });
 
         combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
             .pipe(
@@ -305,7 +310,7 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": this.assessment.batches[0].batchId
+                    "batchId": this.batchID
                 },
                 "filters": {
                     "status": [],
