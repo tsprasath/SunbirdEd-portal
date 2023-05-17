@@ -245,13 +245,11 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
     }
 
     ngOnInit() {
-        console.log('idd',this.batchAssessmentId)
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
         this.activatedRoute.queryParams.subscribe((params) => {
             this.batchID = params.id;
-            console.log('ddd',this.batchID)
           });
 
         combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])

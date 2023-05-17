@@ -107,7 +107,6 @@ export class ScoreDetailComponent extends WorkSpace  implements OnInit, OnDestro
         this.pageNumber = routerStateObj?.pageNumber;
         this.activatedRoute.queryParams.subscribe((params) => {
             this.batchID = params.id;
-            console.log('ddd',this.batchID)
           });
 
     }

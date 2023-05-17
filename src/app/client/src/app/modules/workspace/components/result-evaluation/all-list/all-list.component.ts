@@ -244,7 +244,6 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     ngOnInit() {
         this.activatedRoute.queryParams.subscribe((params) => {
             this.batchID = params.id;
-            console.log('ddd',this.batchID)
           });
 
         this.filterType = this.config.appConfig.allmycontent.filterType;

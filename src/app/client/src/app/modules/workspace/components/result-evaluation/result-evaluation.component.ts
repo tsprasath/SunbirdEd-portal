@@ -48,7 +48,6 @@ export class ResultEvaluationComponent implements OnInit, OnDestroy {
     this.assessment = this.routerStateObj?.assessment;
     this.activatedRoute.queryParams.subscribe((params) => {
       this.batchID = params.id;
-      console.log('ddd',this.batchID)
     });
     }
 
