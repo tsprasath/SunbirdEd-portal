@@ -190,6 +190,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     disableAssessmentAction: boolean = true;
     checkedArray: string[] = [];
     maxCount:number = 250
+    batchID:any;
 
     /**
      * To show/hide collection modal
@@ -241,6 +242,10 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     }
 
     ngOnInit() {
+        this.activatedRoute.queryParams.subscribe((params) => {
+            this.batchID = params.id;
+          });
+
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
 
@@ -281,7 +286,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": this.assessment.batches[0].batchId
+                    "batchId": this.batchID ? this.batchID : this.assessment.batches[0].batchId
                 },
                 "filters": {
                     "status": [],
@@ -401,7 +406,7 @@ export class ResultEvalutionAllListComponent extends WorkSpace implements OnInit
     }
 
     goToScoreDetails() {
-        this.router.navigate(['workspace/content/resultEvaluation/score/1'],{state :{assessment: this.assessment, pageNumber: this.pageNumber}});
+        this.router.navigate(['workspace/content/resultEvaluation/score/1'],{state :{assessment: this.assessment, pageNumber: this.pageNumber},queryParams: { id:this.batchID }});
     }
 
     inview(event) {

@@ -19,19 +19,25 @@ export class AssignAssessmentsComponent implements OnInit, OnDestroy {
     */
     assessment: any = {}
 
+      /**
+     * To send activatedRoute.snapshot to router navigation
+     * service for redirection to draft  component
+    */
+      //private activatedRoute: ActivatedRoute;
+
     /**
      * to store all nav links
     */
-
+    batchID:any;
     navLinks: any[];
 
 
     routerStateObj: any;
 
     constructor(
-      activatedRoute: ActivatedRoute,
       private router: Router,
       private location: Location,
+      private activatedRoute: ActivatedRoute
     ) { 
       this.routerStateObj = this.location.getState();
       this.assessment =  this.routerStateObj?.assessment;
@@ -47,13 +53,18 @@ export class AssignAssessmentsComponent implements OnInit, OnDestroy {
         }
     ];
     this.activeLink= "/all/1";
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.batchID = params.id;
+    });
     }
 
-    ngOnInit() { }
+    ngOnInit() { 
+    }
 
     navigateToLink(selectedLink: string) {
       this.activeLink = selectedLink;
-      this.router.navigate(['workspace/content/assessments/assign'+ selectedLink], { state: {assessment: this.assessment, pageNumber: 1} });
+      this.router.navigate(['workspace/content/assessments/assign'+ selectedLink], { state: {assessment: this.assessment, pageNumber: 1},queryParams: { id:this.batchID } });
+      
     }
 
     navigateToAssessments()  {

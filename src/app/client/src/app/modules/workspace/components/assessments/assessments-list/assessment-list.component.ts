@@ -334,7 +334,7 @@ export class AssessmentsListComponent extends WorkSpace implements OnInit, After
     }
 
     handleAssignAssessment(assessment): void {
-        this.route.navigate([this.isOrgAdmin ? '/workspace/content/resultEvaluation/all/1' : '/workspace/content/assessments/assign/all/1'], { state: {assessment: assessment, pageNumber: this.pageNumber} });
+        this.route.navigate([this.isOrgAdmin ? '/workspace/content/resultEvaluation/all/1' : '/workspace/content/assessments/assign/all/1'],{ state: {assessment: assessment, pageNumber: this.pageNumber},queryParams: { id:assessment.batches[0].batchId } },);
     }
 
     inview(event) {

@@ -188,6 +188,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     participantsList: any[] = [];
     isChecked: boolean = false;
     enableFeedback: boolean = false;
+    batchID:any;
     /**
     *To store the flag to open issue or reject popup 
     */
@@ -264,6 +265,9 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     }
 
     ngOnInit() {
+        this.activatedRoute.queryParams.subscribe((params) => {
+            this.batchID = params.id;
+          });
 
         this.filterType = this.config.appConfig.allmycontent.filterType;
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
@@ -305,7 +309,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
         const batchDetails = {
             "request": {
                 "batch": {
-                    "batchId": this.assessment.batches[0].batchId
+                    "batchId": this.batchID
                 },
                 "filters": {
                     "status": [],
@@ -513,7 +517,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
     }
 
     handleSubmitData(modal?): void {
-        console.warn('bbbb',this.feedbackForm.value.feedback);
         const batch = this.assessment.batches[0];
         const userIds = _.compact(_.map(this.selectedStudents, (student) =>  {
             if (student?.assessmentInfo  && student?.assessmentInfo?.status === 3) {
@@ -535,7 +538,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                     requestBody.request.status = 4
                     this.courseBatchService.submitforEval(requestBody).pipe(takeUntil(this.destroySubject$))
                     .subscribe((res)=>{
-                        console.log(res)
                     })
                 }
                 this.closeModal();
