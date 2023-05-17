@@ -55,7 +55,6 @@ export class AssignAssessmentsComponent implements OnInit, OnDestroy {
     this.activeLink= "/all/1";
     this.activatedRoute.queryParams.subscribe((params) => {
       this.batchID = params.id;
-      console.log('ddd',this.batchID)
     });
     }
 

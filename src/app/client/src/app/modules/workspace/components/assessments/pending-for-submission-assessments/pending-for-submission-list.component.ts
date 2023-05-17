@@ -270,7 +270,6 @@ export class PendingForSubmissionListComponent extends WorkSpace implements OnIn
         this.redirectUrl = this.config.appConfig.allmycontent.inPageredirectUrl;
         this.activatedRoute.queryParams.subscribe((params) => {
             this.batchID = params.id;
-            console.log('ddd',this.batchID)
           });
 
         combineLatest([this.activatedRoute.params, this.activatedRoute.queryParams])
