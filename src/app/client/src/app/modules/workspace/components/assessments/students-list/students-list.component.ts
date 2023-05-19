@@ -509,7 +509,9 @@ export class StudentsListComponent extends WorkSpace implements OnInit, AfterVie
             case 4:
                 statusText= "Evaluation completed";
                 break; 
-
+            case 5:
+                statusText= "Evaluation completed";
+                break;
         }
         return statusText;
     }
