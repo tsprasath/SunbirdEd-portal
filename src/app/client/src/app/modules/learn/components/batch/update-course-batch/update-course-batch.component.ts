@@ -454,13 +454,15 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (this.removedUsers && this.removedUsers.length > 0) {
       requests.push(this.removeParticipantFromBatch(this.batchId, this.removedUsers));
     }
-    if (participants && participants.length > 0) {
-      requests.push(this.addParticipantToBatch(this.batchId, participants));
-    }
+    // if (participants && participants.length > 0) {
+    //   requests.push(this.addParticipantToBatch(this.batchId, participants));
+    //   console.log('aaaa',requests)
+    // }
 
     forkJoin(requests).subscribe(results => {
       // this.disableSubmitBtn = false;
       this.toasterService.success(this.resourceService.messages.smsg.m0034);
+      
       this.reload();
       this.checkIssueCertificate(this.batchId, this.batchDetails);
       this.checkEnableDiscussions(this.batchId);
