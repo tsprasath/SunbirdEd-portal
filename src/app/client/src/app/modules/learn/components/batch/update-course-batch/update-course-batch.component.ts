@@ -429,7 +429,7 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     let participants = [];
     const selectedMentors = [];
     let mentors = this.batchUpdateForm.value.mentors || [];
-    if (this.batchUpdateForm.value.enrollmentType !== 'open') {
+    if (this.batchUpdateForm.value.enrollmentType !== 'open' && this.batchUpdateForm.value.enrollmentType !== 'invite-only') {
       participants = this.batchUpdateForm.value.users || [];
     }
     const startDate = dayjs(this.batchUpdateForm.value.startDate).format('YYYY-MM-DD');
@@ -454,10 +454,10 @@ export class UpdateCourseBatchComponent implements OnInit, OnDestroy, AfterViewI
     if (this.removedUsers && this.removedUsers.length > 0) {
       requests.push(this.removeParticipantFromBatch(this.batchId, this.removedUsers));
     }
-    // if (participants && participants.length > 0) {
-    //   requests.push(this.addParticipantToBatch(this.batchId, participants));
-    //   console.log('aaaa',requests)
-    // }
+    if (participants && participants.length > 0) {
+      requests.push(this.addParticipantToBatch(this.batchId, participants));
+      console.log('aaaa',requests)
+    }
 
     forkJoin(requests).subscribe(results => {
       // this.disableSubmitBtn = false;
