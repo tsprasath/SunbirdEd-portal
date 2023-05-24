@@ -548,6 +548,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                         if(student.id == ids){
                           student.assessmentInfo.status  = 4;
                           student.assessmentInfo.certificates  = ["issued"];
+                          student.assessmentInfo.comment =requestBody.request['comment']
                           student.checked = false;
                         }
                     });
@@ -571,6 +572,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                     userIds.forEach(ids=>{
                         if(student.id == ids){
                           student.assessmentInfo.status  = 5;
+                          student.assessmentInfo.comment =requestBody.request['comment']
                           student.checked = false;
                         }
                     });
