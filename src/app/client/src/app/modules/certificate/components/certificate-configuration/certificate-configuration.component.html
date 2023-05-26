@@ -147,10 +147,12 @@
                   </div>
                 </div>
 
-                <div class='ui stackable grid mt-0'>
+                <div class='ui stackable grid mt-0 rules'>
                   <div class="seven wide column">
                     <div class="pt-8 pb-16 font-weight-bold fnormal text-left">
-                      {{resourceService?.frmelmnts?.cert?.lbl?.certRules}}</div>
+                      {{resourceService?.frmelmnts?.cert?.lbl?.certRules}}
+                      <span class="asterik">*</span>
+                    </div>
                     <div class="d-flex flex-dc w-50">
                         <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
                           <mat-label>{{resourceService?.frmelmnts?.cert?.lbl?.issueTo}}</mat-label>
@@ -267,9 +269,9 @@
 
                 <div class='ui stackable grid mt-0'>
                   <div class="twelve wide column">
-                    <div class="sb-checkbox sb-checkbox-secondary pt-24">
-                      <input formControlName="allowPermission" value="true" type="checkbox" id="check2" name="selected">
-                      <label for="check2" class="text-left">{{resourceService?.frmelmnts?.cert?.lbl?.verified}}</label>
+                    <div class="sb-checkbox sb-checkbox-secondary pt-24 verified">
+                      <input formControlName="allowPermission" value="true" type="checkbox" id="check2" name="selected" >
+                      <label for="check2" class="text-left" ><span class="asteriks">*</span>{{resourceService?.frmelmnts?.cert?.lbl?.verified}}</label>
                     </div>
                   </div>
                 </div>
