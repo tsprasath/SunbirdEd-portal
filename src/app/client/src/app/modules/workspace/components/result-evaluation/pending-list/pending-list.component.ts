@@ -507,13 +507,15 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
 
     openFeedbackPopup(flag: string): void {
         if(flag === 'issue'){
-            this.feedbackText = this.resourceService.frmelmnts.lbl.reasonToIssueCert;
+            // this.feedbackText = this.resourceService.frmelmnts.lbl.reasonToIssueCert;
             this.isIssueCertificate =  true;
+            this.handleSubmitData()
         } else{
             this.feedbackText =  this.resourceService.frmelmnts.lbl.reasonToNotIssueCert;
             this.isIssueCertificate =  false;
+            this.enableFeedback = true;
         }
-        this.enableFeedback = true;
+       
     }
 
     handleSubmitData(modal?): void {
@@ -540,7 +542,6 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                     .subscribe((res)=>{
                     })
                 }
-                this.closeModal();
                 this.disableIssueCertificateAction = true;
                 this.disableRejectCertificateAction = true;
                 _.forEach(this.allStudents, (student) =>  {
@@ -548,7 +549,7 @@ export class ResultEvalutionPendingListComponent extends WorkSpace implements On
                         if(student.id == ids){
                           student.assessmentInfo.status  = 4;
                           student.assessmentInfo.certificates  = ["issued"];
-                          student.assessmentInfo.comment =requestBody.request['comment']
+                        //   student.assessmentInfo.comment =requestBody.request['comment']
                           student.checked = false;
                         }
                     });
