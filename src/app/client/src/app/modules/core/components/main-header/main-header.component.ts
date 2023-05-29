@@ -73,8 +73,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     width: '38px'
   };
   avtarDesktopStyle = {
-    backgroundColor: '#ffffff',
-    color: '#333333',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    color: '#ffffff',
     fontFamily: 'inherit',
     fontSize: '17px',
     lineHeight: '38px',
@@ -84,8 +84,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     width: '38px'
   };
   SbtavtarDesktopStyle = {
-    backgroundColor: '#ffffff',
-    color: '#333333',
+    backgroundColor:  'rgba(0, 0, 0, 0.8)',
+    color: '#ffffff',
     fontFamily: 'inherit',
     fontSize: '24px',
     lineHeight: '48px',
@@ -166,6 +166,13 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
   showReportMenu = false;
   showingDescription: string;
   showSwitchTheme = false
+  showUserMergeAccount:boolean = true;
+  showUserMyGroup: boolean = true;
+  userRoles:any[] = [];
+  url: any;
+
+  public hideSearchBar: any;
+  public hideSearchBoolean: boolean = false;
   constructor(public config: ConfigService, public resourceService: ResourceService, public router: Router,
     public permissionService: PermissionService, public userService: UserService, public tenantService: TenantService,
     public orgDetailsService: OrgDetailsService, public formService: FormService,
@@ -189,6 +196,8 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.instance = (<HTMLInputElement>document.getElementById('instance'))
       ? (<HTMLInputElement>document.getElementById('instance')).value.toUpperCase() : 'SUNBIRD';
     this.workSpaceRole = this.config.rolesConfig.headerDropdownRoles.workSpaceRole;
+
+    this.hideSearchBar = ['/faq','/learn/course','/learn/course/play','/profile','/landing']
     this.updateHrefPath(this.router.url);
     router.events.pipe(
       filter(event => event instanceof NavigationEnd)
@@ -211,10 +220,32 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
                 this.setUserPreferences();
                 }
             }
+            this.userRoles = profileData.userProfile['roles'].length ? _.map(profileData.userProfile['roles'], 'role') : [];
           });
         }
       }
     });
+  }
+
+  getUserProfileConfig(){
+    const formReadInputParams = { 
+      formType: 'user',
+      formAction: 'display',
+      contentType: 'account',
+      component: 'portal'
+    };
+    this.formService.getFormConfig(formReadInputParams).subscribe(
+      (formResponsedata) => {
+        if(formResponsedata.length){
+          this.showUserMergeAccount = formResponsedata[0].showMergeAccount
+          this.showUserMyGroup = formResponsedata[1].showMyGroup
+        }
+        },
+        (error) => {
+          this.showUserMergeAccount = true
+          this.showUserMyGroup =  true
+        }
+      );
   }
 
   getFormConfigs() {
@@ -251,6 +282,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
 }
 
   updateHrefPath(url) {
+    this.url= url;
     if (url.indexOf('explore-course') >= 0) {
       this.hrefPath = url.replace('explore-course', 'learn');
     } else if (url.indexOf('explore-groups') >= 0) {
@@ -339,7 +371,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       const defaultTab = _.find(contentTypes, ['default', true]);
       const isOldThemeDisabled = _.get(defaultTab, 'isOldThemeDisabled');
       if (!isOldThemeDisabled) {
-        this.showSwitchTheme = true;
+        this.showSwitchTheme = false;
       }
       if(isOldThemeDisabled && layoutType !== 'joy') {
         this.layoutService.initiateSwitchLayout();
@@ -357,7 +389,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       const defaultTab = _.find(contentTypes, ['default', true]);
       const goToBasePath = _.get(defaultTab, 'goToBasePath');
       if (goToBasePath) {
-        this.navigateByUrl(goToBasePath);
+        this.navigateByUrl('/logoff');
       } else {
         if (this.userService.loggedIn) {
           this.navigateByUrl('/resources');
@@ -648,13 +680,14 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     this.getUrl();
     this.activatedRoute.queryParams.subscribe(queryParams => this.queryParam = { ...queryParams });
     this.tenantService.tenantData$.subscribe(({ tenantData }) => {
-      this.tenantInfo.logo = tenantData ? tenantData.logo : undefined;
+      this.tenantInfo.logo = tenantData ? 'https://uphrh.in/assets/images/sunbird_logo.png' : undefined;
       this.tenantInfo.titleName = (tenantData && tenantData.titleName) ? tenantData.titleName.toUpperCase() : undefined;
     });
     this.setInteractEventData();
     this.cdr.detectChanges();
     this.setWindowConfig();
     this.switchToNewTheme();
+    this.getUserProfileConfig();
   }
 
   checkFullScreenView() {
@@ -812,5 +845,16 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     if (this.cacheService.exists('searchFilters')) {
       this.cacheService.remove('searchFilters');
     }
+  }
+  hideSearch() {
+    let hideSearch = false;
+    this.hideSearchBar.forEach(ele => {
+      if(this.url.includes(ele) && !hideSearch) {
+        hideSearch = true
+
+        this.hideSearchBoolean = true;
+      }
+    })
+    return hideSearch;
   }
 }

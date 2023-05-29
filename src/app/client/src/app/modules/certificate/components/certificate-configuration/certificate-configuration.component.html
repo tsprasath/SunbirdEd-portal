@@ -191,6 +191,37 @@
                   </div>
                 </div>
 
+                <div class="ui stackable grid">
+                  <div class="sb-field-group">
+                    <div class="eight wide column">
+                      <label class="text-uppercase">{{resourceService?.frmelmnts?.cert?.lbl?.certificateValidity}}</label>
+                      <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
+                        <mat-select formControlName="certificateValidityType" role="listbox" aria-label="Certificate validity"
+                          class="selection" >
+                          <mat-option class="mat-dropdown__options" role="option" *ngFor="let option of certificateValidityTypes" [value]="option"
+                          attr.aria-label="{{option}}">{{option}}</mat-option>
+                        </mat-select>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="sb-field-group">
+                    <div class="four wide column">
+                      <div *ngIf="userPreference.value.certificateValidityType === 'Limited'">
+                        <label class="required text-uppercase">{{resourceService?.frmelmnts?.cert?.lbl?.certificateExpiresIn}}</label>
+                        <mat-form-field appearance="fill" class="sb-mat__dropdown w-100 mb-16">
+                          <mat-select formControlName="certificateExpiresIn" role="listbox" aria-label="certificate expires in year list"
+                            class="selection" >
+                            <mat-option class="mat-dropdown__options" role="option" *ngFor="let option of certificateExpireYears" [value]="option"
+                            attr.aria-label="{{option}}">
+                              {{option}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="progess-add-content" *ngIf="isSingleAssessment">
                   <div class="left-border"></div>
                   <button type="button" class="add-score-btn py-8 px-16 fsmall font-weight-bold"

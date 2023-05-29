@@ -22,6 +22,7 @@
 	</ng-container>
 	<!--/Logged in user-->
 
+	
 	<!--Not Logged in user-->
 	<ng-container *ngIf="!userService.loggedIn">
 		<button class="ui blue button" *ngIf="router.isActive('', true) && exploreButtonVisibility==='true'"
@@ -106,8 +107,6 @@
 </div>
 <!--/Mobile-->
 </ng-container>
-
-
 <ng-container *ngIf="isLayoutAvailable()">
 
   <app-content-type [layoutConfiguration]="layoutConfiguration" [showBackButton]="showBackButton"></app-content-type>

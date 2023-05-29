@@ -33,6 +33,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
     public pageSections: Array<any> = [];
     public channelId: string;
     public custodianOrg = true;
+    public showPreference = true;
     public defaultFilters;
     public userSelectedPreference;
     public selectedFilters = {};
@@ -222,6 +223,7 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
         this.segmentationTagService.getSegmentCommand();
         const enrolledSection$ = this.getQueryParams().pipe(
             tap(() => {
+                console.log(this.getCurrentPageData(),this.getSelectedTab(),'asdfghjkl')
                 const currentPage = this._currentPageData = this.getCurrentPageData();
                 this.pageTitleSrc = get(this.resourceService, 'RESOURCE_CONSUMPTION_ROOT') + get(currentPage, 'title');
                 this.isFilterEnabled = true;
@@ -315,8 +317,14 @@ export class ExplorePageComponent implements OnInit, OnDestroy, AfterViewInit {
                 this.FIRST_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(0, this.layoutConfiguration, COLUMN_TYPE.threeToNine, true);
                 this.SECOND_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(1, this.layoutConfiguration, COLUMN_TYPE.threeToNine, true);
             } else {
-                this.FIRST_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(0, null, COLUMN_TYPE.fullLayout);
+                if(contentType !== 'home' && contentType !== 'explore'){
+
+                    this.FIRST_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(0, {"source": "","name": "newLayout","options": "","layout":"v2"}, COLUMN_TYPE.nineToThree, true);
+                    this.SECOND_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(1, {"source": "","name": "newLayout","options": "","layout":"v2"}, COLUMN_TYPE.nineToThree, true);
+                } else {
+                    this.FIRST_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(0, null, COLUMN_TYPE.fullLayout);
                 this.SECOND_PANEL_LAYOUT = this.layoutService.redoLayoutCSS(1, null, COLUMN_TYPE.fullLayout);
+                }
             }
         }
     }

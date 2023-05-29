@@ -21,7 +21,7 @@ body {
 }
 
 body {
-  background: var(--sbt-body-bg) !important;
+  background: var(--white) !important;
   position: relative;
   font-family: var(--font-stack-en) !important;
   letter-spacing: calculateRem(0.2px);
@@ -1542,4 +1542,42 @@ html[layout="joy"] .sb-modal-content .ui.center.aligned.segment {
   font-size: 1rem;
   font-weight: normal;
   padding: calculateRem(10px) 0;
+}
+sb-library-card-v4 .sb--card.sb--card--theme2 {
+  width: 100% !important ;
+  max-width: 350px !important;
+}
+
+.workspace-sidebar {
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.08);
+}
+
+
+.layout-library{
+  .header{
+    .badge{
+      border-radius: 2px !important;
+      border: 1px solid rgba(255,189,180, 1) !important;
+      opacity: 1;
+      background-color: rgba(255,255,255, 1) !important;
+      color: var(--primary-theme) !important;
+    }
+  }
+}
+
+.sb-btn-primary:hover {
+  background-color: hsl(12deg 100% 98.04%) !important;
+  border: 0.0625rem solid #ec4933 !important;
+  color: #ec4933 !important;
+}
+.sb-pageSection-count {
+  color: #ec4933 !important;
+}
+
+.sb-mat__dropdown.mat-form-field-appearance-fill .mat-form-field-flex {
+  height: 2.5rem !important;
+}
+.sb-label-grid.size--md .item label {
+  font-size: calculateRem(14px);
 }
