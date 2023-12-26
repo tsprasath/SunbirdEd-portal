@@ -88,7 +88,7 @@ commit_hash=$(git rev-parse --short HEAD)
 # echo "Client and Server Build complete Took $[$BUILD_ENDTIME - $STARTTIME] seconds to complete."
 
 if [ $buildDockerImage == true ]
-# then
+then
 # cd app_dist
 # mkdir -p node_modules/client-cloud-services/dist
 # cp /var/lib/jenkins/custombuild/client-cloud-services/bundle.js node_modules/client-cloud-services/dist/
