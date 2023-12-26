@@ -21,7 +21,6 @@ fi
 
 commit_hash=$(git rev-parse --short HEAD)
 #nvm install $NODE_VERSION # same is used in client and server
-
 # cd src/app
 # mkdir -p app_dist/ # this folder should be created prior server and client build
 # rm -rf dist-cdn # remove cdn dist folder
@@ -89,7 +88,6 @@ commit_hash=$(git rev-parse --short HEAD)
 
 if [ $buildDockerImage == true ]
 then
-# cd app_dist
 # mkdir -p node_modules/client-cloud-services/dist
 # cp /var/lib/jenkins/custombuild/client-cloud-services/bundle.js node_modules/client-cloud-services/dist/
 # you will need to inject the custom client-cloud-service bundle.js to the player build
@@ -102,7 +100,7 @@ then
 #   cp /var/lib/jenkins/jobs/Build/jobs/build-local/jobs/NodeJS-Client-Cloud-Service/builds/[build_number]/archive/dist/bundle.js
 #      /var/lib/jenkins/custom-artifacts/client-cloud-services/
 
-sed -i "/version/a\  \"buildHash\": \"${commit_hash}\"," package.json
+sed -i "/version/a\  \"buildHash\": \"${commit_hash}\"," src/app/package.json
 echo "starting docker build"
 docker build --no-cache --label commitHash=$(git rev-parse --short HEAD) -t ${org}/${name}:${build_tag} .
 echo "completed docker build"
